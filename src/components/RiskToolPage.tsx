@@ -5,7 +5,7 @@ import { Badge } from "./ui/badge";
 import { Progress } from "./ui/progress";
 import { RadioGroup, RadioGroupItem } from "./ui/radio-group";
 import { Label } from "./ui/label";
-import { AlertTriangle, Shield, Server, Users, Lock, Wifi, Database, Check, FileText, Download } from "lucide-react";
+import { AlertTriangle, Shield, Server, Users, Lock, Wifi, Database, Check, FileText } from "lucide-react";
 import { RiskHeatMap } from "./RiskHeatMap";
 import { RecommendationsSection } from "./RecommendationsSection";
 
@@ -1120,244 +1120,9 @@ export function RiskToolPage() {
   const [currentCategory, setCurrentCategory] = useState(0);
   const [answers, setAnswers] = useState<Record<string, string>>({});
   const [showResults, setShowResults] = useState(false);
-  const [isGeneratingPDF, setIsGeneratingPDF] = useState(false);
 
   const handleAnswerChange = (questionId: string, value: string) => {
     setAnswers(prev => ({ ...prev, [questionId]: value }));
-  };
-
-  const generatePDFReport = async () => {
-    setIsGeneratingPDF(true);
-    try {
-    const riskScore = calculateRiskScore();
-    const riskLevel = getRiskLevel(riskScore);
-    const recommendations = getRiskRecommendations(riskScore);
-    
-    // Dynamically import jsPDF to avoid build issues
-    const { jsPDF } = await import('jspdf');
-    const doc = new jsPDF();
-    
-    // Set up colors and styling
-    const primaryColor = [3, 2, 19]; // Dark gray from CyberWise brand
-    const accentColor = [107, 114, 128]; // Gray-500
-    const successColor = [34, 197, 94]; // Green-500
-    const warningColor = [251, 191, 36]; // Yellow-400
-    const errorColor = [239, 68, 68]; // Red-500
-    
-    let yPosition = 20;
-    const pageWidth = doc.internal.pageSize.width;
-    const margin = 20;
-    const contentWidth = pageWidth - (2 * margin);
-    
-    // Helper function to add text with word wrapping
-    const addWrappedText = (text: string, x: number, y: number, maxWidth: number, fontSize: number = 11) => {
-      doc.setFontSize(fontSize);
-      const lines = doc.splitTextToSize(text, maxWidth);
-      lines.forEach((line: string, index: number) => {
-        doc.text(line, x, y + (index * (fontSize * 0.4)));
-      });
-      return y + (lines.length * (fontSize * 0.4));
-    };
-    
-    // Header
-    doc.setFillColor(...primaryColor);
-    doc.rect(0, 0, pageWidth, 40, 'F');
-    doc.setTextColor(255, 255, 255);
-    doc.setFontSize(24);
-    doc.text('CyberWise Core', margin, 25);
-    doc.setFontSize(14);
-    doc.text('Cybersecurity Risk Assessment Report', margin, 35);
-    
-    yPosition = 60;
-    doc.setTextColor(0, 0, 0);
-    
-    // Report date
-    doc.setFontSize(10);
-    doc.setTextColor(...accentColor);
-    doc.text(`Generated: ${new Date().toLocaleDateString('en-AU', { 
-      year: 'numeric', 
-      month: 'long', 
-      day: 'numeric',
-      hour: '2-digit',
-      minute: '2-digit'
-    })}`, margin, yPosition);
-    yPosition += 20;
-    
-    // Executive Summary
-    doc.setTextColor(...primaryColor);
-    doc.setFontSize(16);
-    doc.text('Executive Summary', margin, yPosition);
-    yPosition += 10;
-    
-    doc.setTextColor(0, 0, 0);
-    doc.setFontSize(11);
-    const summaryText = `This report presents the results of a comprehensive cybersecurity risk assessment conducted using CyberWise Core's risk evaluation framework. The assessment covers ${riskCategories.length} key security domains with a total of ${riskCategories.reduce((sum, cat) => sum + cat.questions.length, 0)} evaluation criteria.`;
-    yPosition = addWrappedText(summaryText, margin, yPosition, contentWidth) + 15;
-    
-    // Overall Risk Score Section
-    doc.setFillColor(245, 245, 245);
-    doc.rect(margin, yPosition - 5, contentWidth, 40, 'F');
-    
-    doc.setTextColor(...primaryColor);
-    doc.setFontSize(14);
-    doc.text('Overall Risk Assessment', margin + 10, yPosition + 10);
-    
-    // Risk score and level
-    doc.setFontSize(32);
-    let riskColor;
-    switch(riskLevel.level) {
-      case 'Low': riskColor = successColor; break;
-      case 'Medium': riskColor = warningColor; break;
-      case 'High': riskColor = [255, 165, 0]; break; // Orange
-      case 'Critical': riskColor = errorColor; break;
-      default: riskColor = accentColor;
-    }
-    doc.setTextColor(...riskColor);
-    doc.text(`${riskScore}%`, pageWidth - 80, yPosition + 15);
-    
-    doc.setFontSize(12);
-    doc.text(`${riskLevel.level} Risk`, pageWidth - 80, yPosition + 25);
-    
-    yPosition += 50;
-    
-    // Risk interpretation
-    doc.setTextColor(0, 0, 0);
-    doc.setFontSize(11);
-    let interpretation = '';
-    if (riskScore <= 20) {
-      interpretation = 'Your organization demonstrates strong cybersecurity practices with minimal identified risks. Continue monitoring and maintain current security measures.';
-    } else if (riskScore <= 40) {
-      interpretation = 'Your organization has moderate cybersecurity risk. Several areas require attention to strengthen your security posture.';
-    } else if (riskScore <= 60) {
-      interpretation = 'Your organization faces significant cybersecurity risks. Immediate action is recommended to address critical vulnerabilities.';
-    } else {
-      interpretation = 'Your organization has critical cybersecurity risks that require urgent attention. Immediate remediation is essential to prevent potential security incidents.';
-    }
-    yPosition = addWrappedText(interpretation, margin, yPosition, contentWidth) + 20;
-    
-    // Category Breakdown
-    if (yPosition > 250) {
-      doc.addPage();
-      yPosition = 20;
-    }
-    
-    doc.setTextColor(...primaryColor);
-    doc.setFontSize(16);
-    doc.text('Risk Category Analysis', margin, yPosition);
-    yPosition += 15;
-    
-    riskCategories.forEach((category, index) => {
-      if (yPosition > 260) {
-        doc.addPage();
-        yPosition = 20;
-      }
-      
-      // Calculate category risk
-      let categoryRisk = 0;
-      let categoryQuestions = 0;
-      category.questions.forEach(question => {
-        const answer = answers[question.id];
-        if (answer) {
-          const option = question.options.find(opt => opt.value === answer);
-          if (option) {
-            categoryRisk += option.risk;
-            categoryQuestions++;
-          }
-        }
-      });
-      const categoryScore = categoryQuestions > 0 ? Math.round((categoryRisk / (categoryQuestions * 5)) * 100) : 0;
-      const categoryLevel = getRiskLevel(categoryScore);
-      
-      doc.setFontSize(12);
-      doc.setTextColor(...primaryColor);
-      doc.text(`${index + 1}. ${category.name}`, margin, yPosition);
-      
-      doc.setFontSize(11);
-      let catRiskColor;
-      switch(categoryLevel.level) {
-        case 'Low': catRiskColor = successColor; break;
-        case 'Medium': catRiskColor = warningColor; break;
-        case 'High': catRiskColor = [255, 165, 0]; break;
-        case 'Critical': catRiskColor = errorColor; break;
-        default: catRiskColor = accentColor;
-      }
-      doc.setTextColor(...catRiskColor);
-      doc.text(`${categoryScore}% (${categoryLevel.level})`, pageWidth - 60, yPosition);
-      
-      yPosition += 10;
-      doc.setTextColor(...accentColor);
-      doc.setFontSize(10);
-      yPosition = addWrappedText(category.description, margin + 10, yPosition, contentWidth - 20, 10) + 10;
-    });
-    
-    // Recommendations Section
-    if (yPosition > 200) {
-      doc.addPage();
-      yPosition = 20;
-    }
-    
-    doc.setTextColor(...primaryColor);
-    doc.setFontSize(16);
-    doc.text('Recommended Actions', margin, yPosition);
-    yPosition += 15;
-    
-    doc.setFontSize(11);
-    doc.setTextColor(0, 0, 0);
-    const recText = `Based on your risk assessment results, the following ${recommendations.length} recommendations are prioritized to improve your cybersecurity posture:`;
-    yPosition = addWrappedText(recText, margin, yPosition, contentWidth) + 15;
-    
-    recommendations.forEach((rec, index) => {
-      if (yPosition > 250) {
-        doc.addPage();
-        yPosition = 20;
-      }
-      
-      // Priority indicator
-      let priorityColor;
-      switch(rec.priority) {
-        case 'high': priorityColor = errorColor; break;
-        case 'medium': priorityColor = warningColor; break;
-        case 'low': priorityColor = successColor; break;
-        default: priorityColor = accentColor;
-      }
-      
-      doc.setFillColor(...priorityColor);
-      doc.circle(margin + 5, yPosition - 2, 2, 'F');
-      
-      doc.setTextColor(...primaryColor);
-      doc.setFontSize(12);
-      doc.text(`${index + 1}. ${rec.title}`, margin + 15, yPosition);
-      
-      doc.setTextColor(...priorityColor);
-      doc.setFontSize(10);
-      doc.text(rec.priority.toUpperCase(), pageWidth - 50, yPosition);
-      
-      yPosition += 8;
-      doc.setTextColor(0, 0, 0);
-      doc.setFontSize(10);
-      yPosition = addWrappedText(rec.description, margin + 15, yPosition, contentWidth - 25, 10) + 5;
-      
-      doc.setTextColor(...accentColor);
-      doc.setFontSize(9);
-      doc.text(`Category: ${rec.category} | Timeframe: ${rec.timeframe} | Effort: ${rec.effort}`, margin + 15, yPosition);
-      yPosition += 15;
-    });
-    
-    // Footer on last page
-    doc.setTextColor(...accentColor);
-    doc.setFontSize(8);
-    doc.text('Generated by CyberWise Core - Cybersecurity Risk Assessment Tool', margin, doc.internal.pageSize.height - 10);
-    doc.text('For more information, visit: https://cyberwise.gov.au', pageWidth - 120, doc.internal.pageSize.height - 10);
-    
-    // Save the PDF
-    const fileName = `cyberwise-risk-assessment-${new Date().toISOString().split('T')[0]}.pdf`;
-    doc.save(fileName);
-    } catch (error) {
-      console.error('Error generating PDF report:', error);
-      alert('There was an error generating the PDF report. Please try again.');
-    } finally {
-      setIsGeneratingPDF(false);
-    }
   };
 
   const calculateRiskScore = () => {
@@ -1449,13 +1214,8 @@ export function RiskToolPage() {
           >
             Start New Assessment
           </Button>
-          <Button 
-            onClick={generatePDFReport}
-            disabled={isGeneratingPDF}
-            className="bg-gray-900 hover:bg-gray-800 text-white disabled:opacity-50"
-          >
-            <Download className="w-4 h-4 mr-2" />
-            {isGeneratingPDF ? 'Generating PDF...' : 'Export PDF Report'}
+          <Button className="bg-gray-900 hover:bg-gray-800 text-white">
+            Download Report
           </Button>
         </div>
       </div>
