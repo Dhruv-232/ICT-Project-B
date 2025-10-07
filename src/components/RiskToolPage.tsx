@@ -237,15 +237,23 @@ export function RiskToolPage() {
         <div className="lg:col-span-3">
           <Card>
             <CardHeader>
-              <div className="flex items-center space-x-3 mb-2">
-                <div className="p-2 bg-gray-100 rounded">
-                  {riskCategories[currentCategory].icon}
+              <div>
+                <div className="flex items-center space-x-3 mb-2">
+                  <div className="p-2 bg-gray-100 rounded">
+                    {riskCategories[currentCategory].icon}
+                  </div>
+                  <div>
+                    <CardTitle>
+                      {riskCategories[currentCategory].name}
+                    </CardTitle>
+                    <CardDescription>
+                      {riskCategories[currentCategory].description}
+                    </CardDescription>
+                  </div>
                 </div>
                 <div>
-                  <CardTitle>{riskCategories[currentCategory].name}</CardTitle>
-                  <CardDescription>
-                    {riskCategories[currentCategory].description}
-                  </CardDescription>
+                  Estimated Time:{" "}
+                  {riskCategories[currentCategory].estimatedTime}
                 </div>
               </div>
               <Progress

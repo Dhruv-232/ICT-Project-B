@@ -373,6 +373,16 @@ export function ComplianceChecklistPage() {
       : 0;
   };
 
+  const calculateEstdTime = () => {
+    const totalSeconds = totalItems * 20;
+    const hours = Math.floor(totalSeconds / 3600);
+    const minutes = Math.floor((totalSeconds % 3600) / 60);
+    let result = "";
+    if (hours > 0) result += `${hours} hour${hours > 1 ? "s" : ""} `;
+    result += `${minutes} minute${minutes !== 1 ? "s" : ""}`;
+    return result.trim();
+  };
+
   // Filter frameworks dynamically when business size or sector changes
   useEffect(() => {
     if (!businessSize && !sector) {
@@ -459,11 +469,16 @@ export function ComplianceChecklistPage() {
         <CardHeader>
           <CardTitle className="flex items-center justify-between">
             <span>Overall Progress</span>
-            <Badge
-              variant={progressPercentage === 100 ? "default" : "secondary"}
-            >
-              {progressPercentage}% Complete
-            </Badge>
+            <div className="flex flex-col items-end space-y-2">
+              <Badge variant="outline">
+                Estimated Time : {calculateEstdTime()}
+              </Badge>
+              <Badge
+                variant={progressPercentage === 100 ? "default" : "secondary"}
+              >
+                {progressPercentage}% Complete
+              </Badge>
+            </div>
           </CardTitle>
         </CardHeader>
         <CardContent>

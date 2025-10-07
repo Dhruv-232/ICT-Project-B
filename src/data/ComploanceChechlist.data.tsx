@@ -8499,15 +8499,6 @@ const complianceFrameworksData: ComplianceFramework[] = [
         completed: false,
         required: true,
       },
-    ],
-  },
-  {
-    id: "ransomware-reporting",
-    name: "Ransomware Reporting Rules 2025",
-    icon: <AlertTriangle className="h-5 w-5" />,
-    description: "CyberWise Compliance Checklist for Australian SMEs",
-    externalLink: "https://www.cyber.gov.au/",
-    items: [
       // 1. Business Overview
       {
         id: "annual-turnover",

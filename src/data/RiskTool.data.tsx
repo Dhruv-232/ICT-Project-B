@@ -5,6 +5,7 @@ interface RiskCategory {
   name: string;
   icon: React.ReactNode;
   description: string;
+  estimatedTime: string;
   questions: {
     id: string;
     question: string;
@@ -18,6 +19,7 @@ const riskCategories: RiskCategory[] = [
     name: "Incident Response",
     icon: <FileText className="h-5 w-5" />,
     description: "Assess your incident response capabilities and preparedness",
+    estimatedTime: "1h 30min",
     questions: [
       {
         id: "written_plan",
@@ -407,6 +409,7 @@ const riskCategories: RiskCategory[] = [
     name: "Access Management",
     icon: <Lock className="h-5 w-5" />,
     description: "Evaluate user access controls and authentication",
+    estimatedTime: "1h ",
     questions: [
       {
         id: "staff_mfa",
@@ -689,6 +692,7 @@ const riskCategories: RiskCategory[] = [
     name: "Data Protection",
     icon: <Database className="h-5 w-5" />,
     description: "Review data handling and backup procedures",
+    estimatedTime: "30min",
     questions: [
       {
         id: "data_inventory",
@@ -1102,6 +1106,7 @@ const riskCategories: RiskCategory[] = [
     name: "Staff Training",
     icon: <Users className="h-5 w-5" />,
     description: "Assess cybersecurity awareness and training",
+    estimatedTime: "1h 45min",
     questions: [
       {
         id: "basic_training_completed",

@@ -1,23 +1,29 @@
 import { Button } from "./ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "./ui/card";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "./ui/card";
 import { Badge } from "./ui/badge";
 import { Separator } from "./ui/separator";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "./ui/tabs";
-import { 
-  BookOpen, 
-  ExternalLink, 
-  FileText, 
-  Shield, 
-  Users, 
-  AlertTriangle, 
-  CheckCircle, 
+import {
+  BookOpen,
+  ExternalLink,
+  FileText,
+  Shield,
+  Users,
+  AlertTriangle,
+  CheckCircle,
   Download,
   Play,
   Calendar,
   Globe,
   Lock,
   Search,
-  Lightbulb
+  Lightbulb,
 } from "lucide-react";
 
 interface Resource {
@@ -28,6 +34,9 @@ interface Resource {
   duration?: string;
   url?: string;
   downloadUrl?: string;
+  guide?: string;
+  assessment?: string;
+  training?: string;
   tags: string[];
 }
 
@@ -43,151 +52,176 @@ const resourceCategories: ResourceCategory[] = [
   {
     id: "government-frameworks",
     name: "Government Frameworks",
-    description: "Official Australian government cybersecurity frameworks and legislation",
+    description:
+      "Official Australian government cybersecurity frameworks and legislation",
     icon: <Shield className="h-5 w-5" />,
     resources: [
       {
         title: "Privacy Act 1988 - Complete Guide",
-        description: "Comprehensive guide to understanding and implementing Privacy Act requirements for SMEs",
+        description:
+          "Comprehensive guide to understanding and implementing Privacy Act requirements for SMEs",
         type: "guide",
         level: "beginner",
         duration: "45 min read",
         url: "https://www.oaic.gov.au/privacy/privacy-legislation/the-privacy-act",
-        tags: ["Privacy Act", "Data Protection", "Legal Requirements"]
+        tags: ["Privacy Act", "Data Protection", "Legal Requirements"],
       },
       {
         title: "Cybersecurity Act 2024 Implementation Guide",
-        description: "Step-by-step guide for critical infrastructure cybersecurity obligations",
+        description:
+          "Step-by-step guide for critical infrastructure cybersecurity obligations",
         type: "document",
         level: "intermediate",
         duration: "1 hour read",
         url: "https://www.cisc.gov.au/",
-        tags: ["Cybersecurity Act", "Critical Infrastructure", "Compliance"]
+        tags: ["Cybersecurity Act", "Critical Infrastructure", "Compliance"],
       },
       {
         title: "ACSC Essential Eight Maturity Model",
-        description: "Detailed implementation guide for the Essential Eight cybersecurity strategies",
+        description:
+          "Detailed implementation guide for the Essential Eight cybersecurity strategies",
         type: "guide",
         level: "intermediate",
         duration: "2 hours",
         url: "https://www.cyber.gov.au/resources-business-and-government/essential-cyber-security/essential-eight",
-        tags: ["Essential Eight", "ACSC", "Security Controls"]
+        tags: ["Essential Eight", "ACSC", "Security Controls"],
       },
       {
         title: "Ransomware Reporting Rules 2025",
-        description: "Understanding mandatory ransomware incident reporting requirements",
+        description:
+          "Understanding mandatory ransomware incident reporting requirements",
         type: "document",
         level: "beginner",
         duration: "30 min read",
         url: "https://www.cyber.gov.au/",
-        tags: ["Ransomware", "Incident Reporting", "Legal Requirements"]
-      }
-    ]
+        tags: ["Ransomware", "Incident Reporting", "Legal Requirements"],
+      },
+    ],
   },
   {
     id: "implementation-guides",
     name: "Implementation Guides",
-    description: "Practical guides for implementing cybersecurity measures in your organization",
+    description:
+      "Practical guides for implementing cybersecurity measures in your organization",
     icon: <BookOpen className="h-5 w-5" />,
     resources: [
       {
         title: "SME Cybersecurity Quick Start Guide",
-        description: "Essential first steps for small businesses starting their cybersecurity journey",
+        description:
+          "Essential first steps for small businesses starting their cybersecurity journey",
         type: "guide",
         level: "beginner",
         duration: "20 min read",
-        tags: ["SME", "Getting Started", "Basics"]
+        guide: "#",
+        tags: ["SME", "Getting Started", "Basics"],
       },
       {
         title: "Multi-Factor Authentication Setup Guide",
-        description: "Complete guide to implementing MFA across your organization",
+        description:
+          "Complete guide to implementing MFA across your organization",
         type: "guide",
         level: "beginner",
         duration: "30 min read",
-        tags: ["MFA", "Authentication", "Security"]
+        guide: "#",
+        tags: ["MFA", "Authentication", "Security"],
       },
       {
         title: "Data Backup and Recovery Planning",
-        description: "Creating effective backup strategies and disaster recovery plans",
+        description:
+          "Creating effective backup strategies and disaster recovery plans",
         type: "guide",
         level: "intermediate",
         duration: "1 hour read",
-        tags: ["Backup", "Disaster Recovery", "Business Continuity"]
+        guide: "#",
+        tags: ["Backup", "Disaster Recovery", "Business Continuity"],
       },
       {
         title: "Employee Security Training Program",
-        description: "Framework for developing cybersecurity awareness training for staff",
+        description:
+          "Framework for developing cybersecurity awareness training for staff",
         type: "guide",
         level: "intermediate",
         duration: "45 min read",
-        tags: ["Training", "Awareness", "Human Factors"]
+        guide: "#",
+        tags: ["Training", "Awareness", "Human Factors"],
       },
       {
         title: "Incident Response Plan Template",
-        description: "Ready-to-use template for creating your cybersecurity incident response plan",
+        description:
+          "Ready-to-use template for creating your cybersecurity incident response plan",
         type: "tool",
         level: "intermediate",
         duration: "2 hours setup",
-        downloadUrl: "#",
-        tags: ["Incident Response", "Template", "Emergency Planning"]
-      }
-    ]
+        guide: "#",
+        tags: ["Incident Response", "Template", "Emergency Planning"],
+      },
+    ],
   },
   {
     id: "assessment-tools",
     name: "Assessment Tools",
-    description: "Tools and checklists to evaluate your current cybersecurity posture",
+    description:
+      "Tools and checklists to evaluate your current cybersecurity posture",
     icon: <CheckCircle className="h-5 w-5" />,
     resources: [
       {
         title: "Cybersecurity Maturity Self-Assessment",
-        description: "Evaluate your organization's cybersecurity maturity across key domains",
+        description:
+          "Evaluate your organization's cybersecurity maturity across key domains",
         type: "tool",
         level: "beginner",
         duration: "30 minutes",
-        tags: ["Self-Assessment", "Maturity", "Evaluation"]
+        assessment: "#",
+        tags: ["Self-Assessment", "Maturity", "Evaluation"],
       },
       {
         title: "Privacy Impact Assessment Template",
-        description: "Template for conducting privacy impact assessments on new projects",
+        description:
+          "Template for conducting privacy impact assessments on new projects",
         type: "checklist",
         level: "intermediate",
         duration: "1 hour",
-        downloadUrl: "#",
-        tags: ["Privacy", "PIA", "Template"]
+        assessment: "#",
+        tags: ["Privacy", "PIA", "Template"],
       },
       {
         title: "Essential Eight Readiness Checklist",
-        description: "Comprehensive checklist to assess your Essential Eight implementation",
+        description:
+          "Comprehensive checklist to assess your Essential Eight implementation",
         type: "checklist",
         level: "intermediate",
         duration: "45 minutes",
-        downloadUrl: "#",
-        tags: ["Essential Eight", "Checklist", "Assessment"]
+        assessment: "#",
+        tags: ["Essential Eight", "Checklist", "Assessment"],
       },
       {
         title: "Risk Assessment Methodology",
-        description: "Structured approach to identifying and assessing cybersecurity risks",
+        description:
+          "Structured approach to identifying and assessing cybersecurity risks",
         type: "guide",
         level: "advanced",
         duration: "2 hours",
-        tags: ["Risk Assessment", "Methodology", "Risk Management"]
-      }
-    ]
+        assessment: "#",
+        tags: ["Risk Assessment", "Methodology", "Risk Management"],
+      },
+    ],
   },
   {
     id: "training-education",
     name: "Training & Education",
-    description: "Educational resources and training materials for teams and individuals",
+    description:
+      "Educational resources and training materials for teams and individuals",
     icon: <Users className="h-5 w-5" />,
     resources: [
       {
         title: "Cybersecurity Awareness for Employees",
-        description: "Interactive training module covering common threats and safe practices",
+        description:
+          "Interactive training module covering common threats and safe practices",
         type: "video",
         level: "beginner",
         duration: "25 minutes",
-        tags: ["Employee Training", "Awareness", "Phishing"]
+        training: "#",
+        tags: ["Employee Training", "Awareness", "Phishing"],
       },
       {
         title: "Password Security Best Practices",
@@ -195,97 +229,118 @@ const resourceCategories: ResourceCategory[] = [
         type: "guide",
         level: "beginner",
         duration: "15 min read",
-        tags: ["Passwords", "Authentication", "Best Practices"]
+        training: "#",
+        tags: ["Passwords", "Authentication", "Best Practices"],
       },
       {
         title: "Social Engineering Recognition",
-        description: "Learn to identify and respond to social engineering attacks",
+        description:
+          "Learn to identify and respond to social engineering attacks",
         type: "video",
         level: "beginner",
         duration: "30 minutes",
-        tags: ["Social Engineering", "Phishing", "Awareness"]
+        training: "#",
+        tags: ["Social Engineering", "Phishing", "Awareness"],
       },
       {
         title: "Secure Remote Work Practices",
-        description: "Guidelines for maintaining security while working remotely",
+        description:
+          "Guidelines for maintaining security while working remotely",
         type: "guide",
         level: "beginner",
         duration: "20 min read",
-        tags: ["Remote Work", "VPN", "Home Office Security"]
+        training: "#",
+        tags: ["Remote Work", "VPN", "Home Office Security"],
       },
       {
         title: "Monthly Cybersecurity Webinar Series",
-        description: "Regular webinars covering current threats and compliance updates",
+        description:
+          "Regular webinars covering current threats and compliance updates",
         type: "webinar",
         level: "beginner",
         duration: "1 hour",
-        tags: ["Webinar", "Current Threats", "Updates"]
-      }
-    ]
+        training: "#",
+        tags: ["Webinar", "Current Threats", "Updates"],
+      },
+    ],
   },
   {
     id: "incident-response",
     name: "Incident Response",
-    description: "Resources for preparing for and responding to cybersecurity incidents",
+    description:
+      "Resources for preparing for and responding to cybersecurity incidents",
     icon: <AlertTriangle className="h-5 w-5" />,
     resources: [
       {
         title: "Data Breach Response Checklist",
-        description: "Step-by-step checklist for responding to data security incidents",
+        description:
+          "Step-by-step checklist for responding to data security incidents",
         type: "checklist",
         level: "beginner",
         duration: "Immediate use",
         downloadUrl: "#",
-        tags: ["Data Breach", "Incident Response", "Emergency"]
+        url: "#",
+        tags: ["Data Breach", "Incident Response", "Emergency"],
       },
       {
         title: "Ransomware Attack Response Guide",
-        description: "Comprehensive guide for responding to ransomware incidents",
+        description:
+          "Comprehensive guide for responding to ransomware incidents",
         type: "guide",
         level: "intermediate",
         duration: "1 hour read",
-        tags: ["Ransomware", "Incident Response", "Recovery"]
+        url: "#",
+        tags: ["Ransomware", "Incident Response", "Recovery"],
       },
       {
         title: "Communication Templates for Incidents",
-        description: "Pre-written templates for communicating during security incidents",
+        description:
+          "Pre-written templates for communicating during security incidents",
         type: "tool",
         level: "beginner",
         duration: "Setup: 30 min",
         downloadUrl: "#",
-        tags: ["Communication", "Templates", "Crisis Management"]
+        url: "#",
+        tags: ["Communication", "Templates", "Crisis Management"],
       },
       {
         title: "Forensic Evidence Preservation",
-        description: "Guidelines for preserving digital evidence during incidents",
+        description:
+          "Guidelines for preserving digital evidence during incidents",
         type: "guide",
         level: "advanced",
         duration: "45 min read",
-        tags: ["Forensics", "Evidence", "Investigation"]
-      }
-    ]
+        url: "#",
+        tags: ["Forensics", "Evidence", "Investigation"],
+      },
+    ],
   },
   {
     id: "industry-specific",
     name: "Industry-Specific Resources",
-    description: "Tailored guidance for specific industry sectors and compliance requirements",
+    description:
+      "Tailored guidance for specific industry sectors and compliance requirements",
     icon: <Globe className="h-5 w-5" />,
     resources: [
       {
         title: "Healthcare Cybersecurity Guide",
-        description: "Specific guidance for healthcare providers and patient data protection",
+        description:
+          "Specific guidance for healthcare providers and patient data protection",
         type: "guide",
         level: "intermediate",
         duration: "1.5 hours",
-        tags: ["Healthcare", "Patient Data", "HIPAA-aligned"]
+        url: "#",
+        tags: ["Healthcare", "Patient Data", "HIPAA-aligned"],
       },
       {
         title: "Financial Services Security Framework",
-        description: "Cybersecurity requirements and best practices for financial institutions",
+        description:
+          "Cybersecurity requirements and best practices for financial institutions",
         type: "document",
         level: "advanced",
         duration: "2 hours",
-        tags: ["Finance", "Banking", "Financial Data"]
+        url: "#",
+        tags: ["Finance", "Banking", "Financial Data"],
       },
       {
         title: "Retail PCI DSS Compliance Guide",
@@ -293,18 +348,21 @@ const resourceCategories: ResourceCategory[] = [
         type: "guide",
         level: "intermediate",
         duration: "1 hour",
-        tags: ["Retail", "PCI DSS", "Payment Security"]
+        url: "#",
+        tags: ["Retail", "PCI DSS", "Payment Security"],
       },
       {
         title: "Education Sector Cybersecurity",
-        description: "Protecting student data and educational technology systems",
+        description:
+          "Protecting student data and educational technology systems",
         type: "guide",
         level: "beginner",
         duration: "45 minutes",
-        tags: ["Education", "Student Data", "EdTech"]
-      }
-    ]
-  }
+        url: "#",
+        tags: ["Education", "Student Data", "EdTech"],
+      },
+    ],
+  },
 ];
 
 const getTypeIcon = (type: Resource["type"]) => {
@@ -353,8 +411,9 @@ export function ResourcesPage() {
               Cybersecurity Resources
             </h1>
             <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-              Comprehensive guides, tools, and educational materials to help your organization 
-              understand and implement Australian cybersecurity compliance requirements.
+              Comprehensive guides, tools, and educational materials to help
+              your organization understand and implement Australian
+              cybersecurity compliance requirements.
             </p>
           </div>
         </div>
@@ -373,17 +432,18 @@ export function ResourcesPage() {
                 </p>
               </CardContent>
             </Card>
-            
+
             <Card className="text-center p-4">
               <CardContent className="pt-6">
                 <CheckCircle className="h-8 w-8 text-gray-700 mx-auto mb-3" />
                 <h3 className="text-lg text-gray-900 mb-2">Assessment Tools</h3>
                 <p className="text-sm text-gray-600">
-                  Evaluate your current security posture with our assessment tools.
+                  Evaluate your current security posture with our assessment
+                  tools.
                 </p>
               </CardContent>
             </Card>
-            
+
             <Card className="text-center p-4">
               <CardContent className="pt-6">
                 <FileText className="h-8 w-8 text-gray-700 mx-auto mb-3" />
@@ -393,7 +453,7 @@ export function ResourcesPage() {
                 </p>
               </CardContent>
             </Card>
-            
+
             <Card className="text-center p-4">
               <CardContent className="pt-6">
                 <Users className="h-8 w-8 text-gray-700 mx-auto mb-3" />
@@ -413,12 +473,16 @@ export function ResourcesPage() {
           <Tabs defaultValue="government-frameworks" className="w-full">
             <TabsList className="grid grid-cols-3 md:grid-cols-6 lg:grid-cols-6 mb-8">
               {resourceCategories.map((category) => (
-                <TabsTrigger key={category.id} value={category.id} className="text-xs">
-                  {category.name.split(' ')[0]}
+                <TabsTrigger
+                  key={category.id}
+                  value={category.id}
+                  className="text-xs"
+                >
+                  {category.name.split(" ")[0]}
                 </TabsTrigger>
               ))}
             </TabsList>
-            
+
             {resourceCategories.map((category) => (
               <TabsContent key={category.id} value={category.id}>
                 <div className="mb-8">
@@ -427,12 +491,14 @@ export function ResourcesPage() {
                       {category.icon}
                     </div>
                     <div>
-                      <h2 className="text-2xl text-gray-900">{category.name}</h2>
+                      <h2 className="text-2xl text-gray-900">
+                        {category.name}
+                      </h2>
                       <p className="text-gray-600">{category.description}</p>
                     </div>
                   </div>
                 </div>
-                
+
                 <div className="grid gap-6">
                   {category.resources.map((resource, index) => (
                     <Card key={index}>
@@ -443,7 +509,9 @@ export function ResourcesPage() {
                               {getTypeIcon(resource.type)}
                             </div>
                             <div>
-                              <CardTitle className="text-lg">{resource.title}</CardTitle>
+                              <CardTitle className="text-lg">
+                                {resource.title}
+                              </CardTitle>
                               <CardDescription className="mt-2">
                                 {resource.description}
                               </CardDescription>
@@ -454,7 +522,9 @@ export function ResourcesPage() {
                               {resource.level}
                             </Badge>
                             {resource.duration && (
-                              <span className="text-sm text-gray-500">{resource.duration}</span>
+                              <span className="text-sm text-gray-500">
+                                {resource.duration}
+                              </span>
                             )}
                           </div>
                         </div>
@@ -462,18 +532,24 @@ export function ResourcesPage() {
                       <CardContent>
                         <div className="flex flex-wrap gap-2 mb-4">
                           {resource.tags.map((tag, tagIndex) => (
-                            <Badge key={tagIndex} variant="outline" className="text-xs">
+                            <Badge
+                              key={tagIndex}
+                              variant="outline"
+                              className="text-xs"
+                            >
                               {tag}
                             </Badge>
                           ))}
                         </div>
-                        
+
                         <div className="flex space-x-3">
                           {resource.url && (
                             <Button
                               variant="outline"
                               size="sm"
-                              onClick={() => window.open(resource.url, '_blank')}
+                              onClick={() =>
+                                window.open(resource.url, "_blank")
+                              }
                             >
                               <ExternalLink className="h-4 w-4 mr-2" />
                               View Resource
@@ -485,11 +561,48 @@ export function ResourcesPage() {
                               size="sm"
                               onClick={() => {
                                 // In a real app, this would trigger actual download
-                                console.log('Downloading:', resource.title);
+                                console.log("Downloading:", resource.title);
                               }}
                             >
                               <Download className="h-4 w-4 mr-2" />
                               Download
+                            </Button>
+                          )}
+                          {resource.guide && (
+                            <Button
+                              variant="outline"
+                              size="sm"
+                              onClick={() => {
+                                // In a real app, this would trigger actual download
+                                console.log("Downloading:", resource.title);
+                              }}
+                            >
+                              <BookOpen className="h-4 w-4 mr-2" />
+                              Read Guide
+                            </Button>
+                          )}
+                          {resource.assessment && (
+                            <Button
+                              variant="outline"
+                              size="sm"
+                              onClick={() => {
+                                console.log("Downloading:", resource.title);
+                              }}
+                            >
+                              <Play className="h-4 w-4 mr-2" />
+                              Take Assement
+                            </Button>
+                          )}
+                          {resource.training && (
+                            <Button
+                              variant="outline"
+                              size="sm"
+                              onClick={() => {
+                                console.log("Start Training:", resource.title);
+                              }}
+                            >
+                              <Play className="h-4 w-4 mr-2" />
+                              Start Training
                             </Button>
                           )}
                         </div>
@@ -509,7 +622,7 @@ export function ResourcesPage() {
           <div className="text-center mb-12">
             <h2 className="text-3xl text-gray-900 mb-4">Stay Updated</h2>
             <p className="text-xl text-gray-600 max-w-2xl mx-auto">
-              Cybersecurity threats and regulations are constantly evolving. 
+              Cybersecurity threats and regulations are constantly evolving.
               Here are additional resources to keep your knowledge current.
             </p>
           </div>
@@ -525,18 +638,38 @@ export function ResourcesPage() {
               <CardContent>
                 <div className="space-y-4">
                   <div>
-                    <h4 className="text-lg text-gray-900 mb-2">Australian Cyber Security Centre (ACSC)</h4>
-                    <p className="text-gray-600 mb-2">Latest threat intelligence and security guidance</p>
-                    <Button variant="outline" size="sm" onClick={() => window.open('https://www.cyber.gov.au/', '_blank')}>
+                    <h4 className="text-lg text-gray-900 mb-2">
+                      Australian Cyber Security Centre (ACSC)
+                    </h4>
+                    <p className="text-gray-600 mb-2">
+                      Latest threat intelligence and security guidance
+                    </p>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() =>
+                        window.open("https://www.cyber.gov.au/", "_blank")
+                      }
+                    >
                       <ExternalLink className="h-4 w-4 mr-2" />
                       Visit ACSC
                     </Button>
                   </div>
                   <Separator />
                   <div>
-                    <h4 className="text-lg text-gray-900 mb-2">Office of the Australian Information Commissioner (OAIC)</h4>
-                    <p className="text-gray-600 mb-2">Privacy law guidance and breach notifications</p>
-                    <Button variant="outline" size="sm" onClick={() => window.open('https://www.oaic.gov.au/', '_blank')}>
+                    <h4 className="text-lg text-gray-900 mb-2">
+                      Office of the Australian Information Commissioner (OAIC)
+                    </h4>
+                    <p className="text-gray-600 mb-2">
+                      Privacy law guidance and breach notifications
+                    </p>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() =>
+                        window.open("https://www.oaic.gov.au/", "_blank")
+                      }
+                    >
                       <ExternalLink className="h-4 w-4 mr-2" />
                       Visit OAIC
                     </Button>
@@ -555,18 +688,38 @@ export function ResourcesPage() {
               <CardContent>
                 <div className="space-y-4">
                   <div>
-                    <h4 className="text-lg text-gray-900 mb-2">Australian Information Industry Association (AIIA)</h4>
-                    <p className="text-gray-600 mb-2">Industry insights and cybersecurity initiatives</p>
-                    <Button variant="outline" size="sm" onClick={() => window.open('https://www.aiia.com.au/', '_blank')}>
+                    <h4 className="text-lg text-gray-900 mb-2">
+                      Australian Information Industry Association (AIIA)
+                    </h4>
+                    <p className="text-gray-600 mb-2">
+                      Industry insights and cybersecurity initiatives
+                    </p>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() =>
+                        window.open("https://www.aiia.com.au/", "_blank")
+                      }
+                    >
                       <ExternalLink className="h-4 w-4 mr-2" />
                       Visit AIIA
                     </Button>
                   </div>
                   <Separator />
                   <div>
-                    <h4 className="text-lg text-gray-900 mb-2">Australian Computer Society (ACS)</h4>
-                    <p className="text-gray-600 mb-2">Professional development and certification programs</p>
-                    <Button variant="outline" size="sm" onClick={() => window.open('https://www.acs.org.au/', '_blank')}>
+                    <h4 className="text-lg text-gray-900 mb-2">
+                      Australian Computer Society (ACS)
+                    </h4>
+                    <p className="text-gray-600 mb-2">
+                      Professional development and certification programs
+                    </p>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() =>
+                        window.open("https://www.acs.org.au/", "_blank")
+                      }
+                    >
                       <ExternalLink className="h-4 w-4 mr-2" />
                       Visit ACS
                     </Button>
