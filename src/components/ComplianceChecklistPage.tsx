@@ -256,6 +256,8 @@ export function ComplianceChecklistPage() {
   const [activeFramework, setActiveFramework] = useState<string | null>(null);
   const [privacyActExpanded, setPrivacyActExpanded] = useState(true); // starts expanded
   const [cyberActExpanded, setCyberActExpanded] = useState(true);
+  const [ransomwareExpanded, setRansomwareExpanded] = useState(true);
+
 
   const togglePrivacyAct = () => {
     setPrivacyActExpanded((prev) => !prev);
@@ -512,19 +514,24 @@ export function ComplianceChecklistPage() {
 
           const isPrivacyAct = framework.id === "privacy-act";
           const isCyberAct = framework.id === "cybersecurity-act";
+          const isRansomware = framework.id === "ransomware-reporting";
+
 
           return (
             <Card key={framework.id}>
               <CardHeader
-                className={(isPrivacyAct || isCyberAct) ? "cursor-pointer select-none" : ""}
+                className={(isPrivacyAct || isCyberAct || isRansomware) ? "cursor-pointer select-none" : ""}
                 onClick={
                   isPrivacyAct
                     ? () => setPrivacyActExpanded((prev) => !prev)
                     : isCyberAct
                       ? () => setCyberActExpanded((prev) => !prev)
-                      : undefined
+                      : isRansomware
+                        ? () => setRansomwareExpanded((prev) => !prev)
+                        : undefined
                 }
               >
+
                 <div className="flex items-center justify-between">
                   <div className="flex items-center space-x-3">
                     <div className="p-2 bg-gray-100 rounded">
@@ -548,14 +555,16 @@ export function ComplianceChecklistPage() {
                     </div>
                   </div>
                   <div className="text-right space-y-1 flex flex-col items-end">
-                    {(isPrivacyAct || isCyberAct) && (
+                    {(isPrivacyAct || isCyberAct || isRansomware) && (
                       <div className="text-gray-600 select-none text-lg">
                         {(isPrivacyAct && privacyActExpanded) ||
-                          (isCyberAct && cyberActExpanded)
+                          (isCyberAct && cyberActExpanded) ||
+                          (isRansomware && ransomwareExpanded)
                           ? "▲"
                           : "▼"}
                       </div>
                     )}
+
                     <Badge variant={frameworkProgress === 100 ? "default" : "secondary"}>
                       {frameworkProgress}%
                     </Badge>
@@ -568,67 +577,69 @@ export function ComplianceChecklistPage() {
               </CardHeader>
 
               {/* Checklist Items (conditionally shown based on expansion) */}
-              {(!isPrivacyAct && !isCyberAct) ||
+              {(!isPrivacyAct && !isCyberAct && !isRansomware) ||
                 (isPrivacyAct && privacyActExpanded) ||
-                (isCyberAct && cyberActExpanded) ? (
-                <CardContent>
-                  <div className="space-y-4">
-                    {relevantItems.map((item) => (
-                      <div
-                        key={item.id}
-                        className="flex items-start space-x-3 p-3 rounded-lg border border-gray-200"
-                      >
-                        <Checkbox
-                          id={item.id}
-                          checked={item.completed}
-                          onCheckedChange={() =>
-                            handleItemToggle(framework.id, item.id)
-                          }
-                          className="mt-1"
-                        />
-                        <div className="flex-1 space-y-1">
-                          <label
-                            htmlFor={item.id}
-                            className="text-sm cursor-pointer flex items-center space-x-2"
-                          >
-                            <span
-                              className={
-                                item.completed
-                                  ? "line-through text-gray-500"
-                                  : "text-gray-900"
-                              }
+                (isCyberAct && cyberActExpanded) ||
+                (isRansomware && ransomwareExpanded)
+                ? (
+                  <CardContent>
+                    <div className="space-y-4">
+                      {relevantItems.map((item) => (
+                        <div
+                          key={item.id}
+                          className="flex items-start space-x-3 p-3 rounded-lg border border-gray-200"
+                        >
+                          <Checkbox
+                            id={item.id}
+                            checked={item.completed}
+                            onCheckedChange={() =>
+                              handleItemToggle(framework.id, item.id)
+                            }
+                            className="mt-1"
+                          />
+                          <div className="flex-1 space-y-1">
+                            <label
+                              htmlFor={item.id}
+                              className="text-sm cursor-pointer flex items-center space-x-2"
                             >
-                              {item.title}
-                            </span>
-                            {item.required && (
-                              <Badge variant="outline" className="text-xs">
-                                Required
-                              </Badge>
-                            )}
-                          </label>
-                          <p className="text-xs text-gray-600">{item.description}</p>
+                              <span
+                                className={
+                                  item.completed
+                                    ? "line-through text-gray-500"
+                                    : "text-gray-900"
+                                }
+                              >
+                                {item.title}
+                              </span>
+                              {item.required && (
+                                <Badge variant="outline" className="text-xs">
+                                  Required
+                                </Badge>
+                              )}
+                            </label>
+                            <p className="text-xs text-gray-600">{item.description}</p>
+                          </div>
                         </div>
-                      </div>
-                    ))}
-                  </div>
-
-                  {framework.externalLink && (
-                    <div className="mt-4 pt-4 border-t border-gray-200">
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        onClick={() =>
-                          window.open(framework.externalLink, "_blank")
-                        }
-                        className="w-full"
-                      >
-                        <ExternalLink className="h-4 w-4 mr-2" />
-                        View Official Documentation
-                      </Button>
+                      ))}
                     </div>
-                  )}
-                </CardContent>
-              ) : null}
+
+                    {framework.externalLink && (
+                      <div className="mt-4 pt-4 border-t border-gray-200">
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={() =>
+                            window.open(framework.externalLink, "_blank")
+                          }
+                          className="w-full"
+                        >
+                          <ExternalLink className="h-4 w-4 mr-2" />
+                          View Official Documentation
+                        </Button>
+                      </div>
+                    )}
+                  </CardContent>
+                ) : null}
             </Card>
           );
         })}
