@@ -1,4 +1,5 @@
 import { useState } from "react";
+import jsPDF from "jspdf";
 import { Button } from "./ui/button";
 import {
   Card,
@@ -51,6 +52,7 @@ export function RiskToolPage() {
     setAnswers((prev) => ({ ...prev, [questionId]: value }));
   };
 
+  // Calculate risk score across all answers
   const calculateRiskScore = () => {
     let totalRisk = 0;
     let totalQuestions = 0;
@@ -68,11 +70,10 @@ export function RiskToolPage() {
       });
     });
 
-    return totalQuestions > 0
-      ? Math.round((totalRisk / (totalQuestions * 5)) * 100)
-      : 0;
+    return totalQuestions > 0 ? Math.round((totalRisk / (totalQuestions * 5)) * 100) : 0;
   };
 
+  // Determine risk level based on score
   const getRiskLevel = (score: number) => {
     if (score <= 20)
       return {
@@ -97,6 +98,26 @@ export function RiskToolPage() {
       color: "bg-red-500",
       textColor: "text-red-700",
     };
+  };
+
+  // Download PDF report
+  const downloadPdf = () => {
+    const doc = new jsPDF();
+
+    const riskScore = calculateRiskScore();
+    const riskLevel = getRiskLevel(riskScore);
+
+    doc.setFontSize(18);
+    doc.text("Cybersecurity Risk Assessment Report", 20, 20);
+
+    doc.setFontSize(12);
+    doc.text(`Overall Risk Score: ${riskScore}%`, 20, 40);
+    doc.text(`Risk Level: ${riskLevel.level}`, 20, 50);
+
+    doc.text("Thank you for using the assessment tool.", 20, 70);
+    doc.text("To improve your posture, please refer to our recommendations.", 20, 80);
+
+    doc.save("cybersecurity-risk-report.pdf");
   };
 
   const allQuestionsAnswered = riskCategories.every((category) =>
@@ -168,7 +189,10 @@ export function RiskToolPage() {
           >
             Start New Assessment
           </Button>
-          <Button className="bg-gray-900 hover:bg-gray-800 text-white">
+          <Button
+            className="bg-gray-900 hover:bg-gray-800 text-white"
+            onClick={downloadPdf}
+          >
             Download Report
           </Button>
         </div>
@@ -219,9 +243,7 @@ export function RiskToolPage() {
                       {category.icon}
                     </div>
                     <div>
-                      <div className="text-sm text-gray-900">
-                        {category.name}
-                      </div>
+                      <div className="text-sm text-gray-900">{category.name}</div>
                       {isCompleted && (
                         <div className="text-xs text-green-600">Completed</div>
                       )}
@@ -243,17 +265,14 @@ export function RiskToolPage() {
                     {riskCategories[currentCategory].icon}
                   </div>
                   <div>
-                    <CardTitle>
-                      {riskCategories[currentCategory].name}
-                    </CardTitle>
+                    <CardTitle>{riskCategories[currentCategory].name}</CardTitle>
                     <CardDescription>
                       {riskCategories[currentCategory].description}
                     </CardDescription>
                   </div>
                 </div>
                 <div>
-                  Estimated Time:{" "}
-                  {riskCategories[currentCategory].estimatedTime}
+                  Estimated Time: {riskCategories[currentCategory].estimatedTime}
                 </div>
               </div>
               <Progress
@@ -268,9 +287,7 @@ export function RiskToolPage() {
               {riskCategories[currentCategory].questions.map((question) => (
                 <div key={question.id} className="space-y-4">
                   <div className="flex items-center justify-between">
-                    <h3 className="text-lg text-gray-900">
-                      {question.question}
-                    </h3>
+                    <h3 className="text-lg text-gray-900">{question.question}</h3>
                     <Badge variant="outline" className="text-xs">
                       Required
                     </Badge>
@@ -281,9 +298,7 @@ export function RiskToolPage() {
                       return (
                         <button
                           key={option.value}
-                          onClick={() =>
-                            handleAnswerChange(question.id, option.value)
-                          }
+                          onClick={() => handleAnswerChange(question.id, option.value)}
                           className={`
                             relative p-4 rounded-lg border-2 text-left transition-all duration-200 hover:shadow-md
                             ${
