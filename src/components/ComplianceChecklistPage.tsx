@@ -254,6 +254,13 @@ export function ComplianceChecklistPage() {
   const [checklist, setChecklist] =
     useState<ComplianceFramework[]>(complianceFrameworks);
   const [activeFramework, setActiveFramework] = useState<string | null>(null);
+  const [privacyActExpanded, setPrivacyActExpanded] = useState(true); // starts expanded
+  const [cyberActExpanded, setCyberActExpanded] = useState(true);
+
+  const togglePrivacyAct = () => {
+    setPrivacyActExpanded((prev) => !prev);
+  };
+
 
   // Calculate overall progress
   const totalItems = checklist.reduce((total, framework) => {
@@ -340,9 +347,8 @@ export function ComplianceChecklistPage() {
       reportContent += `${framework.name.toUpperCase()}\n`;
       reportContent += `${"=".repeat(framework.name.length)}\n`;
       framework.items.forEach((item) => {
-        reportContent += `${item.completed ? "✓" : "✗"} ${item.title}${
-          item.required ? " (Required)" : ""
-        }\n`;
+        reportContent += `${item.completed ? "✓" : "✗"} ${item.title}${item.required ? " (Required)" : ""
+          }\n`;
       });
       reportContent += "\n";
     });
@@ -351,9 +357,8 @@ export function ComplianceChecklistPage() {
     const url = URL.createObjectURL(blob);
     const a = document.createElement("a");
     a.href = url;
-    a.download = `compliance-report-${
-      new Date().toISOString().split("T")[0]
-    }.txt`;
+    a.download = `compliance-report-${new Date().toISOString().split("T")[0]
+      }.txt`;
     document.body.appendChild(a);
     a.click();
     document.body.removeChild(a);
@@ -471,7 +476,7 @@ export function ComplianceChecklistPage() {
           <CardTitle className="flex items-center justify-between">
             <span>Overall Progress</span>
             <div className="flex flex-col items-end space-y-2">
-              
+
               <Badge
                 variant={progressPercentage === 100 ? "default" : "secondary"}
               >
@@ -494,17 +499,32 @@ export function ComplianceChecklistPage() {
       {/* Compliance Frameworks */}
       <div className="grid gap-6">
         <h2 className="text-2xl text-gray-900">Compliance Frameworks</h2>
-        
+
         {checklist.map((framework) => {
           const frameworkProgress = getFrameworkProgress(framework);
-          const relevantItems = framework.items.filter(item => 
-            (!item.sector || item.sector.includes(sector) || sector === "") &&
-            (!item.businessSize || item.businessSize.includes(businessSize) || businessSize === "")
+          const relevantItems = framework.items.filter(
+            (item) =>
+              (!item.sector || item.sector.includes(sector) || sector === "") &&
+              (!item.businessSize ||
+                item.businessSize.includes(businessSize) ||
+                businessSize === "")
           );
-          
+
+          const isPrivacyAct = framework.id === "privacy-act";
+          const isCyberAct = framework.id === "cybersecurity-act";
+
           return (
             <Card key={framework.id}>
-              <CardHeader>
+              <CardHeader
+                className={(isPrivacyAct || isCyberAct) ? "cursor-pointer select-none" : ""}
+                onClick={
+                  isPrivacyAct
+                    ? () => setPrivacyActExpanded((prev) => !prev)
+                    : isCyberAct
+                      ? () => setCyberActExpanded((prev) => !prev)
+                      : undefined
+                }
+              >
                 <div className="flex items-center justify-between">
                   <div className="flex items-center space-x-3">
                     <div className="p-2 bg-gray-100 rounded">
@@ -514,7 +534,7 @@ export function ComplianceChecklistPage() {
                       <CardTitle className="flex items-center space-x-2">
                         <span>{framework.name}</span>
                         {framework.externalLink && (
-                          <a 
+                          <a
                             href={framework.externalLink}
                             target="_blank"
                             rel="noopener noreferrer"
@@ -527,66 +547,93 @@ export function ComplianceChecklistPage() {
                       <CardDescription>{framework.description}</CardDescription>
                     </div>
                   </div>
-                  <div className="text-right space-y-1">
+                  <div className="text-right space-y-1 flex flex-col items-end">
+                    {(isPrivacyAct || isCyberAct) && (
+                      <div className="text-gray-600 select-none text-lg">
+                        {(isPrivacyAct && privacyActExpanded) ||
+                          (isCyberAct && cyberActExpanded)
+                          ? "▲"
+                          : "▼"}
+                      </div>
+                    )}
                     <Badge variant={frameworkProgress === 100 ? "default" : "secondary"}>
                       {frameworkProgress}%
                     </Badge>
                     {framework.estimatedTime && (
-                      <div className="text-gray-500">
-                        {framework.estimatedTime}
-                      </div>
+                      <div className="text-gray-500">{framework.estimatedTime}</div>
                     )}
                   </div>
                 </div>
                 <Progress value={frameworkProgress} className="mt-4" />
               </CardHeader>
-              <CardContent>
-                <div className="space-y-4">
-                  {relevantItems.map((item) => (
-                    <div key={item.id} className="flex items-start space-x-3 p-3 rounded-lg border border-gray-200">
-                      <Checkbox
-                        id={item.id}
-                        checked={item.completed}
-                        onCheckedChange={() => handleItemToggle(framework.id, item.id)}
-                        className="mt-1"
-                      />
-                      <div className="flex-1 space-y-1">
-                        <label 
-                          htmlFor={item.id}
-                          className="text-sm cursor-pointer flex items-center space-x-2"
-                        >
-                          <span className={item.completed ? "line-through text-gray-500" : "text-gray-900"}>
-                            {item.title}
-                          </span>
-                          {item.required && (
-                            <Badge variant="outline" className="text-xs">
-                              Required
-                            </Badge>
-                          )}
-                        </label>
-                        <p className="text-xs text-gray-600">{item.description}</p>
+
+              {/* Checklist Items (conditionally shown based on expansion) */}
+              {(!isPrivacyAct && !isCyberAct) ||
+                (isPrivacyAct && privacyActExpanded) ||
+                (isCyberAct && cyberActExpanded) ? (
+                <CardContent>
+                  <div className="space-y-4">
+                    {relevantItems.map((item) => (
+                      <div
+                        key={item.id}
+                        className="flex items-start space-x-3 p-3 rounded-lg border border-gray-200"
+                      >
+                        <Checkbox
+                          id={item.id}
+                          checked={item.completed}
+                          onCheckedChange={() =>
+                            handleItemToggle(framework.id, item.id)
+                          }
+                          className="mt-1"
+                        />
+                        <div className="flex-1 space-y-1">
+                          <label
+                            htmlFor={item.id}
+                            className="text-sm cursor-pointer flex items-center space-x-2"
+                          >
+                            <span
+                              className={
+                                item.completed
+                                  ? "line-through text-gray-500"
+                                  : "text-gray-900"
+                              }
+                            >
+                              {item.title}
+                            </span>
+                            {item.required && (
+                              <Badge variant="outline" className="text-xs">
+                                Required
+                              </Badge>
+                            )}
+                          </label>
+                          <p className="text-xs text-gray-600">{item.description}</p>
+                        </div>
                       </div>
-                    </div>
-                  ))}
-                </div>
-                
-                {framework.externalLink && (
-                  <div className="mt-4 pt-4 border-t border-gray-200">
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      onClick={() => window.open(framework.externalLink, '_blank')}
-                      className="w-full"
-                    >
-                      <ExternalLink className="h-4 w-4 mr-2" />
-                      View Official Documentation
-                    </Button>
+                    ))}
                   </div>
-                )}
-              </CardContent>
+
+                  {framework.externalLink && (
+                    <div className="mt-4 pt-4 border-t border-gray-200">
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() =>
+                          window.open(framework.externalLink, "_blank")
+                        }
+                        className="w-full"
+                      >
+                        <ExternalLink className="h-4 w-4 mr-2" />
+                        View Official Documentation
+                      </Button>
+                    </div>
+                  )}
+                </CardContent>
+              ) : null}
             </Card>
           );
         })}
+
+
       </div>
 
       {/* Report Generation */}
