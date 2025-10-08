@@ -254,9 +254,12 @@ export function ComplianceChecklistPage() {
   const [checklist, setChecklist] =
     useState<ComplianceFramework[]>(complianceFrameworks);
   const [activeFramework, setActiveFramework] = useState<string | null>(null);
-  const [privacyActExpanded, setPrivacyActExpanded] = useState(true); // starts expanded
-  const [cyberActExpanded, setCyberActExpanded] = useState(true);
-  const [ransomwareExpanded, setRansomwareExpanded] = useState(true);
+  const [privacyActExpanded, setPrivacyActExpanded] = useState(false); // starts expanded
+  const [cyberActExpanded, setCyberActExpanded] = useState(false);
+  const [ransomwareExpanded, setRansomwareExpanded] = useState(false);
+  const [ml1Expanded, setML1Expanded] = useState(false);
+
+
 
 
   const togglePrivacyAct = () => {
@@ -515,12 +518,16 @@ export function ComplianceChecklistPage() {
           const isPrivacyAct = framework.id === "privacy-act";
           const isCyberAct = framework.id === "cybersecurity-act";
           const isRansomware = framework.id === "ransomware-reporting";
-
+          const isML1 = framework.id === "essential-eight-ml1";
 
           return (
             <Card key={framework.id}>
               <CardHeader
-                className={(isPrivacyAct || isCyberAct || isRansomware) ? "cursor-pointer select-none" : ""}
+                className={
+                  (isPrivacyAct || isCyberAct || isRansomware || isML1)
+                    ? "cursor-pointer select-none"
+                    : ""
+                }
                 onClick={
                   isPrivacyAct
                     ? () => setPrivacyActExpanded((prev) => !prev)
@@ -528,15 +535,14 @@ export function ComplianceChecklistPage() {
                       ? () => setCyberActExpanded((prev) => !prev)
                       : isRansomware
                         ? () => setRansomwareExpanded((prev) => !prev)
-                        : undefined
+                        : isML1
+                          ? () => setML1Expanded((prev) => !prev)
+                          : undefined
                 }
               >
-
                 <div className="flex items-center justify-between">
                   <div className="flex items-center space-x-3">
-                    <div className="p-2 bg-gray-100 rounded">
-                      {framework.icon}
-                    </div>
+                    <div className="p-2 bg-gray-100 rounded">{framework.icon}</div>
                     <div>
                       <CardTitle className="flex items-center space-x-2">
                         <span>{framework.name}</span>
@@ -555,11 +561,12 @@ export function ComplianceChecklistPage() {
                     </div>
                   </div>
                   <div className="text-right space-y-1 flex flex-col items-end">
-                    {(isPrivacyAct || isCyberAct || isRansomware) && (
+                    {(isPrivacyAct || isCyberAct || isRansomware || isML1) && (
                       <div className="text-gray-600 select-none text-lg">
                         {(isPrivacyAct && privacyActExpanded) ||
                           (isCyberAct && cyberActExpanded) ||
-                          (isRansomware && ransomwareExpanded)
+                          (isRansomware && ransomwareExpanded) ||
+                          (isML1 && ml1Expanded)
                           ? "▲"
                           : "▼"}
                       </div>
@@ -577,10 +584,11 @@ export function ComplianceChecklistPage() {
               </CardHeader>
 
               {/* Checklist Items (conditionally shown based on expansion) */}
-              {(!isPrivacyAct && !isCyberAct && !isRansomware) ||
+              {(!isPrivacyAct && !isCyberAct && !isRansomware && !isML1) ||
                 (isPrivacyAct && privacyActExpanded) ||
                 (isCyberAct && cyberActExpanded) ||
-                (isRansomware && ransomwareExpanded)
+                (isRansomware && ransomwareExpanded) ||
+                (isML1 && ml1Expanded)
                 ? (
                   <CardContent>
                     <div className="space-y-4">
@@ -628,9 +636,7 @@ export function ComplianceChecklistPage() {
                         <Button
                           variant="outline"
                           size="sm"
-                          onClick={() =>
-                            window.open(framework.externalLink, "_blank")
-                          }
+                          onClick={() => window.open(framework.externalLink, "_blank")}
                           className="w-full"
                         >
                           <ExternalLink className="h-4 w-4 mr-2" />
@@ -643,6 +649,7 @@ export function ComplianceChecklistPage() {
             </Card>
           );
         })}
+
 
 
       </div>
