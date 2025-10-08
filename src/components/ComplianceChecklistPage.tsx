@@ -263,6 +263,30 @@ export function ComplianceChecklistPage() {
 
 
 
+const handleGenerateReport  = () => {
+  const reportData = `
+    Compliance Checklist Report
+    --------------------------
+    Business Size: ${businessSize || "Not specified"}
+    Sector: ${sector || "Not specified"}
+    Completion Date: ${new Date().toLocaleDateString()}
+    Overall Progress: ${progressPercentage}%
+  `;
+
+  const printWindow = window.open("", "_blank");
+  if (printWindow) {
+    printWindow.document.write(`
+      <html>
+        <head><title>Compliance Report</title></head>
+        <body>
+          <pre>${reportData}</pre>
+        </body>
+      </html>
+    `);
+    printWindow.document.close();
+    printWindow.print();
+  }
+};
 
 
 
@@ -681,7 +705,7 @@ export function ComplianceChecklistPage() {
         </CardHeader>
         <CardContent>
           <Button
-            onClick={generateReport}
+            onClick={handleGenerateReport}
             disabled={progressPercentage === 0}
             className="w-full bg-gray-900 hover:bg-gray-800 text-white"
           >
