@@ -112,7 +112,7 @@ const resourceCategories: ResourceCategory[] = [
         type: "guide",
         level: "beginner",
         duration: "20 min read",
-        guide: "#",
+        guide: "https://nvlpubs.nist.gov/nistpubs/SpecialPublications/NIST.SP.1300.pdf",
         tags: ["SME", "Getting Started", "Basics"],
       },
       {
@@ -122,7 +122,7 @@ const resourceCategories: ResourceCategory[] = [
         type: "guide",
         level: "beginner",
         duration: "30 min read",
-        guide: "#",
+        guide: "https://atwork.safeonweb.be/sites/default/files/2024-09/MFA_Guide_FINAL_EN.pdf",
         tags: ["MFA", "Authentication", "Security"],
       },
       {
@@ -132,7 +132,7 @@ const resourceCategories: ResourceCategory[] = [
         type: "guide",
         level: "intermediate",
         duration: "1 hour read",
-        guide: "#",
+        guide: "https://www.scalecomputing.com/documents/White-Papers/Business-Resilience-Best-Practices.pdf",
         tags: ["Backup", "Disaster Recovery", "Business Continuity"],
       },
       {
@@ -142,7 +142,7 @@ const resourceCategories: ResourceCategory[] = [
         type: "guide",
         level: "intermediate",
         duration: "45 min read",
-        guide: "#",
+        guide: "https://apps.dtic.mil/sti/pdfs/AD1112780.pdf",
         tags: ["Training", "Awareness", "Human Factors"],
       },
       {
@@ -152,7 +152,7 @@ const resourceCategories: ResourceCategory[] = [
         type: "tool",
         level: "intermediate",
         duration: "2 hours setup",
-        guide: "#",
+        guide: "https://www.cyber.gov.au/sites/default/files/2023-03/ACSC%20Cyber%20Incident%20Response%20Plan%20Guidance_A4.pdf",
         tags: ["Incident Response", "Template", "Emergency Planning"],
       },
     ],
@@ -573,14 +573,14 @@ export function ResourcesPage() {
                               variant="outline"
                               size="sm"
                               onClick={() => {
-                                // In a real app, this would trigger actual download
-                                console.log("Downloading:", resource.title);
+                                window.open(resource.guide, "_blank"); // open the PDF link
                               }}
                             >
                               <BookOpen className="h-4 w-4 mr-2" />
                               Read Guide
                             </Button>
                           )}
+
                           {resource.assessment && (
                             <Button
                               variant="outline"
