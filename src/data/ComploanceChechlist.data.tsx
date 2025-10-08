@@ -25,6 +25,7 @@ interface ComplianceFramework {
   description: string;
   externalLink?: string;
   items: ChecklistItem[];
+  estimatedTime?: string;
 }
 
 const complianceFrameworksData: ComplianceFramework[] = [
@@ -36,6 +37,7 @@ const complianceFrameworksData: ComplianceFramework[] = [
       "Australian Privacy Principles and data protection requirements",
     externalLink:
       "https://www.oaic.gov.au/privacy/privacy-legislation/the-privacy-act",
+    estimatedTime: "Est. time of completion: 2-3 hours",
     items: [
       // PART I – Preliminary
       {
@@ -2639,6 +2641,7 @@ const complianceFrameworksData: ComplianceFramework[] = [
     description:
       "Compliance checklist for connectable products and ransomware reporting",
     externalLink: "https://www.cisc.gov.au/",
+    estimatedTime: "Est. time of completion: 30-45 minutes",
     items: [
       // Section 13: Application of This Part
       {
@@ -3290,6 +3293,7 @@ const complianceFrameworksData: ComplianceFramework[] = [
       "Essential Eight - Comprehensive Checklist (All Maturity Levels Combined)",
     externalLink:
       "https://www.cyber.gov.au/resources-business-and-government/essential-cyber-security/essential-eight",
+    estimatedTime: "Est. time of completion: 3 - 3.5 hours",
     items: [
       // ML1 Original Items - 1. Patch Applications
       {
@@ -5563,6 +5567,7 @@ const complianceFrameworksData: ComplianceFramework[] = [
       "Essential Eight – Maturity Level Two Checklist (Appendix B – Plain English for non-technical SMEs)",
     externalLink:
       "https://www.cyber.gov.au/resources-business-and-government/essential-cyber-security/essential-eight",
+    estimatedTime: "Est. time of completion: 3 - 3.5 hours",
     items: [
       // 1. Patch Applications
       {
@@ -6364,6 +6369,7 @@ const complianceFrameworksData: ComplianceFramework[] = [
     description: "Maturity Level Three Cybersecurity Checklist for SMEs",
     externalLink:
       "https://www.cyber.gov.au/resources-business-and-government/essential-cyber-security/essential-eight",
+    estimatedTime: "Est. time of completion: 3 - 3.5 hours",
     items: [
       // Patch Applications
       {
@@ -7466,6 +7472,7 @@ const complianceFrameworksData: ComplianceFramework[] = [
     icon: <AlertTriangle className="h-5 w-5" />,
     description: "CyberWise Compliance Checklist for Australian SMEs",
     externalLink: "https://www.cyber.gov.au/",
+    estimatedTime: "Est. time of completion: 45 minutes - 1 hour",
     items: [
       // 1. Business Overview
       {

@@ -46,6 +46,7 @@ interface ComplianceFramework {
   icon: React.ReactNode;
   description: string;
   externalLink?: string;
+  estimatedTime?: string;
   items: ChecklistItem[];
 }
 
@@ -470,9 +471,7 @@ export function ComplianceChecklistPage() {
           <CardTitle className="flex items-center justify-between">
             <span>Overall Progress</span>
             <div className="flex flex-col items-end space-y-2">
-              <Badge variant="outline">
-                Estimated Time : {calculateEstdTime()}
-              </Badge>
+              
               <Badge
                 variant={progressPercentage === 100 ? "default" : "secondary"}
               >
@@ -495,17 +494,14 @@ export function ComplianceChecklistPage() {
       {/* Compliance Frameworks */}
       <div className="grid gap-6">
         <h2 className="text-2xl text-gray-900">Compliance Frameworks</h2>
-
+        
         {checklist.map((framework) => {
           const frameworkProgress = getFrameworkProgress(framework);
-          const relevantItems = framework.items.filter(
-            (item) =>
-              (!item.sector || item.sector.includes(sector) || sector === "") &&
-              (!item.businessSize ||
-                item.businessSize.includes(businessSize) ||
-                businessSize === "")
+          const relevantItems = framework.items.filter(item => 
+            (!item.sector || item.sector.includes(sector) || sector === "") &&
+            (!item.businessSize || item.businessSize.includes(businessSize) || businessSize === "")
           );
-
+          
           return (
             <Card key={framework.id}>
               <CardHeader>
@@ -518,7 +514,7 @@ export function ComplianceChecklistPage() {
                       <CardTitle className="flex items-center space-x-2">
                         <span>{framework.name}</span>
                         {framework.externalLink && (
-                          <a
+                          <a 
                             href={framework.externalLink}
                             target="_blank"
                             rel="noopener noreferrer"
@@ -531,14 +527,15 @@ export function ComplianceChecklistPage() {
                       <CardDescription>{framework.description}</CardDescription>
                     </div>
                   </div>
-                  <div className="text-right">
-                    <Badge
-                      variant={
-                        frameworkProgress === 100 ? "default" : "secondary"
-                      }
-                    >
+                  <div className="text-right space-y-1">
+                    <Badge variant={frameworkProgress === 100 ? "default" : "secondary"}>
                       {frameworkProgress}%
                     </Badge>
+                    {framework.estimatedTime && (
+                      <div className="text-gray-500">
+                        {framework.estimatedTime}
+                      </div>
+                    )}
                   </div>
                 </div>
                 <Progress value={frameworkProgress} className="mt-4" />
@@ -546,30 +543,19 @@ export function ComplianceChecklistPage() {
               <CardContent>
                 <div className="space-y-4">
                   {relevantItems.map((item) => (
-                    <div
-                      key={item.id}
-                      className="flex items-start space-x-3 p-3 rounded-lg border border-gray-200"
-                    >
+                    <div key={item.id} className="flex items-start space-x-3 p-3 rounded-lg border border-gray-200">
                       <Checkbox
                         id={item.id}
                         checked={item.completed}
-                        onCheckedChange={() =>
-                          handleItemToggle(framework.id, item.id)
-                        }
+                        onCheckedChange={() => handleItemToggle(framework.id, item.id)}
                         className="mt-1"
                       />
                       <div className="flex-1 space-y-1">
-                        <label
+                        <label 
                           htmlFor={item.id}
                           className="text-sm cursor-pointer flex items-center space-x-2"
                         >
-                          <span
-                            className={
-                              item.completed
-                                ? "line-through text-gray-500"
-                                : "text-gray-900"
-                            }
-                          >
+                          <span className={item.completed ? "line-through text-gray-500" : "text-gray-900"}>
                             {item.title}
                           </span>
                           {item.required && (
@@ -578,22 +564,18 @@ export function ComplianceChecklistPage() {
                             </Badge>
                           )}
                         </label>
-                        <p className="text-xs text-gray-600">
-                          {item.description}
-                        </p>
+                        <p className="text-xs text-gray-600">{item.description}</p>
                       </div>
                     </div>
                   ))}
                 </div>
-
+                
                 {framework.externalLink && (
                   <div className="mt-4 pt-4 border-t border-gray-200">
                     <Button
                       variant="outline"
                       size="sm"
-                      onClick={() =>
-                        window.open(framework.externalLink, "_blank")
-                      }
+                      onClick={() => window.open(framework.externalLink, '_blank')}
                       className="w-full"
                     >
                       <ExternalLink className="h-4 w-4 mr-2" />
@@ -605,23 +587,6 @@ export function ComplianceChecklistPage() {
             </Card>
           );
         })}
-      </div>
-
-      {/* Compliance Recommendations */}
-      <div className="mt-8">
-        <RecommendationsSection
-          title="Compliance Improvement Recommendations"
-          subtitle="Tailored suggestions to enhance your compliance posture and security maturity"
-          recommendations={getComplianceRecommendations(
-            progressPercentage,
-            businessSize,
-            sector
-          )}
-          onActionClick={(recommendation) => {
-            // Handle action clicks - could scroll to relevant section or open guides
-            console.log("Action clicked for:", recommendation.title);
-          }}
-        />
       </div>
 
       {/* Report Generation */}
