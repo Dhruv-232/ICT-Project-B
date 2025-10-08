@@ -258,6 +258,10 @@ export function ComplianceChecklistPage() {
   const [cyberActExpanded, setCyberActExpanded] = useState(false);
   const [ransomwareExpanded, setRansomwareExpanded] = useState(false);
   const [ml1Expanded, setML1Expanded] = useState(false);
+  const [ml2Expanded, setML2Expanded] = useState(false);
+  const [ml3Expanded, setML3Expanded] = useState(false);
+
+
 
 
 
@@ -519,12 +523,14 @@ export function ComplianceChecklistPage() {
           const isCyberAct = framework.id === "cybersecurity-act";
           const isRansomware = framework.id === "ransomware-reporting";
           const isML1 = framework.id === "essential-eight-ml1";
+          const isML2 = framework.id === "essential-eight-ml2";
+          const isML3 = framework.id === "essential-eight-ml3";
 
           return (
             <Card key={framework.id}>
               <CardHeader
                 className={
-                  (isPrivacyAct || isCyberAct || isRansomware || isML1)
+                  (isPrivacyAct || isCyberAct || isRansomware || isML1 || isML2 || isML3)
                     ? "cursor-pointer select-none"
                     : ""
                 }
@@ -537,7 +543,11 @@ export function ComplianceChecklistPage() {
                         ? () => setRansomwareExpanded((prev) => !prev)
                         : isML1
                           ? () => setML1Expanded((prev) => !prev)
-                          : undefined
+                          : isML2
+                            ? () => setML2Expanded((prev) => !prev)
+                            : isML3
+                              ? () => setML3Expanded((prev) => !prev)
+                              : undefined
                 }
               >
                 <div className="flex items-center justify-between">
@@ -561,12 +571,14 @@ export function ComplianceChecklistPage() {
                     </div>
                   </div>
                   <div className="text-right space-y-1 flex flex-col items-end">
-                    {(isPrivacyAct || isCyberAct || isRansomware || isML1) && (
+                    {(isPrivacyAct || isCyberAct || isRansomware || isML1 || isML2 || isML3) && (
                       <div className="text-gray-600 select-none text-lg">
                         {(isPrivacyAct && privacyActExpanded) ||
                           (isCyberAct && cyberActExpanded) ||
                           (isRansomware && ransomwareExpanded) ||
-                          (isML1 && ml1Expanded)
+                          (isML1 && ml1Expanded) ||
+                          (isML2 && ml2Expanded) ||
+                          (isML3 && ml3Expanded)
                           ? "▲"
                           : "▼"}
                       </div>
@@ -584,11 +596,13 @@ export function ComplianceChecklistPage() {
               </CardHeader>
 
               {/* Checklist Items (conditionally shown based on expansion) */}
-              {(!isPrivacyAct && !isCyberAct && !isRansomware && !isML1) ||
+              {(!isPrivacyAct && !isCyberAct && !isRansomware && !isML1 && !isML2 && !isML3) ||
                 (isPrivacyAct && privacyActExpanded) ||
                 (isCyberAct && cyberActExpanded) ||
                 (isRansomware && ransomwareExpanded) ||
-                (isML1 && ml1Expanded)
+                (isML1 && ml1Expanded) ||
+                (isML2 && ml2Expanded) ||
+                (isML3 && ml3Expanded)
                 ? (
                   <CardContent>
                     <div className="space-y-4">
@@ -649,6 +663,8 @@ export function ComplianceChecklistPage() {
             </Card>
           );
         })}
+
+
 
 
 
