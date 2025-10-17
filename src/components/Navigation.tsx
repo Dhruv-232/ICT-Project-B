@@ -8,8 +8,8 @@ interface NavigationProps {
 export function Navigation({ currentPage, onNavigate }: NavigationProps) {
   const navItems = [
     { id: "home", label: "Home" },
-    { id: "compliance", label: "Compliance Checklist" },
     { id: "risk-tool", label: "Risk Tool" },
+    { id: "compliance", label: "Compliance Checklist" },
     { id: "resources", label: "Resources" },
     { id: "about", label: "About" },
   ];
