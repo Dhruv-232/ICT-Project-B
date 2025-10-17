@@ -19,26 +19,11 @@ export function HomePage({ onNavigate }: HomePageProps) {
             <p className="text-lg text-gray-600 max-w-3xl mx-auto mb-6">
               Streamline your cyber security compliance and risk management with our comprehensive suite of tools designed specifically for small and medium enterprises.
             </p>
-            <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <Button
-                size="lg"
-                className="bg-gray-900 hover:bg-gray-800 text-white px-8 py-3"
-                onClick={() => onNavigate("risk-tool")}
-              >
-                Get Started
-              </Button>
-              <Button
-                size="lg"
-                variant="outline"
-                className="text-gray-700 border-gray-300 hover:bg-gray-50 px-8 py-3"
-                onClick={() => onNavigate("about")}
-              >
-                Learn More
-              </Button>
-            </div>
+            {/* Buttons removed */}
           </div>
         </div>
       </section>
+
 
       {/* Tools Section */}
       <section className="bg-gray-50 py-8">
