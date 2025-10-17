@@ -286,7 +286,7 @@ const riskCategories: RiskCategory[] = [
       {
         id: "external_support",
         question:
-          "Have you established a relationship with a cybersecurity professional or service provider?",
+          "Have you established a relationship with a Cybersecurity professional or service provider?",
         options: [
           {
             value: "established",
@@ -298,7 +298,7 @@ const riskCategories: RiskCategory[] = [
             label: "Service provider identified",
             risk: 3,
           },
-          { value: "no", label: "No external cybersecurity support", risk: 4 },
+          { value: "no", label: "No external Cybersecurity support", risk: 4 },
         ],
       },
       {
@@ -1105,13 +1105,13 @@ const riskCategories: RiskCategory[] = [
     id: "training",
     name: "Staff Training",
     icon: <Users className="h-5 w-5" />,
-    description: "Assess cybersecurity awareness and training",
+    description: "Assess Cybersecurity awareness and training",
     estimatedTime: "1h 45min",
     questions: [
       {
         id: "basic_training_completed",
         question:
-          "Has everyone completed basic cybersecurity training in the past year?",
+          "Has everyone completed basic Cybersecurity training in the past year?",
         options: [
           { value: "yes", label: "Yes, all staff completed training", risk: 1 },
           { value: "most", label: "Most staff completed training", risk: 2 },
@@ -1122,7 +1122,7 @@ const riskCategories: RiskCategory[] = [
       {
         id: "new_hire_training",
         question:
-          "Do new hires get cybersecurity training when they join the company?",
+          "Do new hires get Cybersecurity training when they join the company?",
         options: [
           {
             value: "yes",
@@ -1172,7 +1172,7 @@ const riskCategories: RiskCategory[] = [
       {
         id: "security_reminders",
         question:
-          "Do we use posters, reminders, or internal campaigns to keep cybersecurity top of mind?",
+          "Do we use posters, reminders, or internal campaigns to keep Cybersecurity top of mind?",
         options: [
           {
             value: "regular",
@@ -1384,7 +1384,7 @@ const riskCategories: RiskCategory[] = [
       {
         id: "training_refresh",
         question:
-          "Do we refresh or update cybersecurity training at least once a year?",
+          "Do we refresh or update Cybersecurity training at least once a year?",
         options: [
           { value: "regular", label: "Yes, regular training updates", risk: 1 },
           { value: "annual", label: "Annual training refresh", risk: 2 },
@@ -1414,7 +1414,7 @@ const riskCategories: RiskCategory[] = [
       {
         id: "policy_acknowledgment",
         question:
-          "Have all staff read and acknowledged the company's cybersecurity policies?",
+          "Have all staff read and acknowledged the company's Cybersecurity policies?",
         options: [
           { value: "all", label: "Yes, all staff have acknowledged", risk: 1 },
           { value: "most", label: "Most staff have acknowledged", risk: 2 },
@@ -1425,7 +1425,7 @@ const riskCategories: RiskCategory[] = [
       {
         id: "policy_testing",
         question:
-          "Do we test or quiz employees to make sure they understand the company's cybersecurity policies?",
+          "Do we test or quiz employees to make sure they understand the company's Cybersecurity policies?",
         options: [
           { value: "regular", label: "Yes, regular testing", risk: 1 },
           { value: "occasional", label: "Occasional testing", risk: 3 },
@@ -1489,9 +1489,9 @@ const riskScore60 = [
   },
   {
     id: "critical-training",
-    title: "Cyber security Staff Training",
+    title: "Cybersecurity Staff Training",
     description:
-      "Conduct immediate cyber security awareness training for all employees",
+      "Conduct immediate Cybersecurity awareness training for all employees",
     priority: "high" as const,
     category: "Human Resources",
     timeframe: "2 weeks",
@@ -1547,7 +1547,7 @@ const riskScore40 = [
     id: "medium-awareness",
     title: "Enhanced Security Awareness",
     description:
-      "Expand cyber security training program with regular updates and testing",
+      "Expand Cybersecurity training program with regular updates and testing",
     priority: "medium" as const,
     category: "Training",
     timeframe: "6-8 weeks",
@@ -1599,7 +1599,7 @@ const riskScore0 = [
     id: "low-emerging",
     title: "Emerging Threats Monitoring",
     description:
-      "Establish processes to stay informed about new cyber security threats",
+      "Establish processes to stay informed about new Cybersecurity threats",
     priority: "low" as const,
     category: "Intelligence",
     timeframe: "Ongoing",

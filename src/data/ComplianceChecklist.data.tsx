@@ -2635,7 +2635,7 @@ const complianceFrameworksData: ComplianceFramework[] = [
     ],
   },
   {
-    id: "cybersecurity-act",
+    id: "Cybersecurity-act",
     name: "Cybersecurity Act 2024",
     icon: <Lock className="h-5 w-5" />,
     description:
@@ -3089,7 +3089,7 @@ const complianceFrameworksData: ComplianceFramework[] = [
       {
         id: "cyber-s25-1",
         title:
-          "Are you required to report a ransomware payment made due to a cyber security incident?",
+          "Are you required to report a ransomware payment made due to a Cybersecurity incident?",
         description: "",
         completed: false,
         required: true,
@@ -3171,7 +3171,7 @@ const complianceFrameworksData: ComplianceFramework[] = [
       {
         id: "cyber-s27-3",
         title:
-          "Did your report include the required information (e.g., details of your business, the extorting entity, the cyber security incident, the payment, and communications)?",
+          "Did your report include the required information (e.g., details of your business, the extorting entity, the Cybersecurity incident, the payment, and communications)?",
         description: "",
         completed: false,
         required: true,
@@ -3229,7 +3229,7 @@ const complianceFrameworksData: ComplianceFramework[] = [
       {
         id: "cyber-s29-1",
         title:
-          "Check if the information is used for permitted purposes only: Assisting in the response or mitigation of the cyber security incident, Performing functions under this Part or related parts of the Act, Supporting legal proceedings related to false/misleading information or obstruction of officials, Assisting intelligence agencies or Commonwealth/State bodies involved in cyber security",
+          "Check if the information is used for permitted purposes only: Assisting in the response or mitigation of the Cybersecurity incident, Performing functions under this Part or related parts of the Act, Supporting legal proceedings related to false/misleading information or obstruction of officials, Assisting intelligence agencies or Commonwealth/State bodies involved in Cybersecurity",
         description: "",
         completed: false,
         required: true,
@@ -3262,7 +3262,7 @@ const complianceFrameworksData: ComplianceFramework[] = [
       {
         id: "cyber-s30-1",
         title:
-          "Ensure secondary use of information is restricted: Only used for assisting with the cyber security incident or related functions, Supporting legal proceedings under the Criminal Code, Assisting Commonwealth or State bodies with cyber security tasks",
+          "Ensure secondary use of information is restricted: Only used for assisting with the Cybersecurity incident or related functions, Supporting legal proceedings under the Criminal Code, Assisting Commonwealth or State bodies with Cybersecurity tasks",
         description: "",
         completed: false,
         required: true,
@@ -3278,7 +3278,7 @@ const complianceFrameworksData: ComplianceFramework[] = [
       {
         id: "cyber-annual-turnover",
         title:
-          "Annual Turnover Assessment: Does your business have an annual turnover of more than $3 million? If Yes: You are required to comply with ransomware payment reporting rules under the Cyber Security Act 2024. If No: You are exempt from ransomware reporting but should still follow other cybersecurity practices.",
+          "Annual Turnover Assessment: Does your business have an annual turnover of more than $3 million? If Yes: You are required to comply with ransomware payment reporting rules under the Cybersecurity Act 2024. If No: You are exempt from ransomware reporting but should still follow other Cybersecurity practices.",
         description: "",
         completed: false,
         required: true,
@@ -3292,7 +3292,7 @@ const complianceFrameworksData: ComplianceFramework[] = [
     description:
       "Essential Eight - Comprehensive Checklist (All Maturity Levels Combined)",
     externalLink:
-      "https://www.cyber.gov.au/resources-business-and-government/essential-cyber-security/essential-eight",
+      "https://www.cyber.gov.au/resources-business-and-government/essential-Cybersecurity/essential-eight",
     estimatedTime: "Est. time of completion: 3 - 3.5 hours",
     items: [
       // ML1 Original Items - 1. Patch Applications
@@ -3936,7 +3936,7 @@ const complianceFrameworksData: ComplianceFramework[] = [
       {
         id: "ml2-mfa-15",
         title:
-          "Are cybersecurity events reviewed quickly to detect real threats?",
+          "Are Cybersecurity events reviewed quickly to detect real threats?",
         description: "",
         completed: false,
         required: true,
@@ -5566,7 +5566,7 @@ const complianceFrameworksData: ComplianceFramework[] = [
     description:
       "Essential Eight – Maturity Level Two Checklist (Appendix B – Plain English for non-technical SMEs)",
     externalLink:
-      "https://www.cyber.gov.au/resources-business-and-government/essential-cyber-security/essential-eight",
+      "https://www.cyber.gov.au/resources-business-and-government/essential-Cybersecurity/essential-eight",
     estimatedTime: "Est. time of completion: 3 - 3.5 hours",
     items: [
       // 1. Patch Applications
@@ -5833,7 +5833,7 @@ const complianceFrameworksData: ComplianceFramework[] = [
       {
         id: "ml2-mfa-cyber-events-reviewed",
         title:
-          "Are cybersecurity events reviewed quickly to detect real threats?",
+          "Are Cybersecurity events reviewed quickly to detect real threats?",
         description: "",
         completed: false,
         required: true,
@@ -6368,7 +6368,7 @@ const complianceFrameworksData: ComplianceFramework[] = [
     icon: <FileText className="h-5 w-5" />,
     description: "Maturity Level Three Cybersecurity Checklist for SMEs",
     externalLink:
-      "https://www.cyber.gov.au/resources-business-and-government/essential-cyber-security/essential-eight",
+      "https://www.cyber.gov.au/resources-business-and-government/essential-Cybersecurity/essential-eight",
     estimatedTime: "Est. time of completion: 3 - 3.5 hours",
     items: [
       // Patch Applications
@@ -7479,7 +7479,7 @@ const complianceFrameworksData: ComplianceFramework[] = [
         id: "annual-turnover",
         title: "Annual Turnover Assessment",
         description:
-          "Does your business have an annual turnover of more than $3 million?\n○ If Yes: You are required to comply with ransomware payment reporting rules under the Cyber Security Act 2024.\n○ If No: You are exempt from ransomware reporting but should still follow other cybersecurity practices.",
+          "Does your business have an annual turnover of more than $3 million?\n○ If Yes: You are required to comply with ransomware payment reporting rules under the Cybersecurity Act 2024.\n○ If No: You are exempt from ransomware reporting but should still follow other Cybersecurity practices.",
         completed: false,
         required: true,
       },
@@ -8511,7 +8511,7 @@ const complianceFrameworksData: ComplianceFramework[] = [
         id: "annual-turnover",
         title: "Annual Turnover Assessment",
         description:
-          "Does your business have an annual turnover of more than $3 million?\n○ If Yes: You are required to comply with ransomware payment reporting rules under the Cyber Security Act 2024.\n○ If No: You are exempt from ransomware reporting but should still follow other cybersecurity practices.",
+          "Does your business have an annual turnover of more than $3 million?\n○ If Yes: You are required to comply with ransomware payment reporting rules under the Cybersecurity Act 2024.\n○ If No: You are exempt from ransomware reporting but should still follow other Cybersecurity practices.",
         completed: false,
         required: true,
       },
@@ -8579,7 +8579,7 @@ const complianceFrameworksData: ComplianceFramework[] = [
         id: "security-risk-assessment",
         title: "Security Risk Assessment",
         description:
-          "Have you conducted a cybersecurity risk assessment for your business?\n○ If Yes: Have you reviewed your risk management and mitigation strategies based on the assessment?\n○ If No: You need to perform a risk assessment (refer to ICTCYS608 – Perform Cyber Security Risk Assessments guidelines).",
+          "Have you conducted a Cybersecurity risk assessment for your business?\n○ If Yes: Have you reviewed your risk management and mitigation strategies based on the assessment?\n○ If No: You need to perform a risk assessment (refer to ICTCYS608 – Perform Cybersecurity Risk Assessments guidelines).",
         completed: false,
         required: true,
       },
@@ -8615,7 +8615,7 @@ const complianceFrameworksData: ComplianceFramework[] = [
         id: "incident-reporting-procedures",
         title: "Incident Reporting Procedures",
         description:
-          "Are your employees aware of how to report a cybersecurity incident internally?",
+          "Are your employees aware of how to report a Cybersecurity incident internally?",
         completed: false,
         required: true,
       },
@@ -8630,10 +8630,10 @@ const complianceFrameworksData: ComplianceFramework[] = [
 
       // 6. Employee Awareness and Training
       {
-        id: "cybersecurity-training",
+        id: "Cybersecurity-training",
         title: "Cybersecurity Training",
         description:
-          "Do you provide regular cybersecurity training to your employees?\n○ Is it updated based on emerging threats, including ransomware?",
+          "Do you provide regular Cybersecurity training to your employees?\n○ Is it updated based on emerging threats, including ransomware?",
         completed: false,
         required: true,
       },
@@ -8651,7 +8651,7 @@ const complianceFrameworksData: ComplianceFramework[] = [
         id: "application-whitelisting",
         title: "Application Whitelisting",
         description:
-          "Have you implemented application whitelisting as part of the ACSC Essential Eight cybersecurity controls?",
+          "Have you implemented application whitelisting as part of the ACSC Essential Eight Cybersecurity controls?",
         completed: false,
         required: true,
       },
@@ -8659,7 +8659,7 @@ const complianceFrameworksData: ComplianceFramework[] = [
         id: "patching-applications-os",
         title: "Patching Applications and Operating Systems",
         description:
-          "Have you implemented patching of applications and operating systems as part of the ACSC Essential Eight cybersecurity controls?",
+          "Have you implemented patching of applications and operating systems as part of the ACSC Essential Eight Cybersecurity controls?",
         completed: false,
         required: true,
       },
@@ -8667,7 +8667,7 @@ const complianceFrameworksData: ComplianceFramework[] = [
         id: "restricting-admin-privileges",
         title: "Restricting Administrative Privileges",
         description:
-          "Have you implemented restricting administrative privileges as part of the ACSC Essential Eight cybersecurity controls?",
+          "Have you implemented restricting administrative privileges as part of the ACSC Essential Eight Cybersecurity controls?",
         completed: false,
         required: true,
       },
@@ -8675,7 +8675,7 @@ const complianceFrameworksData: ComplianceFramework[] = [
         id: "multi-factor-authentication",
         title: "Multi-factor Authentication",
         description:
-          "Have you implemented multi-factor authentication as part of the ACSC Essential Eight cybersecurity controls?",
+          "Have you implemented multi-factor authentication as part of the ACSC Essential Eight Cybersecurity controls?",
         completed: false,
         required: true,
       },
@@ -8683,7 +8683,7 @@ const complianceFrameworksData: ComplianceFramework[] = [
         id: "user-application-hardening",
         title: "User Application Hardening",
         description:
-          "Have you implemented user application hardening as part of the ACSC Essential Eight cybersecurity controls?",
+          "Have you implemented user application hardening as part of the ACSC Essential Eight Cybersecurity controls?",
         completed: false,
         required: true,
       },
@@ -8691,7 +8691,7 @@ const complianceFrameworksData: ComplianceFramework[] = [
         id: "daily-backup-business-data",
         title: "Daily Backup of Important Business Data",
         description:
-          "Have you implemented daily backup of important business data as part of the ACSC Essential Eight cybersecurity controls?",
+          "Have you implemented daily backup of important business data as part of the ACSC Essential Eight Cybersecurity controls?",
         completed: false,
         required: true,
       },
@@ -8699,7 +8699,7 @@ const complianceFrameworksData: ComplianceFramework[] = [
         id: "monitoring-logging-systems",
         title: "Monitoring and Logging of Systems",
         description:
-          "Have you implemented monitoring and logging of systems as part of the ACSC Essential Eight cybersecurity controls?",
+          "Have you implemented monitoring and logging of systems as part of the ACSC Essential Eight Cybersecurity controls?",
         completed: false,
         required: true,
       },
@@ -8707,7 +8707,7 @@ const complianceFrameworksData: ComplianceFramework[] = [
         id: "strong-malware-defenses",
         title: "Implementing Strong Malware Defenses",
         description:
-          "Have you implemented strong malware defenses as part of the ACSC Essential Eight cybersecurity controls?",
+          "Have you implemented strong malware defenses as part of the ACSC Essential Eight Cybersecurity controls?",
         completed: false,
         required: true,
       },

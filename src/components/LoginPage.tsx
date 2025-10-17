@@ -146,7 +146,7 @@ export function LoginPage({ onLogin }: LoginPageProps) {
   const cardIcon = isBusinessLogin ? User : UserCheck;
   const cardTitle = isBusinessLogin ? "Business Owner Login" : "Admin Staff Login";
   const cardDescription = isBusinessLogin 
-    ? "Sign in to access your organization's cybersecurity tools"
+    ? "Sign in to access your organization's Cybersecurity tools"
     : "Sign in to access administrative functions";
 
   return (

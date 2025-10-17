@@ -17,7 +17,7 @@ import {
 } from "./ui/select";
 import { Checkbox } from "./ui/checkbox";
 import { Badge } from "./ui/badge";
-import { Download, ExternalLink } from "lucide-react";
+import { BookOpen, Download, ExternalLink, ClipboardCheck } from "lucide-react";
 import { RecommendationsSection } from "./RecommendationsSection";
 import complianceFrameworks from "../data/ComplianceChecklist.data";
 import jsPDF from "jspdf";
@@ -183,7 +183,7 @@ const getComplianceRecommendations = (
       id: "finance-specific",
       title: "Financial Services Compliance",
       description:
-        "Ensure compliance with financial sector cybersecurity and privacy requirements",
+        "Ensure compliance with financial sector Cybersecurity and privacy requirements",
       priority: "high" as const,
       category: "Finance",
       timeframe: "4-6 weeks",
@@ -367,7 +367,10 @@ export function ComplianceChecklistPage() {
         theme: "grid",
         headStyles: { fillColor: [30, 30, 30], textColor: 255 },
         styles: { fontSize: 9, cellPadding: 3 },
-        columnStyles: { 2: { halign: "center", textColor: [255, 0, 0] }, 3: { halign: "center" } },
+        columnStyles: {
+          2: { halign: "center", textColor: [255, 0, 0] },
+          3: { halign: "center" },
+        },
         margin: { left: 14, right: 14 },
       });
 
@@ -418,14 +421,18 @@ export function ComplianceChecklistPage() {
       y += 8;
       doc.setFontSize(11);
       doc.text(
-        "Based on your compliance progress, the following recommendations are prioritized to improve your cybersecurity posture:",
+        "Based on your compliance progress, the following recommendations are prioritized to improve your Cybersecurity posture:",
         14,
         y,
         { maxWidth: 180 }
       );
       y += 10;
 
-      const recs = getComplianceRecommendations(progressPercentage, businessSize, sector);
+      const recs = getComplianceRecommendations(
+        progressPercentage,
+        businessSize,
+        sector
+      );
       recs.forEach((rec, index) => {
         if (y > 260) {
           doc.addPage();
@@ -459,7 +466,9 @@ export function ComplianceChecklistPage() {
         y += 10;
       });
 
-      doc.save(`Compliance_Report_${new Date().toISOString().split("T")[0]}.pdf`);
+      doc.save(
+        `Compliance_Report_${new Date().toISOString().split("T")[0]}.pdf`
+      );
     } catch (err) {
       console.error("PDF generation failed:", err);
     }
@@ -486,249 +495,295 @@ export function ComplianceChecklistPage() {
   }, [businessSize, sector]);
 
   return (
-    <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-      <div className="text-center mb-12">
-        <h1 className="text-3xl text-gray-900 mb-4">Compliance Checklist</h1>
-        <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-          Ensure your organization meets all relevant cybersecurity compliance
-          requirements. Select your business details below to customize your checklist.
-        </p>
+    <>
+      {/* Hero Section */}
+      <div className="bg-gray-50">
+        <section className="bg-white">
+          <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-24">
+            <div className="text-center">
+              <div className="w-20 h-20 bg-gray-100 rounded-lg flex items-center justify-center mx-auto mb-8">
+                <ClipboardCheck className="h-10 w-10 text-gray-700" />
+              </div>
+              <h1 className="text-4xl md:text-5xl text-gray-900 mb-6">
+                Compliance Checklist
+              </h1>
+              <p className="text-xl text-gray-600 max-w-3xl mx-auto">
+                Ensure your organization meets all relevant Cybersecurity
+                compliance requirements. Select your business details below to
+                customize your checklist.
+              </p>
+            </div>
+          </div>
+        </section>
       </div>
 
-      {/* Business Configuration */}
-      <Card className="mb-8">
-        <CardHeader>
-          <CardTitle>Organization Details</CardTitle>
-          <CardDescription>
-            Configure your business profile to see relevant compliance requirements
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          <div className="grid md:grid-cols-2 gap-6">
-            <div className="space-y-2">
-              <label className="text-sm text-gray-700">Business Size</label>
-              <Select value={businessSize} onValueChange={setBusinessSize}>
-                <SelectTrigger>
-                  <SelectValue placeholder="Select business size" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="small">Small (1-50 employees)</SelectItem>
-                  <SelectItem value="medium">Medium (51-250 employees)</SelectItem>
-                  <SelectItem value="large">Large (250+ employees)</SelectItem>
-                </SelectContent>
-              </Select>
+      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+        {/* Business Configuration */}
+        <Card className="mb-8">
+          <CardHeader>
+            <CardTitle>Organization Details</CardTitle>
+            <CardDescription>
+              Configure your business profile to see relevant compliance
+              requirements
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <div className="grid md:grid-cols-2 gap-6">
+              <div className="space-y-2">
+                <label className="text-sm text-gray-700">Business Size</label>
+                <Select value={businessSize} onValueChange={setBusinessSize}>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select business size" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="small">
+                      Small (1-50 employees)
+                    </SelectItem>
+                    <SelectItem value="medium">
+                      Medium (51-250 employees)
+                    </SelectItem>
+                    <SelectItem value="large">
+                      Large (250+ employees)
+                    </SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+
+              <div className="space-y-2">
+                <label className="text-sm text-gray-700">Industry Sector</label>
+                <Select value={sector} onValueChange={setSector}>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select industry sector" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="healthcare">Healthcare</SelectItem>
+                    <SelectItem value="finance">Finance</SelectItem>
+                    <SelectItem value="retail">Retail</SelectItem>
+                    <SelectItem value="education">Education</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
             </div>
+          </CardContent>
+        </Card>
 
-            <div className="space-y-2">
-              <label className="text-sm text-gray-700">Industry Sector</label>
-              <Select value={sector} onValueChange={setSector}>
-                <SelectTrigger>
-                  <SelectValue placeholder="Select industry sector" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="healthcare">Healthcare</SelectItem>
-                  <SelectItem value="finance">Finance</SelectItem>
-                  <SelectItem value="retail">Retail</SelectItem>
-                  <SelectItem value="education">Education</SelectItem>
-                </SelectContent>
-              </Select>
+        {/* Progress Overview */}
+        <Card className="mb-8">
+          <CardHeader>
+            <CardTitle className="flex items-center justify-between">
+              <span>Overall Progress</span>
+              <div className="flex flex-col items-end space-y-2">
+                <Badge
+                  variant={progressPercentage === 100 ? "default" : "secondary"}
+                >
+                  {progressPercentage}% Complete
+                </Badge>
+              </div>
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <Progress value={progressPercentage} className="mb-4" />
+            <div className="flex justify-between text-sm text-gray-600">
+              <span>
+                {completedItems} of {totalItems} items completed
+              </span>
+              <span>{totalItems - completedItems} remaining</span>
             </div>
-          </div>
-        </CardContent>
-      </Card>
+          </CardContent>
+        </Card>
 
-      {/* Progress Overview */}
-      <Card className="mb-8">
-        <CardHeader>
-          <CardTitle className="flex items-center justify-between">
-            <span>Overall Progress</span>
-            <div className="flex flex-col items-end space-y-2">
-              <Badge variant={progressPercentage === 100 ? "default" : "secondary"}>
-                {progressPercentage}% Complete
-              </Badge>
-            </div>
-          </CardTitle>
-        </CardHeader>
-        <CardContent>
-          <Progress value={progressPercentage} className="mb-4" />
-          <div className="flex justify-between text-sm text-gray-600">
-            <span>{completedItems} of {totalItems} items completed</span>
-            <span>{totalItems - completedItems} remaining</span>
-          </div>
-        </CardContent>
-      </Card>
+        {/* Compliance Frameworks */}
+        <div className="grid gap-6">
+          <h2 className="text-2xl text-gray-900">Compliance Frameworks</h2>
 
-      {/* Compliance Frameworks */}
-      <div className="grid gap-6">
-        <h2 className="text-2xl text-gray-900">Compliance Frameworks</h2>
+          {checklist.map((framework) => {
+            const frameworkProgress = Math.round(
+              (framework.items.filter((i) => i.completed).length /
+                framework.items.length) *
+                100
+            );
 
-        {checklist.map((framework) => {
-          const frameworkProgress = Math.round(
-            (framework.items.filter((i) => i.completed).length /
-              framework.items.length) * 100
-          );
+            const isPrivacyAct = framework.id === "privacy-act";
+            const isCyberAct = framework.id === "Cybersecurity-act";
+            const isRansomware = framework.id === "ransomware-reporting";
+            const isML1 = framework.id === "essential-eight-ml1";
+            const isML2 = framework.id === "essential-eight-ml2";
+            const isML3 = framework.id === "essential-eight-ml3";
 
-          const isPrivacyAct = framework.id === "privacy-act";
-          const isCyberAct = framework.id === "cybersecurity-act";
-          const isRansomware = framework.id === "ransomware-reporting";
-          const isML1 = framework.id === "essential-eight-ml1";
-          const isML2 = framework.id === "essential-eight-ml2";
-          const isML3 = framework.id === "essential-eight-ml3";
+            const expanded =
+              (isPrivacyAct && privacyActExpanded) ||
+              (isCyberAct && cyberActExpanded) ||
+              (isRansomware && ransomwareExpanded) ||
+              (isML1 && ml1Expanded) ||
+              (isML2 && ml2Expanded) ||
+              (isML3 && ml3Expanded);
 
-          const expanded =
-            (isPrivacyAct && privacyActExpanded) ||
-            (isCyberAct && cyberActExpanded) ||
-            (isRansomware && ransomwareExpanded) ||
-            (isML1 && ml1Expanded) ||
-            (isML2 && ml2Expanded) ||
-            (isML3 && ml3Expanded);
-
-          return (
-            <Card key={framework.id}>
-              <CardHeader
-                className="cursor-pointer select-none"
-                onClick={() => {
-                  if (isPrivacyAct) setPrivacyActExpanded(!privacyActExpanded);
-                  else if (isCyberAct) setCyberActExpanded(!cyberActExpanded);
-                  else if (isRansomware) setRansomwareExpanded(!ransomwareExpanded);
-                  else if (isML1) setML1Expanded(!ml1Expanded);
-                  else if (isML2) setML2Expanded(!ml2Expanded);
-                  else if (isML3) setML3Expanded(!ml3Expanded);
-                }}
-              >
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center space-x-3">
-                    <div className="p-2 bg-gray-100 rounded">{framework.icon}</div>
-                    <div>
-                      <CardTitle className="flex items-center space-x-2">
-                        <span>{framework.name}</span>
-                        {framework.externalLink && (
-                          <a
-                            href={framework.externalLink}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="text-gray-500 hover:text-gray-700"
-                          >
-                            <ExternalLink className="h-4 w-4" />
-                          </a>
-                        )}
-                      </CardTitle>
-                      <CardDescription>{framework.description}</CardDescription>
-                    </div>
-                  </div>
-
-                  <div className="text-right space-y-1 flex flex-col items-end">
-                    <div className="text-gray-600 select-none text-lg">
-                      {expanded ? "▲" : "▼"}
-                    </div>
-                    <Badge variant={frameworkProgress === 100 ? "default" : "secondary"}>
-                      {frameworkProgress}%
-                    </Badge>
-                    {framework.estimatedTime && (
-                      <div className="text-gray-500">{framework.estimatedTime}</div>
-                    )}
-                  </div>
-                </div>
-                <Progress value={frameworkProgress} className="mt-4" />
-              </CardHeader>
-
-              {expanded && (
-                <CardContent>
-                  <div className="space-y-4">
-                    {framework.items.map((item) => (
-                      <div
-                        key={item.id}
-                        className="flex items-start space-x-3 p-3 rounded-lg border border-gray-200"
-                      >
-                        <Checkbox
-                          id={item.id}
-                          checked={item.completed}
-                          onCheckedChange={() => handleItemToggle(framework.id, item.id)}
-                          className="mt-1"
-                        />
-                        <div className="flex-1 space-y-1">
-                          <label
-                            htmlFor={item.id}
-                            className="text-sm cursor-pointer flex items-center space-x-2"
-                          >
-                            <span
-                              className={
-                                item.completed
-                                  ? "line-through text-gray-500"
-                                  : "text-gray-900"
-                              }
-                            >
-                              {item.title}
-                            </span>
-                            {item.required && (
-                              <Badge variant="outline" className="text-xs">
-                                Required
-                              </Badge>
-                            )}
-                          </label>
-                          <p className="text-xs text-gray-600">{item.description}</p>
-                        </div>
+            return (
+              <Card key={framework.id}>
+                <CardHeader
+                  className="cursor-pointer select-none"
+                  onClick={() => {
+                    if (isPrivacyAct)
+                      setPrivacyActExpanded(!privacyActExpanded);
+                    else if (isCyberAct) setCyberActExpanded(!cyberActExpanded);
+                    else if (isRansomware)
+                      setRansomwareExpanded(!ransomwareExpanded);
+                    else if (isML1) setML1Expanded(!ml1Expanded);
+                    else if (isML2) setML2Expanded(!ml2Expanded);
+                    else if (isML3) setML3Expanded(!ml3Expanded);
+                  }}
+                >
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center space-x-3">
+                      <div className="p-2 bg-gray-100 rounded">
+                        {framework.icon}
                       </div>
-                    ))}
-                  </div>
-
-                  {framework.externalLink && (
-                    <div className="mt-4 pt-4 border-t border-gray-200">
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        onClick={() => window.open(framework.externalLink, "_blank")}
-                        className="w-full"
-                      >
-                        <ExternalLink className="h-4 w-4 mr-2" />
-                        View Official Documentation
-                      </Button>
+                      <div>
+                        <CardTitle className="flex items-center space-x-2">
+                          <span>{framework.name}</span>
+                          {framework.externalLink && (
+                            <a
+                              href={framework.externalLink}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="text-gray-500 hover:text-gray-700"
+                            >
+                              <ExternalLink className="h-4 w-4" />
+                            </a>
+                          )}
+                        </CardTitle>
+                        <CardDescription>
+                          {framework.description}
+                        </CardDescription>
+                      </div>
                     </div>
-                  )}
-                </CardContent>
-              )}
-            </Card>
-          );
-        })}
-      </div>
 
-      <div className="mt-8">
-        <RecommendationsSection
-          title="Compliance Improvement Recommendations"
-          subtitle="Tailored suggestions to enhance your compliance posture and security maturity"
-          recommendations={getComplianceRecommendations(
-            progressPercentage,
-            businessSize,
-            sector
-          )}
-          onActionClick={(r) => console.log("Action clicked for:", r.title)}
-        />
-      </div>
+                    <div className="text-right space-y-1 flex flex-col items-end">
+                      <div className="text-gray-600 select-none text-lg">
+                        {expanded ? "▲" : "▼"}
+                      </div>
+                      <Badge
+                        variant={
+                          frameworkProgress === 100 ? "default" : "secondary"
+                        }
+                      >
+                        {frameworkProgress}%
+                      </Badge>
+                      {framework.estimatedTime && (
+                        <div className="text-gray-500">
+                          {framework.estimatedTime}
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                  <Progress value={frameworkProgress} className="mt-4" />
+                </CardHeader>
 
-      <Card className="mt-8">
-        <CardHeader>
-          <CardTitle>Generate Compliance Report</CardTitle>
-          <CardDescription>
-            Download a comprehensive report of your compliance status for audit purposes
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          <Button
-            onClick={generateReport}
-            disabled={progressPercentage === 0}
-            className="w-full bg-gray-900 hover:bg-gray-800 text-white"
-          >
-            <Download className="h-4 w-4 mr-2" />
-            Generate PDF Report
-          </Button>
-          {progressPercentage === 0 && (
-            <p className="text-sm text-gray-500 mt-2 text-center">
-              Complete at least one checklist item to generate a report
-            </p>
-          )}
-        </CardContent>
-      </Card>
-    </div>
+                {expanded && (
+                  <CardContent>
+                    <div className="space-y-4">
+                      {framework.items.map((item) => (
+                        <div
+                          key={item.id}
+                          className="flex items-start space-x-3 p-3 rounded-lg border border-gray-200"
+                        >
+                          <Checkbox
+                            id={item.id}
+                            checked={item.completed}
+                            onCheckedChange={() =>
+                              handleItemToggle(framework.id, item.id)
+                            }
+                            className="mt-1"
+                          />
+                          <div className="flex-1 space-y-1">
+                            <label
+                              htmlFor={item.id}
+                              className="text-sm cursor-pointer flex items-center space-x-2"
+                            >
+                              <span
+                                className={
+                                  item.completed
+                                    ? "line-through text-gray-500"
+                                    : "text-gray-900"
+                                }
+                              >
+                                {item.title}
+                              </span>
+                              {item.required && (
+                                <Badge variant="outline" className="text-xs">
+                                  Required
+                                </Badge>
+                              )}
+                            </label>
+                            <p className="text-xs text-gray-600">
+                              {item.description}
+                            </p>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+
+                    {framework.externalLink && (
+                      <div className="mt-4 pt-4 border-t border-gray-200">
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={() =>
+                            window.open(framework.externalLink, "_blank")
+                          }
+                          className="w-full"
+                        >
+                          <ExternalLink className="h-4 w-4 mr-2" />
+                          View Official Documentation
+                        </Button>
+                      </div>
+                    )}
+                  </CardContent>
+                )}
+              </Card>
+            );
+          })}
+        </div>
+
+        <div className="mt-8">
+          <RecommendationsSection
+            title="Compliance Improvement Recommendations"
+            subtitle="Tailored suggestions to enhance your compliance posture and security maturity"
+            recommendations={getComplianceRecommendations(
+              progressPercentage,
+              businessSize,
+              sector
+            )}
+            onActionClick={(r) => console.log("Action clicked for:", r.title)}
+          />
+        </div>
+
+        <Card className="mt-8">
+          <CardHeader>
+            <CardTitle>Generate Compliance Report</CardTitle>
+            <CardDescription>
+              Download a comprehensive report of your compliance status for
+              audit purposes
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <Button
+              onClick={generateReport}
+              disabled={progressPercentage === 0}
+              className="w-full bg-gray-900 hover:bg-gray-800 text-white"
+            >
+              <Download className="h-4 w-4 mr-2" />
+              Generate PDF Report
+            </Button>
+            {progressPercentage === 0 && (
+              <p className="text-sm text-gray-500 mt-2 text-center">
+                Complete at least one checklist item to generate a report
+              </p>
+            )}
+          </CardContent>
+        </Card>
+      </div>
+    </>
   );
 }
 

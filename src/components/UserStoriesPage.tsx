@@ -27,12 +27,12 @@ const userStories: UserStory[] = [
     company: "Chen's Electronics",
     companySize: "10 employees",
     industry: "Retail",
-    challenge: "As the owner of a small business that doesn't know much about cybersecurity.I want to use a simple compliance plan that is made for my industry and business size. That way, I can understand and follow the law's cybersecurity requirements without having to be a tech expert.my electronics store processes customer payments daily but had no formal cybersecurity measures. After hearing about data breaches affecting similar businesses, I realized I needed to protect customer information but didn't know where to start.",
+    challenge: "As the owner of a small business that doesn't know much about Cybersecurity.I want to use a simple compliance plan that is made for my industry and business size. That way, I can understand and follow the law's Cybersecurity requirements without having to be a tech expert.my electronics store processes customer payments daily but had no formal Cybersecurity measures. After hearing about data breaches affecting similar businesses, I realized I needed to protect customer information but didn't know where to start.",
     solution: "I used CyberWise Core's Risk Assessment Tool to identify her biggest vulnerabilities and followed the Compliance Checklist to implement essential security measures. The step-by-step guidance helped to prioritize actions based on my specific business needs.",
     outcome: "Within 3 months, Sarah implemented multi-factor authentication, regular backups, and staff training. Her business now meets Privacy Act requirements and has robust protection against common cyber threats.",
     metrics: ["90% reduction in security risks", "100% staff trained", "Privacy Act compliant", "3-month implementation"],
     tools: ["Risk Assessment", "Compliance Checklist", "Staff Training Resources"],
-    quote: "CyberWise Core turned cybersecurity from an overwhelming challenge into manageable steps. Now I sleep better knowing my customers' data is protected.",
+    quote: "CyberWise Core turned Cybersecurity from an overwhelming challenge into manageable steps. Now I sleep better knowing my customers' data is protected.",
     icon: <Building2 className="h-5 w-5" />
   },
   {
@@ -42,9 +42,9 @@ const userStories: UserStory[] = [
     company: "Precision Parts Co.",
     companySize: "45 employees",
     industry: "Manufacturing",
-    challenge: "Marcus managed a manufacturing company with outdated systems and minimal IT security. When new cybersecurity regulations came into effect, he needed to quickly assess compliance gaps while maintaining production schedules.",
+    challenge: "Marcus managed a manufacturing company with outdated systems and minimal IT security. When new Cybersecurity regulations came into effect, he needed to quickly assess compliance gaps while maintaining production schedules.",
     solution: "Using CyberWise Core's compliance frameworks, Marcus systematically evaluated their systems against ACSC Essential Eight requirements. The Risk Tool helped him prioritize upgrades that wouldn't disrupt operations.",
-    outcome: "Precision Parts achieved full compliance with cybersecurity regulations while improving operational efficiency. The systematic approach prevented costly production delays during implementation.",
+    outcome: "Precision Parts achieved full compliance with Cybersecurity regulations while improving operational efficiency. The systematic approach prevented costly production delays during implementation.",
     metrics: ["100% regulatory compliance", "Zero production downtime", "40% faster incident response", "Essential Eight certified"],
     tools: ["ACSC Essential Eight", "Risk Assessment", "Implementation Guides"],
     quote: "The structured approach meant we could upgrade our security without stopping production. CyberWise Core made compliance achievable for a busy manufacturing operation.",
@@ -58,11 +58,11 @@ const userStories: UserStory[] = [
     companySize: "8 staff members",
     industry: "Healthcare",
     challenge: "Dr. Patel's medical practice handles sensitive patient data daily. With increasing cyber threats targeting healthcare and strict privacy requirements, she needed to ensure patient information was properly protected without impacting patient care.",
-    solution: "Dr. Patel used CyberWise Core to conduct a comprehensive risk assessment of their patient data systems. The Privacy Act compliance checklist helped implement necessary safeguards while the training resources educated all staff on cybersecurity best practices.",
-    outcome: "The clinic now maintains excellent cybersecurity hygiene while providing seamless patient care. All staff understand their role in protecting patient privacy, and systems are regularly monitored and updated.",
+    solution: "Dr. Patel used CyberWise Core to conduct a comprehensive risk assessment of their patient data systems. The Privacy Act compliance checklist helped implement necessary safeguards while the training resources educated all staff on Cybersecurity best practices.",
+    outcome: "The clinic now maintains excellent Cybersecurity hygiene while providing seamless patient care. All staff understand their role in protecting patient privacy, and systems are regularly monitored and updated.",
     metrics: ["100% Privacy Act compliance", "8/8 staff certified", "50% reduction in security incidents", "Patient trust maintained"],
     tools: ["Privacy Act Compliance", "Risk Assessment", "Staff Training"],
-    quote: "Our patients trust us with their most sensitive information. CyberWise Core helps us honor that trust with proper cybersecurity measures.",
+    quote: "Our patients trust us with their most sensitive information. CyberWise Core helps us honor that trust with proper Cybersecurity measures.",
     icon: <Users className="h-5 w-5" />
   },
   {
@@ -72,12 +72,12 @@ const userStories: UserStory[] = [
     company: "Independent Consultant",
     companySize: "Serves 20+ SME clients",
     industry: "Professional Services",
-    challenge: "James helps small businesses with their technology needs but struggled to provide consistent cybersecurity guidance. Each client had different requirements and he needed a reliable framework to assess and improve their security posture.",
-    solution: "James adopted CyberWise Core as his standard cybersecurity assessment tool. He uses the Risk Assessment for client evaluations and the compliance checklists to create tailored security roadmaps for each business.",
-    outcome: "James now provides consistent, high-quality cybersecurity services to all his clients. The standardized approach has improved client outcomes and allowed him to expand his security consulting services.",
+    challenge: "James helps small businesses with their technology needs but struggled to provide consistent Cybersecurity guidance. Each client had different requirements and he needed a reliable framework to assess and improve their security posture.",
+    solution: "James adopted CyberWise Core as his standard Cybersecurity assessment tool. He uses the Risk Assessment for client evaluations and the compliance checklists to create tailored security roadmaps for each business.",
+    outcome: "James now provides consistent, high-quality Cybersecurity services to all his clients. The standardized approach has improved client outcomes and allowed him to expand his security consulting services.",
     metrics: ["20+ clients served", "95% client satisfaction", "3x faster assessments", "New revenue stream created"],
     tools: ["All Assessment Tools", "Compliance Frameworks", "Client Reports"],
-    quote: "CyberWise Core transformed how I deliver cybersecurity services. My clients get professional-grade assessments and I can serve more businesses effectively.",
+    quote: "CyberWise Core transformed how I deliver Cybersecurity services. My clients get professional-grade assessments and I can serve more businesses effectively.",
     icon: <TrendingUp className="h-5 w-5" />
   }
 ];
@@ -93,7 +93,7 @@ export function UserStoriesPage({ onNavigate }: Props) {
       <div className="text-center mb-16">
         <h1 className="text-4xl text-gray-900 mb-6">Real Stories, Real Results</h1>
         <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-          Discover how SME businesses across Australia are using CyberWise Core to strengthen their cybersecurity posture and achieve compliance with confidence.
+          Discover how SME businesses across Australia are using CyberWise Core to strengthen their Cybersecurity posture and achieve compliance with confidence.
         </p>
       </div>
 
@@ -237,7 +237,7 @@ export function UserStoriesPage({ onNavigate }: Props) {
           <CardContent className="py-12">
             <h2 className="text-2xl mb-4">Ready to Write Your Success Story?</h2>
             <p className="text-gray-300 mb-8 max-w-2xl mx-auto">
-              Join hundreds of Australian SMEs who have strengthened their cybersecurity posture with CyberWise Core. 
+              Join hundreds of Australian SMEs who have strengthened their Cybersecurity posture with CyberWise Core. 
               Start your risk assessment today and take the first step toward better protection.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">

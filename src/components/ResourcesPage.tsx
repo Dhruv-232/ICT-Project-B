@@ -53,7 +53,7 @@ const resourceCategories: ResourceCategory[] = [
     id: "government-frameworks",
     name: "Government Frameworks",
     description:
-      "Official Australian government cybersecurity frameworks and legislation",
+      "Official Australian government Cybersecurity frameworks and legislation",
     icon: <Shield className="h-5 w-5" />,
     resources: [
       {
@@ -69,7 +69,7 @@ const resourceCategories: ResourceCategory[] = [
       {
         title: "Cybersecurity Act 2024 Implementation Guide",
         description:
-          "Step-by-step guide for critical infrastructure cybersecurity obligations",
+          "Step-by-step guide for critical infrastructure Cybersecurity obligations",
         type: "document",
         level: "intermediate",
         duration: "1 hour read",
@@ -79,11 +79,11 @@ const resourceCategories: ResourceCategory[] = [
       {
         title: "ACSC Essential Eight Maturity Model",
         description:
-          "Detailed implementation guide for the Essential Eight cybersecurity strategies",
+          "Detailed implementation guide for the Essential Eight Cybersecurity strategies",
         type: "guide",
         level: "intermediate",
         duration: "2 hours",
-        url: "https://www.cyber.gov.au/resources-business-and-government/essential-cyber-security/essential-eight",
+        url: "https://www.cyber.gov.au/resources-business-and-government/essential-Cybersecurity/essential-eight",
         tags: ["Essential Eight", "ACSC", "Security Controls"],
       },
       {
@@ -102,13 +102,13 @@ const resourceCategories: ResourceCategory[] = [
     id: "implementation-guides",
     name: "Implementation Guides",
     description:
-      "Practical guides for implementing cybersecurity measures in your organization",
+      "Practical guides for implementing Cybersecurity measures in your organization",
     icon: <BookOpen className="h-5 w-5" />,
     resources: [
       {
         title: "SME Cybersecurity Quick Start Guide",
         description:
-          "Essential first steps for small businesses starting their cybersecurity journey",
+          "Essential first steps for small businesses starting their Cybersecurity journey",
         type: "guide",
         level: "beginner",
         duration: "20 min read",
@@ -138,7 +138,7 @@ const resourceCategories: ResourceCategory[] = [
       {
         title: "Employee Security Training Program",
         description:
-          "Framework for developing cybersecurity awareness training for staff",
+          "Framework for developing Cybersecurity awareness training for staff",
         type: "guide",
         level: "intermediate",
         duration: "45 min read",
@@ -148,7 +148,7 @@ const resourceCategories: ResourceCategory[] = [
       {
         title: "Incident Response Plan Template",
         description:
-          "Ready-to-use template for creating your cybersecurity incident response plan",
+          "Ready-to-use template for creating your Cybersecurity incident response plan",
         type: "tool",
         level: "intermediate",
         duration: "2 hours setup",
@@ -161,13 +161,13 @@ const resourceCategories: ResourceCategory[] = [
     id: "assessment-tools",
     name: "Assessment Tools",
     description:
-      "Tools and checklists to evaluate your current cybersecurity posture",
+      "Tools and checklists to evaluate your current Cybersecurity posture",
     icon: <CheckCircle className="h-5 w-5" />,
     resources: [
       {
         title: "Cybersecurity Maturity Self-Assessment",
         description:
-          "Evaluate your organization's cybersecurity maturity across key domains",
+          "Evaluate your organization's Cybersecurity maturity across key domains",
         type: "tool",
         level: "beginner",
         duration: "30 minutes",
@@ -197,7 +197,7 @@ const resourceCategories: ResourceCategory[] = [
       {
         title: "Risk Assessment Methodology",
         description:
-          "Structured approach to identifying and assessing cybersecurity risks",
+          "Structured approach to identifying and assessing Cybersecurity risks",
         type: "guide",
         level: "advanced",
         duration: "2 hours",
@@ -268,7 +268,7 @@ const resourceCategories: ResourceCategory[] = [
     id: "incident-response",
     name: "Incident Response",
     description:
-      "Resources for preparing for and responding to cybersecurity incidents",
+      "Resources for preparing for and responding to Cybersecurity incidents",
     icon: <AlertTriangle className="h-5 w-5" />,
     resources: [
       {
@@ -413,7 +413,7 @@ export function ResourcesPage() {
             <p className="text-xl text-gray-600 max-w-3xl mx-auto">
               Comprehensive guides, tools, and educational materials to help
               your organization understand and implement Australian
-              cybersecurity compliance requirements.
+              Cybersecurity compliance requirements.
             </p>
           </div>
         </div>
@@ -428,7 +428,7 @@ export function ResourcesPage() {
                 <Shield className="h-8 w-8 text-gray-700 mx-auto mb-3" />
                 <h3 className="text-lg text-gray-900 mb-2">Getting Started</h3>
                 <p className="text-sm text-gray-600">
-                  New to cybersecurity? Start with our beginner-friendly guides.
+                  New to Cybersecurity? Start with our beginner-friendly guides.
                 </p>
               </CardContent>
             </Card>
@@ -459,7 +459,7 @@ export function ResourcesPage() {
                 <Users className="h-8 w-8 text-gray-700 mx-auto mb-3" />
                 <h3 className="text-lg text-gray-900 mb-2">Training</h3>
                 <p className="text-sm text-gray-600">
-                  Educational materials to build cybersecurity awareness.
+                  Educational materials to build Cybersecurity awareness.
                 </p>
               </CardContent>
             </Card>
@@ -639,7 +639,7 @@ export function ResourcesPage() {
                 <div className="space-y-4">
                   <div>
                     <h4 className="text-lg text-gray-900 mb-2">
-                      Australian Cyber Security Centre (ACSC)
+                      Australian Cybersecurity Centre (ACSC)
                     </h4>
                     <p className="text-gray-600 mb-2">
                       Latest threat intelligence and security guidance
@@ -692,7 +692,7 @@ export function ResourcesPage() {
                       Australian Information Industry Association (AIIA)
                     </h4>
                     <p className="text-gray-600 mb-2">
-                      Industry insights and cybersecurity initiatives
+                      Industry insights and Cybersecurity initiatives
                     </p>
                     <Button
                       variant="outline"

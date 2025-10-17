@@ -45,7 +45,7 @@ export function RiskHeatMap() {
       <CardHeader>
         <CardTitle className="text-2xl text-center">Cybersecurity Risk Heat Map</CardTitle>
         <CardDescription className="text-center">
-          Visual representation of cybersecurity risks by likelihood and impact
+          Visual representation of Cybersecurity risks by likelihood and impact
         </CardDescription>
       </CardHeader>
       <CardContent>
