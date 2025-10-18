@@ -213,107 +213,58 @@ const resourceCategories: ResourceCategory[] = [
       "Educational resources and training materials for teams and individuals",
     icon: <Users className="h-5 w-5" />,
     resources: [
-      {
-        title: "Cybersecurity Awareness for Employees",
-        description:
-          "Interactive training module covering common threats and safe practices",
-        type: "video",
-        level: "beginner",
-        duration: "25 minutes",
-        training: "#",
-        tags: ["Employee Training", "Awareness", "Phishing"],
-      },
-      {
-        title: "Password Security Best Practices",
-        description: "Comprehensive guide to password management and security",
-        type: "guide",
-        level: "beginner",
-        duration: "15 min read",
-        training: "#",
-        tags: ["Passwords", "Authentication", "Best Practices"],
-      },
-      {
-        title: "Social Engineering Recognition",
-        description:
-          "Learn to identify and respond to social engineering attacks",
-        type: "video",
-        level: "beginner",
-        duration: "30 minutes",
-        training: "#",
-        tags: ["Social Engineering", "Phishing", "Awareness"],
-      },
-      {
-        title: "Secure Remote Work Practices",
-        description:
-          "Guidelines for maintaining security while working remotely",
-        type: "guide",
-        level: "beginner",
-        duration: "20 min read",
-        training: "#",
-        tags: ["Remote Work", "VPN", "Home Office Security"],
-      },
-      {
-        title: "Monthly Cybersecurity Webinar Series",
-        description:
-          "Regular webinars covering current threats and compliance updates",
-        type: "webinar",
-        level: "beginner",
-        duration: "1 hour",
-        training: "#",
-        tags: ["Webinar", "Current Threats", "Updates"],
-      },
-    ],
+  {
+    title: "Cybersecurity Awareness for Employees",
+    description:
+      "Interactive training module covering common threats and safe practices",
+    type: "video",
+    level: "beginner",
+    duration: "3:59 mins",
+    training: "https://www.youtube.com/embed/1-MdMytK-T0",
+    tags: ["Employee Training", "Awareness", "Phishing"],
   },
   {
-    id: "incident-response",
-    name: "Incident Response",
+    title: "Password Security Best Practices",
     description:
-      "Resources for preparing for and responding to Cybersecurity incidents",
-    icon: <AlertTriangle className="h-5 w-5" />,
-    resources: [
-      {
-        title: "Data Breach Response Checklist",
-        description:
-          "Step-by-step checklist for responding to data security incidents",
-        type: "checklist",
-        level: "beginner",
-        duration: "Immediate use",
-        downloadUrl: "#",
-        url: "#",
-        tags: ["Data Breach", "Incident Response", "Emergency"],
-      },
-      {
-        title: "Ransomware Attack Response Guide",
-        description:
-          "Comprehensive guide for responding to ransomware incidents",
-        type: "guide",
-        level: "intermediate",
-        duration: "1 hour read",
-        url: "#",
-        tags: ["Ransomware", "Incident Response", "Recovery"],
-      },
-      {
-        title: "Communication Templates for Incidents",
-        description:
-          "Pre-written templates for communicating during security incidents",
-        type: "tool",
-        level: "beginner",
-        duration: "Setup: 30 min",
-        downloadUrl: "#",
-        url: "#",
-        tags: ["Communication", "Templates", "Crisis Management"],
-      },
-      {
-        title: "Forensic Evidence Preservation",
-        description:
-          "Guidelines for preserving digital evidence during incidents",
-        type: "guide",
-        level: "advanced",
-        duration: "45 min read",
-        url: "#",
-        tags: ["Forensics", "Evidence", "Investigation"],
-      },
-    ],
+      "Comprehensive guide to password management and security",
+    type: "video",
+    level: "beginner",
+    duration: "8:50 mins",
+    training: "https://www.youtube.com/embed/ezxbTa-BAtc",
+    tags: ["Passwords", "Authentication", "Best Practices"],
+  },
+  {
+    title: "Social Engineering Recognition",
+    description:
+      "Learn to identify and respond to social engineering attacks",
+    type: "video",
+    level: "beginner",
+    duration: "3:47 mins",
+    training: "https://www.youtube.com/embed/uvKTMgWRPw4",
+    tags: ["Social Engineering", "Phishing", "Awareness"],
+  },
+  {
+    title: "Secure Remote Work Practices",
+    description:
+      "Guidelines for maintaining security while working remotely",
+    type: "video",
+    level: "beginner",
+    duration: "1:11 mins",
+    training: "https://www.youtube.com/embed/B43NitVdNcM",
+    tags: ["Remote Work", "VPN", "Home Office Security"],
+  },
+  {
+    title: "Monthly Cybersecurity Webinar Series",
+    description:
+      "Regular webinars covering current threats and compliance updates",
+    type: "webinar",
+    level: "beginner",
+    duration: "1:33 mins",
+    training: "https://www.youtube.com/embed/_OyQaUAcNHY",
+    tags: ["Webinar", "Current Threats", "Updates"],
+  },
+],
+
   },
   {
     id: "industry-specific",
@@ -594,17 +545,32 @@ export function ResourcesPage() {
                             </Button>
                           )}
                           {resource.training && (
-                            <Button
-                              variant="outline"
-                              size="sm"
-                              onClick={() => {
-                                console.log("Start Training:", resource.title);
-                              }}
-                            >
-                              <Play className="h-4 w-4 mr-2" />
-                              Start Training
-                            </Button>
-                          )}
+  <>
+    {resource.type === "video" || resource.type === "webinar" ? (
+      <div className="video-container w-full mt-4">
+        <iframe
+          width="100%"
+          height="315"
+          src={resource.training}
+          title={resource.title}
+          frameBorder="0"
+          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+          allowFullScreen
+        ></iframe>
+      </div>
+    ) : (
+      <Button
+        variant="outline"
+        size="sm"
+        onClick={() => window.open(resource.training, "_blank")}
+      >
+        <Play className="h-4 w-4 mr-2" />
+        Start Training
+      </Button>
+    )}
+  </>
+)}
+
                         </div>
                       </CardContent>
                     </Card>

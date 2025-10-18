@@ -116,9 +116,16 @@ export function RiskToolPage() {
     doc.save("Cybersecurity-risk-report.pdf");
   };
 
-  const allQuestionsAnswered = riskCategories.every((category) =>
-    category.questions.every((question) => answers[question.id])
-  );
+  // Allow completion even if not all questions are answered
+const answeredCount = Object.keys(answers).length;
+const totalQuestions = riskCategories.reduce(
+  (sum, category) => sum + category.questions.length,
+  0
+);
+const progressPercent = Math.round((answeredCount / totalQuestions) * 100);
+
+  
+  
 
   if (showResults) {
     const riskScore = calculateRiskScore();
@@ -396,39 +403,45 @@ export function RiskToolPage() {
               </CardContent>
             </Card>
 
-            {/* Navigation */}
-            <div className="flex justify-between mt-8">
-              <Button
-                variant="outline"
-                onClick={() =>
-                  setCurrentCategory(Math.max(0, currentCategory - 1))
-                }
-                disabled={currentCategory === 0}
-              >
-                Previous
-              </Button>
 
-              {currentCategory === riskCategories.length - 1 ? (
-                <Button
-                  onClick={() => setShowResults(true)}
-                  disabled={!allQuestionsAnswered}
-                  className="bg-gray-900 hover:bg-gray-800 text-white"
-                >
-                  Complete Assessment
-                </Button>
-              ) : (
-                <Button
-                  onClick={() =>
-                    setCurrentCategory(
-                      Math.min(riskCategories.length - 1, currentCategory + 1)
-                    )
-                  }
-                  className="bg-gray-900 hover:bg-gray-800 text-white"
-                >
-                  Next
-                </Button>
-              )}
-            </div>
+          {/* Navigation */}
+<p className="text-sm text-gray-600 mb-2 text-right">
+  Progress: {progressPercent}% completed
+</p>
+
+<div className="flex justify-between mt-8">
+  <Button
+    variant="outline"
+    onClick={() =>
+      setCurrentCategory(Math.max(0, currentCategory - 1))
+    }
+    disabled={currentCategory === 0}
+  >
+    Previous
+  </Button>
+
+  {currentCategory === riskCategories.length - 1 ? (
+    <Button
+      onClick={() => setShowResults(true)}
+      className="bg-gray-900 hover:bg-gray-800 text-white"
+    >
+      Complete Assessment
+    </Button>
+  ) : (
+    <Button
+      onClick={() =>
+        setCurrentCategory(
+          Math.min(riskCategories.length - 1, currentCategory + 1)
+        )
+      }
+      className="bg-gray-900 hover:bg-gray-800 text-white"
+    >
+      Next
+    </Button>
+  )}
+          
+          
+          </div>
           </div>
         </div>
       </div>
