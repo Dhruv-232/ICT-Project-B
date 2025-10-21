@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import jsPDF from "jspdf";
 import { Button } from "./ui/button";
 import {
@@ -10,9 +10,7 @@ import {
 } from "./ui/card";
 import { Badge } from "./ui/badge";
 import { Progress } from "./ui/progress";
-import { RadioGroup, RadioGroupItem } from "./ui/radio-group";
-import { Label } from "./ui/label";
-import { AlertTriangle, Check, BookOpen, CircleAlert } from "lucide-react";
+import { AlertTriangle, Check, CircleAlert } from "lucide-react";
 import { RiskHeatMap } from "./RiskHeatMap";
 import { RecommendationsSection } from "./RecommendationsSection";
 import {
@@ -21,22 +19,62 @@ import {
   riskScore40,
   riskScore0,
 } from "../data/RiskTool.data";
+import { storage } from "../utils/storage";
+import ProgressTracker from "./ProgressTracker"; // <-- NEW
+
+/* ========= Local storage keys ========= */
+const RISK_ANSWERS_KEY = "risk.answers.v1";
+const RISK_STEP_KEY = "risk.step.v1";
+const RISK_RESULTS_KEY = "risk.results.v1";
+/* ===================================== */
 
 // Risk-based recommendations data
 const getRiskRecommendations = (riskScore: number) => {
-  if (riskScore > 60) {
-    return riskScore60;
-  } else if (riskScore > 40) {
-    return riskScore40;
-  } else {
-    return riskScore0;
-  }
+  if (riskScore > 60) return riskScore60;
+  if (riskScore > 40) return riskScore40;
+  return riskScore0;
 };
 
 export function RiskToolPage() {
   const [currentCategory, setCurrentCategory] = useState(0);
   const [answers, setAnswers] = useState<Record<string, string>>({});
   const [showResults, setShowResults] = useState(false);
+  const [hydrated, setHydrated] = useState(false);
+
+  /* -------- Load saved state once -------- */
+  useEffect(() => {
+    const savedAnswers = storage.get<Record<string, string>>(RISK_ANSWERS_KEY);
+    const savedStep = storage.get<number>(RISK_STEP_KEY);
+    const savedResults = storage.get<boolean>(RISK_RESULTS_KEY);
+
+    if (savedAnswers) setAnswers(savedAnswers);
+    if (typeof savedStep === "number") {
+      const clamped = Math.min(
+        Math.max(0, savedStep),
+        Math.max(0, riskCategories.length - 1)
+      );
+      setCurrentCategory(clamped);
+    }
+    if (typeof savedResults === "boolean") setShowResults(savedResults);
+
+    setHydrated(true);
+  }, []);
+
+  /* -------- Persist changes -------- */
+  useEffect(() => {
+    if (!hydrated) return;
+    storage.set(RISK_ANSWERS_KEY, answers);
+  }, [answers, hydrated]);
+
+  useEffect(() => {
+    if (!hydrated) return;
+    storage.set(RISK_STEP_KEY, currentCategory);
+  }, [currentCategory, hydrated]);
+
+  useEffect(() => {
+    if (!hydrated) return;
+    storage.set(RISK_RESULTS_KEY, showResults);
+  }, [showResults, hydrated]);
 
   const handleAnswerChange = (questionId: string, value: string) => {
     setAnswers((prev) => ({ ...prev, [questionId]: value }));
@@ -68,28 +106,12 @@ export function RiskToolPage() {
   // Determine risk level based on score
   const getRiskLevel = (score: number) => {
     if (score <= 20)
-      return {
-        level: "Low",
-        color: "bg-green-500",
-        textColor: "text-green-700",
-      };
+      return { level: "Low", color: "bg-green-500", textColor: "text-green-700" };
     if (score <= 40)
-      return {
-        level: "Medium",
-        color: "bg-yellow-500",
-        textColor: "text-yellow-700",
-      };
+      return { level: "Medium", color: "bg-yellow-500", textColor: "text-yellow-700" };
     if (score <= 60)
-      return {
-        level: "High",
-        color: "bg-orange-500",
-        textColor: "text-orange-700",
-      };
-    return {
-      level: "Critical",
-      color: "bg-red-500",
-      textColor: "text-red-700",
-    };
+      return { level: "High", color: "bg-orange-500", textColor: "text-orange-700" };
+    return { level: "Critical", color: "bg-red-500", textColor: "text-red-700" };
   };
 
   // Zobair
@@ -186,19 +208,8 @@ export function RiskToolPage() {
     doc.setTextColor(0, 0, 0);
     doc.text(`${i + 1}. ${rec.title}`, 75, y + 25);
 
-    doc.setFont("helvetica", "normal");
-    doc.setFontSize(11);
-    doc.setTextColor(90, 90, 90);
-    doc.text(rec.description, 75, y + 45, { maxWidth: pageWidth - 150 });
-
-    doc.setFont("helvetica", "normal");
-    doc.setFontSize(10);
-    doc.setTextColor(0, 0, 0);
-    doc.text(
-      `Timeframe: ${rec.timeframe || "N/A"} | Effort: ${rec.effort || "N/A"} | Impact: ${rec.impact || "N/A"}`,
-      75,
-      y + 65
-    );
+    doc.text("Thank you for using the assessment tool.", 20, 70);
+    doc.text("To improve your posture, please refer to our recommendations.", 20, 80);
 
     y += 110;
   });
@@ -231,16 +242,22 @@ export function RiskToolPage() {
 };
 
 
-  // Allow completion even if not all questions are answered
-const answeredCount = Object.keys(answers).length;
-const totalQuestions = riskCategories.reduce(
-  (sum, category) => sum + category.questions.length,
-  0
-);
-const progressPercent = Math.round((answeredCount / totalQuestions) * 100);
+  // Overall progress
+  const answeredCount = Object.keys(answers).length;
+  const totalQuestions = riskCategories.reduce(
+    (sum, category) => sum + category.questions.length,
+    0
+  );
+  const progressPercent = Math.round((answeredCount / totalQuestions) * 100);
 
-  
-  
+  /* -------- Hydration guard -------- */
+  if (!hydrated) {
+    return (
+      <div className="min-h-[60vh] flex items-center justify-center text-sm text-gray-600">
+        Loading assessment…
+      </div>
+    );
+  }
 
   if (showResults) {
     const riskScore = calculateRiskScore();
@@ -249,12 +266,8 @@ const progressPercent = Math.round((answeredCount / totalQuestions) * 100);
     return (
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         <div className="text-center mb-8">
-          <h1 className="text-3xl text-gray-900 mb-4">
-            Risk Assessment Results
-          </h1>
-          <p className="text-gray-600">
-            Your Cybersecurity risk analysis is complete
-          </p>
+          <h1 className="text-3xl text-gray-900 mb-4">Risk Assessment Results</h1>
+          <p className="text-gray-600">Your Cybersecurity risk analysis is complete</p>
         </div>
 
         <Card className="mb-8">
@@ -265,9 +278,7 @@ const progressPercent = Math.round((answeredCount / totalQuestions) * 100);
             <CardTitle className="text-2xl">Overall Risk Score</CardTitle>
             <div className="mt-4">
               <div className="text-4xl mb-2">{riskScore}%</div>
-              <Badge className={`${riskLevel.color} text-white`}>
-                {riskLevel.level} Risk
-              </Badge>
+              <Badge className={`${riskLevel.color} text-white`}>{riskLevel.level} Risk</Badge>
             </div>
           </CardHeader>
           <CardContent>
@@ -286,7 +297,6 @@ const progressPercent = Math.round((answeredCount / totalQuestions) * 100);
             subtitle="Based on your risk assessment, here are specific actions to improve your Cybersecurity posture"
             recommendations={getRiskRecommendations(riskScore)}
             onActionClick={(recommendation) => {
-              // Handle action clicks - could navigate to specific pages or open modals
               console.log("Action clicked for:", recommendation.title);
             }}
           />
@@ -298,6 +308,9 @@ const progressPercent = Math.round((answeredCount / totalQuestions) * 100);
         <div className="text-center">
           <Button
             onClick={() => {
+              storage.remove(RISK_ANSWERS_KEY);
+              storage.remove(RISK_STEP_KEY);
+              storage.remove(RISK_RESULTS_KEY);
               setShowResults(false);
               setAnswers({});
               setCurrentCategory(0);
@@ -307,10 +320,7 @@ const progressPercent = Math.round((answeredCount / totalQuestions) * 100);
           >
             Start New Assessment
           </Button>
-          <Button
-            className="bg-gray-900 hover:bg-gray-800 text-white"
-            onClick={downloadPdf}
-          >
+          <Button className="bg-gray-900 hover:bg-gray-800 text-white" onClick={downloadPdf}>
             Download Report
           </Button>
         </div>
@@ -345,14 +355,10 @@ const progressPercent = Math.round((answeredCount / totalQuestions) * 100);
         <div className="grid lg:grid-cols-4 gap-8">
           {/* Category Sidebar */}
           <div className="lg:col-span-1">
-            <h2 className="text-lg text-gray-900 mb-4">
-              Assessment Categories
-            </h2>
+            <h2 className="text-lg text-gray-900 mb-4">Assessment Categories</h2>
             <div className="space-y-2">
               {riskCategories.map((category, index) => {
-                const isCompleted = category.questions.every(
-                  (q) => answers[q.id]
-                );
+                const isCompleted = category.questions.every((q) => answers[q.id]);
                 const isCurrent = index === currentCategory;
 
                 return (
@@ -360,28 +366,16 @@ const progressPercent = Math.round((answeredCount / totalQuestions) * 100);
                     key={category.id}
                     onClick={() => setCurrentCategory(index)}
                     className={`w-full text-left p-3 rounded-lg border transition-colors ${
-                      isCurrent
-                        ? "border-gray-900 bg-gray-50"
-                        : "border-gray-200 hover:bg-gray-50"
+                      isCurrent ? "border-gray-900 bg-gray-50" : "border-gray-200 hover:bg-gray-50"
                     }`}
                   >
                     <div className="flex items-center space-x-3">
-                      <div
-                        className={`p-2 rounded ${
-                          isCompleted ? "bg-green-100" : "bg-gray-100"
-                        }`}
-                      >
+                      <div className={`p-2 rounded ${isCompleted ? "bg-green-100" : "bg-gray-100"}`}>
                         {category.icon}
                       </div>
                       <div>
-                        <div className="text-sm text-gray-900">
-                          {category.name}
-                        </div>
-                        {isCompleted && (
-                          <div className="text-xs text-green-600">
-                            Completed
-                          </div>
-                        )}
+                        <div className="text-sm text-gray-900">{category.name}</div>
+                        {isCompleted && <div className="text-xs text-green-600">Completed</div>}
                       </div>
                     </div>
                   </button>
@@ -392,6 +386,17 @@ const progressPercent = Math.round((answeredCount / totalQuestions) * 100);
 
           {/* Assessment Content */}
           <div className="lg:col-span-3">
+            {/* NEW: Global sticky progress tracker */}
+            <div className="mb-4">
+              <ProgressTracker
+                title="Overall Assessment Progress"
+                percent={progressPercent}
+                leftLabel={`${answeredCount} of ${totalQuestions} answered`}
+                rightLabel={`${totalQuestions - answeredCount} remaining`}
+                sticky
+              />
+            </div>
+
             <Card>
               <CardHeader>
                 <div>
@@ -400,18 +405,11 @@ const progressPercent = Math.round((answeredCount / totalQuestions) * 100);
                       {riskCategories[currentCategory].icon}
                     </div>
                     <div>
-                      <CardTitle>
-                        {riskCategories[currentCategory].name}
-                      </CardTitle>
-                      <CardDescription>
-                        {riskCategories[currentCategory].description}
-                      </CardDescription>
+                      <CardTitle>{riskCategories[currentCategory].name}</CardTitle>
+                      <CardDescription>{riskCategories[currentCategory].description}</CardDescription>
                     </div>
                   </div>
-                  <div>
-                    Estimated Time:{" "}
-                    {riskCategories[currentCategory].estimatedTime}
-                  </div>
+                  <div>Estimated Time: {riskCategories[currentCategory].estimatedTime}</div>
                 </div>
                 <Progress
                   value={((currentCategory + 1) / riskCategories.length) * 100}
@@ -421,45 +419,36 @@ const progressPercent = Math.round((answeredCount / totalQuestions) * 100);
                   Section {currentCategory + 1} of {riskCategories.length}
                 </p>
               </CardHeader>
+
               <CardContent className="space-y-8">
                 {riskCategories[currentCategory].questions.map((question) => (
                   <div key={question.id} className="space-y-4">
                     <div className="flex items-center justify-between">
-                      <h3 className="text-lg text-gray-900">
-                        {question.question}
-                      </h3>
+                      <h3 className="text-lg text-gray-900">{question.question}</h3>
                       <Badge variant="outline" className="text-xs">
                         Required
                       </Badge>
                     </div>
+
                     <div className="grid gap-3">
                       {question.options.map((option) => {
-                        const isSelected =
-                          answers[question.id] === option.value;
+                        const isSelected = answers[question.id] === option.value;
                         return (
                           <button
                             key={option.value}
-                            onClick={() =>
-                              handleAnswerChange(question.id, option.value)
-                            }
+                            onClick={() => handleAnswerChange(question.id, option.value)}
                             className={`
-                            relative p-4 rounded-lg border-2 text-left transition-all duration-200 hover:shadow-md
-                            ${
-                              isSelected
-                                ? "border-gray-900 bg-gray-50 shadow-sm"
-                                : "border-gray-200 bg-white hover:border-gray-300 hover:bg-gray-50"
-                            }
-                          `}
+                              relative p-4 rounded-lg border-2 text-left transition-all duration-200 hover:shadow-md
+                              ${
+                                isSelected
+                                  ? "border-gray-900 bg-gray-50 shadow-sm"
+                                  : "border-gray-200 bg-white hover:border-gray-300 hover:bg-gray-50"
+                              }
+                            `}
                           >
                             <div className="flex items-start justify-between">
                               <div className="flex-1">
-                                <div
-                                  className={`text-base mb-1 ${
-                                    isSelected
-                                      ? "text-gray-900"
-                                      : "text-gray-700"
-                                  }`}
-                                >
+                                <div className={`text-base mb-1 ${isSelected ? "text-gray-900" : "text-gray-700"}`}>
                                   {option.label}
                                 </div>
                                 {option.risk <= 2 && (
@@ -505,9 +494,7 @@ const progressPercent = Math.round((answeredCount / totalQuestions) * 100);
                                   />
                                 ))}
                               </div>
-                              <span className="text-xs text-gray-500">
-                                Risk Level: {option.risk}/5
-                              </span>
+                              <span className="text-xs text-gray-500">Risk Level: {option.risk}/5</span>
                             </div>
                           </button>
                         );
@@ -518,48 +505,56 @@ const progressPercent = Math.round((answeredCount / totalQuestions) * 100);
               </CardContent>
             </Card>
 
+            {/* Navigation */}
+            <div className="flex items-center justify-between mt-8">
+              <Button
+                variant="outline"
+                onClick={() => setCurrentCategory(Math.max(0, currentCategory - 1))}
+                disabled={currentCategory === 0}
+              >
+                Previous
+              </Button>
 
-          {/* Navigation */}
-<p className="text-sm text-gray-600 mb-2 text-right">
-  Progress: {progressPercent}% completed
-</p>
+              <div className="flex items-center gap-3">
+                <Button
+                  variant="outline"
+                  onClick={() => {
+                    storage.remove(RISK_ANSWERS_KEY);
+                    storage.remove(RISK_STEP_KEY);
+                    storage.remove(RISK_RESULTS_KEY);
+                    setAnswers({});
+                    setCurrentCategory(0);
+                    setShowResults(false);
+                  }}
+                >
+                  Reset Saved Progress
+                </Button>
 
-<div className="flex justify-between mt-8">
-  <Button
-    variant="outline"
-    onClick={() =>
-      setCurrentCategory(Math.max(0, currentCategory - 1))
-    }
-    disabled={currentCategory === 0}
-  >
-    Previous
-  </Button>
-
-  {currentCategory === riskCategories.length - 1 ? (
-    <Button
-      onClick={() => setShowResults(true)}
-      className="bg-gray-900 hover:bg-gray-800 text-white"
-    >
-      Complete Assessment
-    </Button>
-  ) : (
-    <Button
-      onClick={() =>
-        setCurrentCategory(
-          Math.min(riskCategories.length - 1, currentCategory + 1)
-        )
-      }
-      className="bg-gray-900 hover:bg-gray-800 text-white"
-    >
-      Next
-    </Button>
-  )}
-          
-          
-          </div>
+                {currentCategory === riskCategories.length - 1 ? (
+                  <Button
+                    onClick={() => setShowResults(true)}
+                    className="bg-gray-900 hover:bg-gray-800 text-white"
+                  >
+                    Complete Assessment
+                  </Button>
+                ) : (
+                  <Button
+                    onClick={() =>
+                      setCurrentCategory(Math.min(riskCategories.length - 1, currentCategory + 1))
+                    }
+                    className="bg-gray-900 hover:bg-gray-800 text-white"
+                  >
+                    Next
+                  </Button>
+                )}
+              </div>
+            </div>
           </div>
         </div>
       </div>
     </>
   );
 }
+
+export default RiskToolPage;
+

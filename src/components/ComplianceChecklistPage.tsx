@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { Button } from "./ui/button";
 import {
   Card,
@@ -17,14 +17,53 @@ import {
 } from "./ui/select";
 import { Checkbox } from "./ui/checkbox";
 import { Badge } from "./ui/badge";
-import { BookOpen, Download, ExternalLink, ClipboardCheck } from "lucide-react";
+import { Download, ExternalLink, ClipboardCheck } from "lucide-react";
 import { RecommendationsSection } from "./RecommendationsSection";
 import complianceFrameworks from "../data/ComplianceChecklist.data";
 import jsPDF from "jspdf";
 import autoTable from "jspdf-autotable";
+import { storage } from "../utils/storage"; // localStorage helper
+
+/* ================= Progress Tracker (inline) ================= */
+function ProgressTracker({
+  completed,
+  total,
+  className = "",
+}: {
+  completed: number;
+  total: number;
+  className?: string;
+}) {
+  const pct = total > 0 ? Math.round((completed / total) * 100) : 0;
+
+  return (
+    <div
+      className={`sticky top-0 z-40 border-b bg-white/80 backdrop-blur supports-[backdrop-filter]:bg-white/60 ${className}`}
+    >
+      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-3">
+        <div className="flex items-center justify-between">
+          <div className="text-sm text-gray-900 font-medium">
+            Checklist Progress
+          </div>
+          <Badge variant={pct === 100 ? "default" : "secondary"}>
+            {pct}% Complete
+          </Badge>
+        </div>
+        <Progress value={pct} className="mt-2" />
+        <div className="mt-1 text-xs text-gray-600 flex justify-between">
+          <span>
+            {completed} of {total} items completed
+          </span>
+          <span>{Math.max(total - completed, 0)} remaining</span>
+        </div>
+      </div>
+    </div>
+  );
+}
+/* ============================================================ */
 
 interface ChecklistItem {
-  id: string;
+  id: string | number;
   title: string;
   description: string;
   completed: boolean;
@@ -34,7 +73,7 @@ interface ChecklistItem {
 }
 
 interface ComplianceFramework {
-  id: string;
+  id: string | number;
   name: string;
   icon: React.ReactNode;
   description: string;
@@ -43,13 +82,45 @@ interface ComplianceFramework {
   items: ChecklistItem[];
 }
 
-// Generate tailored recommendations
+/* ========= Local storage keys & helpers ========= */
+const PROFILE_KEY = "compliance.profile.v1";
+const CHECKLIST_KEY = "compliance.checklist.v1";
+const UI_KEY = "compliance.ui.v1";
+
+// frameworkId -> array of completed itemIds (all stored as strings)
+type SavedChecklist = Record<string, string[]>;
+
+/** Normalize saved completion back into the base list (handles number vs string ids). */
+function mergeCompleted(
+  base: ComplianceFramework[],
+  saved: SavedChecklist | null
+): ComplianceFramework[] {
+  if (!saved) return base;
+
+  return base.map((fw) => {
+    const fwKey = String(fw.id);
+    const completedSet = new Set((saved[fwKey] ?? []).map((v) => String(v)));
+    return {
+      ...fw,
+      items: fw.items.map((it) => {
+        const itemId = String(it.id);
+        return {
+          ...it,
+          completed: completedSet.has(itemId) ? true : !!it.completed,
+        };
+      }),
+    };
+  });
+}
+/* ================================================== */
+
+// Generate tailored recommendations (unchanged)
 const getComplianceRecommendations = (
   progressPercentage: number,
   businessSize: string,
   sector: string
 ) => {
-  const recommendations = [];
+  const recommendations: any[] = [];
 
   if (progressPercentage < 25) {
     recommendations.push(
@@ -65,11 +136,7 @@ const getComplianceRecommendations = (
         impact: "high" as const,
         action: "Start Privacy Basics",
         resources: [
-          {
-            title: "Privacy Policy Template",
-            url: "#",
-            type: "guide" as const,
-          },
+          { title: "Privacy Policy Template", url: "#", type: "guide" as const },
           {
             title: "OAIC Privacy Guidelines",
             url: "https://www.oaic.gov.au/",
@@ -111,11 +178,7 @@ const getComplianceRecommendations = (
         impact: "medium" as const,
         action: "Expand Controls",
         resources: [
-          {
-            title: "Security Controls Checklist",
-            url: "#",
-            type: "guide" as const,
-          },
+          { title: "Security Controls Checklist", url: "#", type: "guide" as const },
         ],
       },
       {
@@ -130,11 +193,7 @@ const getComplianceRecommendations = (
         impact: "high" as const,
         action: "Develop Procedures",
         resources: [
-          {
-            title: "Data Governance Framework",
-            url: "#",
-            type: "guide" as const,
-          },
+          { title: "Data Governance Framework", url: "#", type: "guide" as const },
         ],
       }
     );
@@ -151,11 +210,7 @@ const getComplianceRecommendations = (
       impact: "medium" as const,
       action: "Setup Monitoring",
       resources: [
-        {
-          title: "Monitoring Solutions Guide",
-          url: "#",
-          type: "guide" as const,
-        },
+        { title: "Monitoring Solutions Guide", url: "#", type: "guide" as const },
       ],
     });
   }
@@ -230,7 +285,11 @@ const getComplianceRecommendations = (
     impact: "medium" as const,
     action: "Setup Reviews",
     resources: [
-      { title: "Compliance Review Schedule", url: "#", type: "guide" as const },
+      {
+        title: "Compliance Review Schedule",
+        url: "#",
+        type: "guide" as const,
+      },
     ],
   });
 
@@ -240,7 +299,9 @@ const getComplianceRecommendations = (
 export function ComplianceChecklistPage() {
   const [businessSize, setBusinessSize] = useState<string>("");
   const [sector, setSector] = useState<string>("");
-  const [checklist, setChecklist] =
+
+  // MASTER list: holds true state (including completed flags)
+  const [allFrameworks, setAllFrameworks] =
     useState<ComplianceFramework[]>(complianceFrameworks);
 
   const [privacyActExpanded, setPrivacyActExpanded] = useState(false);
@@ -250,51 +311,137 @@ export function ComplianceChecklistPage() {
   const [ml2Expanded, setML2Expanded] = useState(false);
   const [ml3Expanded, setML3Expanded] = useState(false);
 
-  const totalItems = checklist.reduce((total, framework) => {
-    return (
-      total +
-      framework.items.filter(
-        (item) =>
-          (!item.sector || item.sector.includes(sector) || sector === "") &&
-          (!item.businessSize ||
-            item.businessSize.includes(businessSize) ||
-            businessSize === "")
-      ).length
-    );
-  }, 0);
+  const [hydrated, setHydrated] = useState(false);
 
-  const completedItems = checklist.reduce((completed, framework) => {
-    return (
-      completed +
-      framework.items.filter(
-        (item) =>
-          item.completed &&
-          (!item.sector || item.sector.includes(sector) || sector === "") &&
-          (!item.businessSize ||
-            item.businessSize.includes(businessSize) ||
-            businessSize === "")
-      ).length
+  /* -------- Load from localStorage once -------- */
+  useEffect(() => {
+    // Profile
+    const savedProfile = storage.get<{ businessSize: string; sector: string }>(
+      PROFILE_KEY
     );
-  }, 0);
+    if (savedProfile) {
+      setBusinessSize(savedProfile.businessSize ?? "");
+      setSector(savedProfile.sector ?? "");
+    }
 
+    // Checklist completion
+    const savedChecklist = storage.get<SavedChecklist>(CHECKLIST_KEY);
+    if (savedChecklist) {
+      setAllFrameworks((prev) => mergeCompleted(prev, savedChecklist));
+    }
+
+    // UI expanded states
+    const ui = storage.get<{
+      privacyActExpanded: boolean;
+      cyberActExpanded: boolean;
+      ransomwareExpanded: boolean;
+      ml1Expanded: boolean;
+      ml2Expanded: boolean;
+      ml3Expanded: boolean;
+    }>(UI_KEY);
+
+    if (ui) {
+      setPrivacyActExpanded(!!ui.privacyActExpanded);
+      setCyberActExpanded(!!ui.cyberActExpanded);
+      setRansomwareExpanded(!!ui.ransomwareExpanded);
+      setML1Expanded(!!ui.ml1Expanded);
+      setML2Expanded(!!ui.ml2Expanded);
+      setML3Expanded(!!ui.ml3Expanded);
+    }
+
+    setHydrated(true);
+  }, []);
+
+  /* -------- Save to localStorage -------- */
+  // Save profile
+  useEffect(() => {
+    if (!hydrated) return;
+    storage.set(PROFILE_KEY, { businessSize, sector });
+  }, [businessSize, sector, hydrated]);
+
+  // Save checklist completion (normalize ids to strings)
+  useEffect(() => {
+    if (!hydrated) return;
+    const payload: SavedChecklist = {};
+    allFrameworks.forEach((fw) => {
+      const fwKey = String(fw.id);
+      const completedIds = fw.items
+        .filter((i) => i.completed)
+        .map((i) => String(i.id)); // normalize to string
+      if (completedIds.length) {
+        payload[fwKey] = completedIds;
+      }
+    });
+    storage.set(CHECKLIST_KEY, payload);
+  }, [allFrameworks, hydrated]);
+
+  // Save UI expanded state
+  useEffect(() => {
+    if (!hydrated) return;
+    storage.set(UI_KEY, {
+      privacyActExpanded,
+      cyberActExpanded,
+      ransomwareExpanded,
+      ml1Expanded,
+      ml2Expanded,
+      ml3Expanded,
+    });
+  }, [
+    privacyActExpanded,
+    cyberActExpanded,
+    ransomwareExpanded,
+    ml1Expanded,
+    ml2Expanded,
+    ml3Expanded,
+    hydrated,
+  ]);
+
+  /* -------- Derived filtered view (don’t mutate master) -------- */
+  const checklist = useMemo(() => {
+    return allFrameworks
+      .map((framework) => ({
+        ...framework,
+        items: framework.items.filter(
+          (item) =>
+            (!item.businessSize ||
+              item.businessSize.includes(businessSize) ||
+              businessSize === "") &&
+            (!item.sector || item.sector.includes(sector) || sector === "")
+        ),
+      }))
+      .filter((framework) => framework.items.length > 0);
+  }, [allFrameworks, businessSize, sector]);
+
+  /* -------- Progress totals based on filtered view -------- */
+  const totalItems = checklist.reduce(
+    (total, framework) => total + framework.items.length,
+    0
+  );
+  const completedItems = checklist.reduce(
+    (sum, framework) => sum + framework.items.filter((i) => i.completed).length,
+    0
+  );
   const progressPercentage =
     totalItems > 0 ? Math.round((completedItems / totalItems) * 100) : 0;
 
-  const handleItemToggle = (frameworkId: string, itemId: string) => {
-    setChecklist((prev) =>
-      prev.map((framework) => {
-        if (framework.id === frameworkId) {
-          return {
-            ...framework,
-            items: framework.items.map((item) =>
-              item.id === itemId
-                ? { ...item, completed: !item.completed }
-                : item
-            ),
-          };
-        }
-        return framework;
-      })
+  /* -------- Toggle handler updates master list -------- */
+  const handleItemToggle = (
+    frameworkId: string | number,
+    itemId: string | number
+  ) => {
+    setAllFrameworks((prev) =>
+      prev.map((framework) =>
+        framework.id === frameworkId
+          ? {
+              ...framework,
+              items: framework.items.map((item) =>
+                item.id === itemId
+                  ? { ...item, completed: !item.completed }
+                  : item
+              ),
+            }
+          : framework
+      )
     );
   };
 
@@ -340,13 +487,7 @@ export function ComplianceChecklistPage() {
       y += 8;
 
       const frameworkSummary = checklist.map((f) => {
-        const relevantItems = f.items.filter(
-          (i) =>
-            (!i.sector || i.sector.includes(sector) || sector === "") &&
-            (!i.businessSize ||
-              i.businessSize.includes(businessSize) ||
-              businessSize === "")
-        );
+        const relevantItems = f.items;
         const done = relevantItems.filter((i) => i.completed).length;
         const percent =
           relevantItems.length > 0
@@ -367,10 +508,7 @@ export function ComplianceChecklistPage() {
         theme: "grid",
         headStyles: { fillColor: [30, 30, 30], textColor: 255 },
         styles: { fontSize: 9, cellPadding: 3 },
-        columnStyles: {
-          2: { halign: "center", textColor: [255, 0, 0] },
-          3: { halign: "center" },
-        },
+        columnStyles: { 2: { halign: "center", textColor: [255, 0, 0] }, 3: { halign: "center" } },
         margin: { left: 14, right: 14 },
       });
 
@@ -380,13 +518,7 @@ export function ComplianceChecklistPage() {
       y += 10;
 
       checklist.forEach((framework) => {
-        const relevantItems = framework.items.filter(
-          (i) =>
-            (!i.sector || i.sector.includes(sector) || sector === "") &&
-            (!i.businessSize ||
-              i.businessSize.includes(businessSize) ||
-              businessSize === "")
-        );
+        const relevantItems = framework.items;
         if (relevantItems.length === 0) return;
         if (y > 260) {
           doc.addPage();
@@ -474,28 +606,20 @@ export function ComplianceChecklistPage() {
     }
   };
 
-  useEffect(() => {
-    if (!businessSize && !sector) {
-      setChecklist(complianceFrameworks);
-      return;
-    }
-    const filtered = complianceFrameworks
-      .map((framework) => ({
-        ...framework,
-        items: framework.items.filter(
-          (item) =>
-            (!item.businessSize ||
-              item.businessSize.includes(businessSize) ||
-              businessSize === "") &&
-            (!item.sector || item.sector.includes(sector) || sector === "")
-        ),
-      }))
-      .filter((framework) => framework.items.length > 0);
-    setChecklist(filtered);
-  }, [businessSize, sector]);
+  /* -------- Hydration guard: prevents UI flash -------- */
+  if (!hydrated) {
+    return (
+      <div className="min-h-[60vh] flex items-center justify-center text-sm text-gray-600">
+        Loading checklist…
+      </div>
+    );
+  }
 
   return (
     <>
+      {/* Sticky tracker (always visible) */}
+      <ProgressTracker completed={completedItems} total={totalItems} />
+
       {/* Hero Section */}
       <div className="bg-gray-50">
         <section className="bg-white">
@@ -536,9 +660,7 @@ export function ComplianceChecklistPage() {
                     <SelectValue placeholder="Select business size" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="small">
-                      Small (1-50 employees)
-                    </SelectItem>
+                    <SelectItem value="small">Small (1-50 employees)</SelectItem>
                     <SelectItem value="medium">
                       Medium (51-250 employees)
                     </SelectItem>
@@ -567,7 +689,7 @@ export function ComplianceChecklistPage() {
           </CardContent>
         </Card>
 
-        {/* Progress Overview */}
+        {/* Progress Overview (kept — works with tracker above) */}
         <Card className="mb-8">
           <CardHeader>
             <CardTitle className="flex items-center justify-between">
@@ -619,12 +741,11 @@ export function ComplianceChecklistPage() {
               (isML3 && ml3Expanded);
 
             return (
-              <Card key={framework.id}>
+              <Card key={String(framework.id)}>
                 <CardHeader
                   className="cursor-pointer select-none"
                   onClick={() => {
-                    if (isPrivacyAct)
-                      setPrivacyActExpanded(!privacyActExpanded);
+                    if (isPrivacyAct) setPrivacyActExpanded(!privacyActExpanded);
                     else if (isCyberAct) setCyberActExpanded(!cyberActExpanded);
                     else if (isRansomware)
                       setRansomwareExpanded(!ransomwareExpanded);
@@ -684,11 +805,11 @@ export function ComplianceChecklistPage() {
                     <div className="space-y-4">
                       {framework.items.map((item) => (
                         <div
-                          key={item.id}
+                          key={String(item.id)}
                           className="flex items-start space-x-3 p-3 rounded-lg border border-gray-200"
                         >
                           <Checkbox
-                            id={item.id}
+                            id={String(item.id)}
                             checked={item.completed}
                             onCheckedChange={() =>
                               handleItemToggle(framework.id, item.id)
@@ -697,7 +818,7 @@ export function ComplianceChecklistPage() {
                           />
                           <div className="flex-1 space-y-1">
                             <label
-                              htmlFor={item.id}
+                              htmlFor={String(item.id)}
                               className="text-sm cursor-pointer flex items-center space-x-2"
                             >
                               <span
@@ -729,7 +850,7 @@ export function ComplianceChecklistPage() {
                           variant="outline"
                           size="sm"
                           onClick={() =>
-                            window.open(framework.externalLink, "_blank")
+                            window.open(framework.externalLink!, "_blank")
                           }
                           className="w-full"
                         >
@@ -780,6 +901,29 @@ export function ComplianceChecklistPage() {
                 Complete at least one checklist item to generate a report
               </p>
             )}
+
+            {/* Reset Local Data */}
+            <div className="mt-3 grid grid-cols-1 sm:grid-cols-2 gap-3">
+              <Button
+                variant="outline"
+                onClick={() => {
+                  storage.remove(PROFILE_KEY);
+                  storage.remove(CHECKLIST_KEY);
+                  storage.remove(UI_KEY);
+                  setBusinessSize("");
+                  setSector("");
+                  setAllFrameworks(complianceFrameworks);
+                  setPrivacyActExpanded(false);
+                  setCyberActExpanded(false);
+                  setRansomwareExpanded(false);
+                  setML1Expanded(false);
+                  setML2Expanded(false);
+                  setML3Expanded(false);
+                }}
+              >
+                Reset Local Data
+              </Button>
+            </div>
           </CardContent>
         </Card>
       </div>
