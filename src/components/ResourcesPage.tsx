@@ -63,7 +63,9 @@ const resourceCategories: ResourceCategory[] = [
         type: "guide",
         level: "beginner",
         duration: "45 min read",
-        url: "https://www.oaic.gov.au/privacy/privacy-legislation/the-privacy-act",
+        url: "https://www.oaic.gov.au/privacy/privacy-guidance-for-organisations-and-government-agencies/organisations/small-business",
+        downloadUrl:
+          "https://www.oaic.gov.au/privacy/privacy-guidance-for-organisations-and-government-agencies/organisations/small-business",
         tags: ["Privacy Act", "Data Protection", "Legal Requirements"],
       },
       {
@@ -73,7 +75,8 @@ const resourceCategories: ResourceCategory[] = [
         type: "document",
         level: "intermediate",
         duration: "1 hour read",
-        url: "https://www.cisc.gov.au/",
+        url: "https://www.legislation.gov.au/C2024A00098",
+        downloadUrl: "https://www.legislation.gov.au/C2024A00098",
         tags: ["Cybersecurity Act", "Critical Infrastructure", "Compliance"],
       },
       {
@@ -83,7 +86,9 @@ const resourceCategories: ResourceCategory[] = [
         type: "guide",
         level: "intermediate",
         duration: "2 hours",
-        url: "https://www.cyber.gov.au/resources-business-and-government/essential-Cybersecurity/essential-eight",
+        url: "https://www.cyber.gov.au/business-government/asds-cyber-security-frameworks/essential-eight/essential-eight-maturity-model",
+        downloadUrl:
+          "https://www.cyber.gov.au/business-government/asds-cyber-security-frameworks/essential-eight/essential-eight-maturity-model",
         tags: ["Essential Eight", "ACSC", "Security Controls"],
       },
       {
@@ -94,6 +99,7 @@ const resourceCategories: ResourceCategory[] = [
         level: "beginner",
         duration: "30 min read",
         url: "https://www.cyber.gov.au/",
+        downloadUrl: "https://www.cyber.gov.au/",
         tags: ["Ransomware", "Incident Reporting", "Legal Requirements"],
       },
     ],
@@ -112,7 +118,8 @@ const resourceCategories: ResourceCategory[] = [
         type: "guide",
         level: "beginner",
         duration: "20 min read",
-        guide: "https://nvlpubs.nist.gov/nistpubs/SpecialPublications/NIST.SP.1300.pdf",
+        guide:
+          "https://nvlpubs.nist.gov/nistpubs/SpecialPublications/NIST.SP.1300.pdf",
         tags: ["SME", "Getting Started", "Basics"],
       },
       {
@@ -122,7 +129,8 @@ const resourceCategories: ResourceCategory[] = [
         type: "guide",
         level: "beginner",
         duration: "30 min read",
-        guide: "https://atwork.safeonweb.be/sites/default/files/2024-09/MFA_Guide_FINAL_EN.pdf",
+        guide:
+          "https://atwork.safeonweb.be/sites/default/files/2024-09/MFA_Guide_FINAL_EN.pdf",
         tags: ["MFA", "Authentication", "Security"],
       },
       {
@@ -132,7 +140,8 @@ const resourceCategories: ResourceCategory[] = [
         type: "guide",
         level: "intermediate",
         duration: "1 hour read",
-        guide: "https://www.scalecomputing.com/documents/White-Papers/Business-Resilience-Best-Practices.pdf",
+        guide:
+          "https://www.scalecomputing.com/documents/White-Papers/Business-Resilience-Best-Practices.pdf",
         tags: ["Backup", "Disaster Recovery", "Business Continuity"],
       },
       {
@@ -152,7 +161,8 @@ const resourceCategories: ResourceCategory[] = [
         type: "tool",
         level: "intermediate",
         duration: "2 hours setup",
-        guide: "https://www.cyber.gov.au/sites/default/files/2023-03/ACSC%20Cyber%20Incident%20Response%20Plan%20Guidance_A4.pdf",
+        guide:
+          "https://www.cyber.gov.au/sites/default/files/2023-03/ACSC%20Cyber%20Incident%20Response%20Plan%20Guidance_A4.pdf",
         tags: ["Incident Response", "Template", "Emergency Planning"],
       },
     ],
@@ -225,7 +235,8 @@ const resourceCategories: ResourceCategory[] = [
       },
       {
         title: "Password Security Best Practices",
-        description: "Comprehensive guide to password management and security",
+        description:
+          "Comprehensive guide to password management and security",
         type: "guide",
         level: "beginner",
         duration: "15 min read",
@@ -278,8 +289,9 @@ const resourceCategories: ResourceCategory[] = [
         type: "checklist",
         level: "beginner",
         duration: "Immediate use",
-        downloadUrl: "#",
-        url: "#",
+        url: "https://www.oaic.gov.au/privacy/guidance-and-advice/data-breach-preparation-and-response",
+        downloadUrl:
+          "https://www.oaic.gov.au/privacy/guidance-and-advice/data-breach-preparation-and-response",
         tags: ["Data Breach", "Incident Response", "Emergency"],
       },
       {
@@ -289,7 +301,9 @@ const resourceCategories: ResourceCategory[] = [
         type: "guide",
         level: "intermediate",
         duration: "1 hour read",
-        url: "#",
+        url: "https://www.cyber.gov.au/resources-business-and-government/mitigating-cyber-security-incidents/ransomware-response",
+        downloadUrl:
+          "https://www.cyber.gov.au/resources-business-and-government/mitigating-cyber-security-incidents/ransomware-response",
         tags: ["Ransomware", "Incident Response", "Recovery"],
       },
       {
@@ -299,8 +313,9 @@ const resourceCategories: ResourceCategory[] = [
         type: "tool",
         level: "beginner",
         duration: "Setup: 30 min",
-        downloadUrl: "#",
-        url: "#",
+        url: "https://www.cisecurity.org/insights/white-papers/incident-communication-templates",
+        downloadUrl:
+          "https://www.cisecurity.org/insights/white-papers/incident-communication-templates",
         tags: ["Communication", "Templates", "Crisis Management"],
       },
       {
@@ -310,7 +325,8 @@ const resourceCategories: ResourceCategory[] = [
         type: "guide",
         level: "advanced",
         duration: "45 min read",
-        url: "#",
+        url: "https://www.ojp.gov/pdffiles1/nij/199408.pdf",
+        downloadUrl: "https://www.ojp.gov/pdffiles1/nij/199408.pdf",
         tags: ["Forensics", "Evidence", "Investigation"],
       },
     ],
@@ -329,7 +345,7 @@ const resourceCategories: ResourceCategory[] = [
         type: "guide",
         level: "intermediate",
         duration: "1.5 hours",
-        url: "#",
+        url: "https://www.oaic.gov.au/privacy/privacy-guidance-for-organisations-and-government-agencies/health-service-providers/guide-to-health-privacy",
         tags: ["Healthcare", "Patient Data", "HIPAA-aligned"],
       },
       {
@@ -339,16 +355,17 @@ const resourceCategories: ResourceCategory[] = [
         type: "document",
         level: "advanced",
         duration: "2 hours",
-        url: "#",
+        url: "https://www.asic.gov.au/",
         tags: ["Finance", "Banking", "Financial Data"],
       },
       {
         title: "Retail PCI DSS Compliance Guide",
-        description: "Payment Card Industry compliance for retail businesses",
+        description:
+          "Payment Card Industry compliance for retail businesses",
         type: "guide",
         level: "intermediate",
         duration: "1 hour",
-        url: "#",
+        url: "https://www.pcisecuritystandards.org/",
         tags: ["Retail", "PCI DSS", "Payment Security"],
       },
       {
@@ -358,7 +375,7 @@ const resourceCategories: ResourceCategory[] = [
         type: "guide",
         level: "beginner",
         duration: "45 minutes",
-        url: "#",
+        url: "https://www.esafety.gov.au/",
         tags: ["Education", "Student Data", "EdTech"],
       },
     ],
@@ -548,7 +565,7 @@ export function ResourcesPage() {
                               variant="outline"
                               size="sm"
                               onClick={() =>
-                                window.open(resource.url, "_blank")
+                                window.open(resource.url!, "_blank")
                               }
                             >
                               <ExternalLink className="h-4 w-4 mr-2" />
@@ -559,10 +576,9 @@ export function ResourcesPage() {
                             <Button
                               variant="outline"
                               size="sm"
-                              onClick={() => {
-                                // In a real app, this would trigger actual download
-                                console.log("Downloading:", resource.title);
-                              }}
+                              onClick={() =>
+                                window.open(resource.downloadUrl!, "_blank")
+                              }
                             >
                               <Download className="h-4 w-4 mr-2" />
                               Download
@@ -573,7 +589,7 @@ export function ResourcesPage() {
                               variant="outline"
                               size="sm"
                               onClick={() => {
-                                window.open(resource.guide, "_blank"); // open the PDF link
+                                window.open(resource.guide!, "_blank");
                               }}
                             >
                               <BookOpen className="h-4 w-4 mr-2" />
