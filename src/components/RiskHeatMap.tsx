@@ -143,7 +143,7 @@ function mergePlacements(rows: CategoryPlacement[]): CategoryPlacement[] {
 // ────────────────────────────────────────────────────────────────────────────────
 // Component (DEFAULT EXPORT)
 // ────────────────────────────────────────────────────────────────────────────────
-export default function RiskHeatMap() {
+export default function RiskHeatMap({ riskScore }: { riskScore?: number }) {
   const [placements, setPlacements] = useState<CategoryPlacement[]>(defaultAssignments);
 
   // Load initial data and subscribe to external updates
@@ -179,10 +179,12 @@ export default function RiskHeatMap() {
 
   // Color gradient from green (low) to red (high)
   const getCellColor = (row: number, col: number) => {
-    const riskScore = col + 1 + (5 - row);
-    if (riskScore <= 4) return "bg-green-300";
-    if (riskScore <= 6) return "bg-yellow-300";
-    if (riskScore <= 8) return "bg-orange-300";
+    const riskScoreLocal = riskScore ?? 0; // optional use of overall riskScore
+    const baseRisk = col + 1 + (5 - row);
+    const adjusted = baseRisk + Math.round(riskScoreLocal / 25);
+    if (adjusted <= 4) return "bg-green-300";
+    if (adjusted <= 6) return "bg-yellow-300";
+    if (adjusted <= 8) return "bg-orange-300";
     return "bg-red-300";
   };
 
@@ -228,7 +230,7 @@ export default function RiskHeatMap() {
                   {Array.from({ length: 5 }, (_, rowIndex) =>
                     Array.from({ length: 5 }, (_, colIndex) => {
                       const likelihood = colIndex + 1; // 1..5
-                      const impact = 5 - rowIndex;     // 5..1
+                      const impact = 5 - rowIndex; // 5..1
                       const catsInCell = getCategoriesForCell(likelihood, impact);
 
                       return (

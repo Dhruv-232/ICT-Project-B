@@ -223,58 +223,57 @@ const resourceCategories: ResourceCategory[] = [
       "Educational resources and training materials for teams and individuals",
     icon: <Users className="h-5 w-5" />,
     resources: [
-  {
-    title: "Cybersecurity Awareness for Employees",
-    description:
-      "Interactive training module covering common threats and safe practices",
-    type: "video",
-    level: "beginner",
-    duration: "3:59 mins",
-    training: "https://www.youtube.com/embed/1-MdMytK-T0",
-    tags: ["Employee Training", "Awareness", "Phishing"],
-  },
-  {
-    title: "Password Security Best Practices",
-    description:
-      "Comprehensive guide to password management and security",
-    type: "video",
-    level: "beginner",
-    duration: "8:50 mins",
-    training: "https://www.youtube.com/embed/ezxbTa-BAtc",
-    tags: ["Passwords", "Authentication", "Best Practices"],
-  },
-  {
-    title: "Social Engineering Recognition",
-    description:
-      "Learn to identify and respond to social engineering attacks",
-    type: "video",
-    level: "beginner",
-    duration: "3:47 mins",
-    training: "https://www.youtube.com/embed/uvKTMgWRPw4",
-    tags: ["Social Engineering", "Phishing", "Awareness"],
-  },
-  {
-    title: "Secure Remote Work Practices",
-    description:
-      "Guidelines for maintaining security while working remotely",
-    type: "video",
-    level: "beginner",
-    duration: "1:11 mins",
-    training: "https://www.youtube.com/embed/B43NitVdNcM",
-    tags: ["Remote Work", "VPN", "Home Office Security"],
-  },
-  {
-    title: "Monthly Cybersecurity Webinar Series",
-    description:
-      "Regular webinars covering current threats and compliance updates",
-    type: "webinar",
-    level: "beginner",
-    duration: "1:33 mins",
-    training: "https://www.youtube.com/embed/_OyQaUAcNHY",
-    tags: ["Webinar", "Current Threats", "Updates"],
-  },
-],
-
+      {
+        title: "Cybersecurity Awareness for Employees",
+        description:
+          "Interactive training module covering common threats and safe practices",
+        type: "video",
+        level: "beginner",
+        duration: "3:59 mins",
+        training: "https://www.youtube.com/embed/1-MdMytK-T0",
+        tags: ["Employee Training", "Awareness", "Phishing"],
+      },
+      {
+        title: "Password Security Best Practices",
+        description:
+          "Comprehensive guide to password management and security",
+        type: "video",
+        level: "beginner",
+        duration: "8:50 mins",
+        training: "https://www.youtube.com/embed/ezxbTa-BAtc",
+        tags: ["Passwords", "Authentication", "Best Practices"],
+      },
+      {
+        title: "Social Engineering Recognition",
+        description:
+          "Learn to identify and respond to social engineering attacks",
+        type: "video",
+        level: "beginner",
+        duration: "3:47 mins",
+        training: "https://www.youtube.com/embed/uvKTMgWRPw4",
+        tags: ["Social Engineering", "Phishing", "Awareness"],
+      },
+      {
+        title: "Secure Remote Work Practices",
+        description:
+          "Guidelines for maintaining security while working remotely",
+        type: "video",
+        level: "beginner",
+        duration: "1:11 mins",
+        training: "https://www.youtube.com/embed/B43NitVdNcM",
+        tags: ["Remote Work", "VPN", "Home Office Security"],
+      },
+      {
+        title: "Monthly Cybersecurity Webinar Series",
+        description:
+          "Regular webinars covering current threats and compliance updates",
+        type: "webinar",
+        level: "beginner",
+        duration: "1:33 mins",
+        training: "https://www.youtube.com/embed/_OyQaUAcNHY",
+        tags: ["Webinar", "Current Threats", "Updates"],
+      },
+    ],
   },
   {
     id: "industry-specific",
@@ -290,7 +289,7 @@ const resourceCategories: ResourceCategory[] = [
         type: "guide",
         level: "intermediate",
         duration: "1.5 hours",
-        url: "#",
+        url: "https://www.digitalhealth.gov.au/healthcare-providers/cyber-security-for-healthcare-providers",
         tags: ["Healthcare", "Patient Data", "HIPAA-aligned"],
       },
       {
@@ -300,7 +299,7 @@ const resourceCategories: ResourceCategory[] = [
         type: "document",
         level: "advanced",
         duration: "2 hours",
-        url: "#",
+        url: "https://www.cfr.gov.au/financial-stability/cyber-security.html",
         tags: ["Finance", "Banking", "Financial Data"],
       },
       {
@@ -310,7 +309,7 @@ const resourceCategories: ResourceCategory[] = [
         type: "guide",
         level: "intermediate",
         duration: "1 hour",
-        url: "#",
+        url: "https://www.vikingcloud.com/compliance-risk/pci-compliance?utm_source=bing&utm_medium=cpc&utm_term=pci%20dss%20requirements&utm_content=&creative=&device=c&matchtype=e&network=o&utm_adgroupid=1236951657703835&keyword=pci%20dss%20requirements&geo_click_id=121710&campaignid=486098344&gclid=&utm_campaign=bing_au-uk_compliance-risk-&-mst&msclkid=f5fb0338944e133a63216bc0311879b5",
         tags: ["Retail", "PCI DSS", "Payment Security"],
       },
       {
@@ -320,7 +319,7 @@ const resourceCategories: ResourceCategory[] = [
         type: "guide",
         level: "beginner",
         duration: "45 minutes",
-        url: "#",
+        url: "https://adits.com.au/blog/cyber-security-solutions-in-education",
         tags: ["Education", "Student Data", "EdTech"],
       },
     ],
@@ -583,31 +582,31 @@ export function ResourcesPage({
                             </Button>
                           )}
                           {resource.training && (
-  <>
-    {resource.type === "video" || resource.type === "webinar" ? (
-      <div className="video-container w-full mt-4">
-        <iframe
-          width="100%"
-          height="315"
-          src={resource.training}
-          title={resource.title}
-          frameBorder="0"
-          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-          allowFullScreen
-        ></iframe>
-      </div>
-    ) : (
-      <Button
-        variant="outline"
-        size="sm"
-        onClick={() => window.open(resource.training, "_blank")}
-      >
-        <Play className="h-4 w-4 mr-2" />
-        Start Training
-      </Button>
-    )}
-  </>
-)}
+                            <>
+                              {resource.type === "video" || resource.type === "webinar" ? (
+                                <div className="video-container w-full mt-4">
+                                  <iframe
+                                    width="100%"
+                                    height="315"
+                                    src={resource.training}
+                                    title={resource.title}
+                                    frameBorder="0"
+                                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                                    allowFullScreen
+                                  ></iframe>
+                                </div>
+                              ) : (
+                                <Button
+                                  variant="outline"
+                                  size="sm"
+                                  onClick={() => window.open(resource.training, "_blank")}
+                                >
+                                  <Play className="h-4 w-4 mr-2" />
+                                  Start Training
+                                </Button>
+                              )}
+                            </>
+                          )}
 
                         </div>
                       </CardContent>
