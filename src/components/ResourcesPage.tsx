@@ -1,3 +1,4 @@
+import { useCallback } from "react";
 import { Button } from "./ui/button";
 import {
   Card,
@@ -15,13 +16,11 @@ import {
   FileText,
   Shield,
   Users,
-  AlertTriangle,
+  Calendar,
+  Globe,
   CheckCircle,
   Download,
   Play,
-  Calendar,
-  Globe,
-  Lock,
   Search,
   Lightbulb,
 } from "lucide-react";
@@ -32,8 +31,11 @@ interface Resource {
   type: "guide" | "document" | "video" | "webinar" | "tool" | "checklist";
   level: "beginner" | "intermediate" | "advanced";
   duration?: string;
+  /** primary URL to open (for most resources) */
   url?: string;
+  /** optional “download” URL if you want a dedicated Download button */
   downloadUrl?: string;
+  /** alternate URLs used in your original data */
   guide?: string;
   assessment?: string;
   training?: string;
@@ -48,6 +50,9 @@ interface ResourceCategory {
   resources: Resource[];
 }
 
+/* =========================
+   UPDATED RESOURCE DATA
+   ========================= */
 const resourceCategories: ResourceCategory[] = [
   {
     id: "government-frameworks",
@@ -86,9 +91,7 @@ const resourceCategories: ResourceCategory[] = [
         type: "guide",
         level: "intermediate",
         duration: "2 hours",
-        url: "https://www.cyber.gov.au/business-government/asds-cyber-security-frameworks/essential-eight/essential-eight-maturity-model",
-        downloadUrl:
-          "https://www.cyber.gov.au/business-government/asds-cyber-security-frameworks/essential-eight/essential-eight-maturity-model",
+        url: "https://www.cyber.gov.au/resources-business-and-government/essential-Cybersecurity/essential-eight",
         tags: ["Essential Eight", "ACSC", "Security Controls"],
       },
       {
@@ -118,8 +121,7 @@ const resourceCategories: ResourceCategory[] = [
         type: "guide",
         level: "beginner",
         duration: "20 min read",
-        guide:
-          "https://nvlpubs.nist.gov/nistpubs/SpecialPublications/NIST.SP.1300.pdf",
+        guide: "https://nvlpubs.nist.gov/nistpubs/SpecialPublications/NIST.SP.1300.pdf",
         tags: ["SME", "Getting Started", "Basics"],
       },
       {
@@ -129,8 +131,7 @@ const resourceCategories: ResourceCategory[] = [
         type: "guide",
         level: "beginner",
         duration: "30 min read",
-        guide:
-          "https://atwork.safeonweb.be/sites/default/files/2024-09/MFA_Guide_FINAL_EN.pdf",
+        guide: "https://atwork.safeonweb.be/sites/default/files/2024-09/MFA_Guide_FINAL_EN.pdf",
         tags: ["MFA", "Authentication", "Security"],
       },
       {
@@ -140,8 +141,7 @@ const resourceCategories: ResourceCategory[] = [
         type: "guide",
         level: "intermediate",
         duration: "1 hour read",
-        guide:
-          "https://www.scalecomputing.com/documents/White-Papers/Business-Resilience-Best-Practices.pdf",
+        guide: "https://www.scalecomputing.com/documents/White-Papers/Business-Resilience-Best-Practices.pdf",
         tags: ["Backup", "Disaster Recovery", "Business Continuity"],
       },
       {
@@ -151,7 +151,7 @@ const resourceCategories: ResourceCategory[] = [
         type: "guide",
         level: "intermediate",
         duration: "45 min read",
-        guide: "https://apps.dtic.mil/sti/pdfs/AD1112780.pdf",
+        url: "https://apps.dtic.mil/sti/pdfs/AD1112780.pdf",
         tags: ["Training", "Awareness", "Human Factors"],
       },
       {
@@ -161,8 +161,7 @@ const resourceCategories: ResourceCategory[] = [
         type: "tool",
         level: "intermediate",
         duration: "2 hours setup",
-        guide:
-          "https://www.cyber.gov.au/sites/default/files/2023-03/ACSC%20Cyber%20Incident%20Response%20Plan%20Guidance_A4.pdf",
+        guide: "https://www.cyber.gov.au/sites/default/files/2023-03/ACSC%20Cyber%20Incident%20Response%20Plan%20Guidance_A4.pdf",
         tags: ["Incident Response", "Template", "Emergency Planning"],
       },
     ],
@@ -181,6 +180,7 @@ const resourceCategories: ResourceCategory[] = [
         type: "tool",
         level: "beginner",
         duration: "30 minutes",
+        // special-case routed to Risk Tool via button handler
         assessment: "#",
         tags: ["Self-Assessment", "Maturity", "Evaluation"],
       },
@@ -191,7 +191,7 @@ const resourceCategories: ResourceCategory[] = [
         type: "checklist",
         level: "intermediate",
         duration: "1 hour",
-        assessment: "#",
+        url: "https://www.oaic.gov.au/privacy/guidance-and-advice/guide-to-undertaking-privacy-impact-assessments",
         tags: ["Privacy", "PIA", "Template"],
       },
       {
@@ -201,7 +201,7 @@ const resourceCategories: ResourceCategory[] = [
         type: "checklist",
         level: "intermediate",
         duration: "45 minutes",
-        assessment: "#",
+        url: "https://www.cyber.gov.au/resources-business-and-government/essential-cyber-security/essential-eight/essential-eight-assessment-tool",
         tags: ["Essential Eight", "Checklist", "Assessment"],
       },
       {
@@ -211,7 +211,7 @@ const resourceCategories: ResourceCategory[] = [
         type: "guide",
         level: "advanced",
         duration: "2 hours",
-        assessment: "#",
+        url: "https://www.nist.gov/system/files/documents/itl/Cybersecurity/NIST-SP-800-30-Guide-for-Conducting-Risk-Assessments.pdf",
         tags: ["Risk Assessment", "Methodology", "Risk Management"],
       },
     ],
@@ -223,113 +223,58 @@ const resourceCategories: ResourceCategory[] = [
       "Educational resources and training materials for teams and individuals",
     icon: <Users className="h-5 w-5" />,
     resources: [
-      {
-        title: "Cybersecurity Awareness for Employees",
-        description:
-          "Interactive training module covering common threats and safe practices",
-        type: "video",
-        level: "beginner",
-        duration: "25 minutes",
-        training: "#",
-        tags: ["Employee Training", "Awareness", "Phishing"],
-      },
-      {
-        title: "Password Security Best Practices",
-        description:
-          "Comprehensive guide to password management and security",
-        type: "guide",
-        level: "beginner",
-        duration: "15 min read",
-        training: "#",
-        tags: ["Passwords", "Authentication", "Best Practices"],
-      },
-      {
-        title: "Social Engineering Recognition",
-        description:
-          "Learn to identify and respond to social engineering attacks",
-        type: "video",
-        level: "beginner",
-        duration: "30 minutes",
-        training: "#",
-        tags: ["Social Engineering", "Phishing", "Awareness"],
-      },
-      {
-        title: "Secure Remote Work Practices",
-        description:
-          "Guidelines for maintaining security while working remotely",
-        type: "guide",
-        level: "beginner",
-        duration: "20 min read",
-        training: "#",
-        tags: ["Remote Work", "VPN", "Home Office Security"],
-      },
-      {
-        title: "Monthly Cybersecurity Webinar Series",
-        description:
-          "Regular webinars covering current threats and compliance updates",
-        type: "webinar",
-        level: "beginner",
-        duration: "1 hour",
-        training: "#",
-        tags: ["Webinar", "Current Threats", "Updates"],
-      },
-    ],
+  {
+    title: "Cybersecurity Awareness for Employees",
+    description:
+      "Interactive training module covering common threats and safe practices",
+    type: "video",
+    level: "beginner",
+    duration: "3:59 mins",
+    training: "https://www.youtube.com/embed/1-MdMytK-T0",
+    tags: ["Employee Training", "Awareness", "Phishing"],
   },
   {
-    id: "incident-response",
-    name: "Incident Response",
+    title: "Password Security Best Practices",
     description:
-      "Resources for preparing for and responding to Cybersecurity incidents",
-    icon: <AlertTriangle className="h-5 w-5" />,
-    resources: [
-      {
-        title: "Data Breach Response Checklist",
-        description:
-          "Step-by-step checklist for responding to data security incidents",
-        type: "checklist",
-        level: "beginner",
-        duration: "Immediate use",
-        url: "https://www.oaic.gov.au/privacy/guidance-and-advice/data-breach-preparation-and-response",
-        downloadUrl:
-          "https://www.oaic.gov.au/privacy/guidance-and-advice/data-breach-preparation-and-response",
-        tags: ["Data Breach", "Incident Response", "Emergency"],
-      },
-      {
-        title: "Ransomware Attack Response Guide",
-        description:
-          "Comprehensive guide for responding to ransomware incidents",
-        type: "guide",
-        level: "intermediate",
-        duration: "1 hour read",
-        url: "https://www.cyber.gov.au/resources-business-and-government/mitigating-cyber-security-incidents/ransomware-response",
-        downloadUrl:
-          "https://www.cyber.gov.au/resources-business-and-government/mitigating-cyber-security-incidents/ransomware-response",
-        tags: ["Ransomware", "Incident Response", "Recovery"],
-      },
-      {
-        title: "Communication Templates for Incidents",
-        description:
-          "Pre-written templates for communicating during security incidents",
-        type: "tool",
-        level: "beginner",
-        duration: "Setup: 30 min",
-        url: "https://www.cisecurity.org/insights/white-papers/incident-communication-templates",
-        downloadUrl:
-          "https://www.cisecurity.org/insights/white-papers/incident-communication-templates",
-        tags: ["Communication", "Templates", "Crisis Management"],
-      },
-      {
-        title: "Forensic Evidence Preservation",
-        description:
-          "Guidelines for preserving digital evidence during incidents",
-        type: "guide",
-        level: "advanced",
-        duration: "45 min read",
-        url: "https://www.ojp.gov/pdffiles1/nij/199408.pdf",
-        downloadUrl: "https://www.ojp.gov/pdffiles1/nij/199408.pdf",
-        tags: ["Forensics", "Evidence", "Investigation"],
-      },
-    ],
+      "Comprehensive guide to password management and security",
+    type: "video",
+    level: "beginner",
+    duration: "8:50 mins",
+    training: "https://www.youtube.com/embed/ezxbTa-BAtc",
+    tags: ["Passwords", "Authentication", "Best Practices"],
+  },
+  {
+    title: "Social Engineering Recognition",
+    description:
+      "Learn to identify and respond to social engineering attacks",
+    type: "video",
+    level: "beginner",
+    duration: "3:47 mins",
+    training: "https://www.youtube.com/embed/uvKTMgWRPw4",
+    tags: ["Social Engineering", "Phishing", "Awareness"],
+  },
+  {
+    title: "Secure Remote Work Practices",
+    description:
+      "Guidelines for maintaining security while working remotely",
+    type: "video",
+    level: "beginner",
+    duration: "1:11 mins",
+    training: "https://www.youtube.com/embed/B43NitVdNcM",
+    tags: ["Remote Work", "VPN", "Home Office Security"],
+  },
+  {
+    title: "Monthly Cybersecurity Webinar Series",
+    description:
+      "Regular webinars covering current threats and compliance updates",
+    type: "webinar",
+    level: "beginner",
+    duration: "1:33 mins",
+    training: "https://www.youtube.com/embed/_OyQaUAcNHY",
+    tags: ["Webinar", "Current Threats", "Updates"],
+  },
+],
+
   },
   {
     id: "industry-specific",
@@ -345,7 +290,7 @@ const resourceCategories: ResourceCategory[] = [
         type: "guide",
         level: "intermediate",
         duration: "1.5 hours",
-        url: "https://www.oaic.gov.au/privacy/privacy-guidance-for-organisations-and-government-agencies/health-service-providers/guide-to-health-privacy",
+        url: "#",
         tags: ["Healthcare", "Patient Data", "HIPAA-aligned"],
       },
       {
@@ -355,7 +300,7 @@ const resourceCategories: ResourceCategory[] = [
         type: "document",
         level: "advanced",
         duration: "2 hours",
-        url: "https://www.asic.gov.au/",
+        url: "#",
         tags: ["Finance", "Banking", "Financial Data"],
       },
       {
@@ -365,7 +310,7 @@ const resourceCategories: ResourceCategory[] = [
         type: "guide",
         level: "intermediate",
         duration: "1 hour",
-        url: "https://www.pcisecuritystandards.org/",
+        url: "#",
         tags: ["Retail", "PCI DSS", "Payment Security"],
       },
       {
@@ -375,13 +320,16 @@ const resourceCategories: ResourceCategory[] = [
         type: "guide",
         level: "beginner",
         duration: "45 minutes",
-        url: "https://www.esafety.gov.au/",
+        url: "#",
         tags: ["Education", "Student Data", "EdTech"],
       },
     ],
   },
 ];
 
+/* =========================
+   UI helpers
+   ========================= */
 const getTypeIcon = (type: Resource["type"]) => {
   switch (type) {
     case "guide":
@@ -414,7 +362,27 @@ const getLevelColor = (level: Resource["level"]) => {
   }
 };
 
-export function ResourcesPage() {
+/* =========================
+   Component
+   ========================= */
+export function ResourcesPage({
+  onNavigate,
+}: {
+  onNavigate?: (page: string) => void;
+}) {
+  // Navigate using parent handler if provided; otherwise fall back to URL push
+  const goTo = useCallback(
+    (page: string) => {
+      if (onNavigate) {
+        onNavigate(page);
+      } else {
+        window.history.pushState({}, "", `/${page}`);
+        window.dispatchEvent(new PopStateEvent("popstate"));
+      }
+    },
+    [onNavigate]
+  );
+
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Hero Section */}
@@ -490,11 +458,7 @@ export function ResourcesPage() {
           <Tabs defaultValue="government-frameworks" className="w-full">
             <TabsList className="grid grid-cols-3 md:grid-cols-6 lg:grid-cols-6 mb-8">
               {resourceCategories.map((category) => (
-                <TabsTrigger
-                  key={category.id}
-                  value={category.id}
-                  className="text-xs"
-                >
+                <TabsTrigger key={category.id} value={category.id} className="text-xs">
                   {category.name.split(" ")[0]}
                 </TabsTrigger>
               ))}
@@ -504,13 +468,9 @@ export function ResourcesPage() {
               <TabsContent key={category.id} value={category.id}>
                 <div className="mb-8">
                   <div className="flex items-center space-x-3 mb-4">
-                    <div className="p-2 bg-gray-100 rounded">
-                      {category.icon}
-                    </div>
+                    <div className="p-2 bg-gray-100 rounded">{category.icon}</div>
                     <div>
-                      <h2 className="text-2xl text-gray-900">
-                        {category.name}
-                      </h2>
+                      <h2 className="text-2xl text-gray-900">{category.name}</h2>
                       <p className="text-gray-600">{category.description}</p>
                     </div>
                   </div>
@@ -526,9 +486,7 @@ export function ResourcesPage() {
                               {getTypeIcon(resource.type)}
                             </div>
                             <div>
-                              <CardTitle className="text-lg">
-                                {resource.title}
-                              </CardTitle>
+                              <CardTitle className="text-lg">{resource.title}</CardTitle>
                               <CardDescription className="mt-2">
                                 {resource.description}
                               </CardDescription>
@@ -546,81 +504,111 @@ export function ResourcesPage() {
                           </div>
                         </div>
                       </CardHeader>
+
                       <CardContent>
                         <div className="flex flex-wrap gap-2 mb-4">
                           {resource.tags.map((tag, tagIndex) => (
-                            <Badge
-                              key={tagIndex}
-                              variant="outline"
-                              className="text-xs"
-                            >
+                            <Badge key={tagIndex} variant="outline" className="text-xs">
                               {tag}
                             </Badge>
                           ))}
                         </div>
 
-                        <div className="flex space-x-3">
+                        <div className="flex flex-wrap items-center gap-3">
+                          {/* Special route to Risk Tool */}
+                          {resource.title === "Cybersecurity Maturity Self-Assessment" ? (
+                            <Button
+                              variant="outline"
+                              size="sm"
+                              onClick={() => goTo("risk-tool")}
+                              className="bg-gray-900 text-white hover:bg-gray-800"
+                            >
+                              <Play className="h-4 w-4 mr-2" />
+                              Take Assessment
+                            </Button>
+                          ) : null}
+
+                          {/* Primary "View Resource" for resources with canonical URL */}
                           {resource.url && (
                             <Button
                               variant="outline"
                               size="sm"
                               onClick={() =>
-                                window.open(resource.url!, "_blank")
+                                window.open(resource.url, "_blank")
                               }
                             >
                               <ExternalLink className="h-4 w-4 mr-2" />
                               View Resource
                             </Button>
                           )}
+
+                          {/* Fallback to guide/assessment/training if url not set */}
+                          {!resource.url && resource.guide && (
+                            <Button
+                              variant="outline"
+                              size="sm"
+                              onClick={() => {
+                                // In a real app, this would trigger actual download
+                                console.log("Downloading:", resource.title);
+                              }}
+                            >
+                              <ExternalLink className="h-4 w-4 mr-2" />
+                              View Resource
+                            </Button>
+                          )}
+                          {!resource.url && resource.assessment && resource.title !== "Cybersecurity Maturity Self-Assessment" && (
+                            <Button
+                              variant="outline"
+                              size="sm"
+                              onClick={() => {
+                                window.open(resource.guide, "_blank"); // open the PDF link
+                              }}
+                            >
+                              <ExternalLink className="h-4 w-4 mr-2" />
+                              View Resource
+                            </Button>
+                          )}
+
+                          {/* Optional: direct download button if you want it */}
                           {resource.downloadUrl && (
                             <Button
                               variant="outline"
                               size="sm"
                               onClick={() =>
-                                window.open(resource.downloadUrl!, "_blank")
+                                window.open(resource.downloadUrl!, "_blank", "noopener,noreferrer")
                               }
                             >
                               <Download className="h-4 w-4 mr-2" />
                               Download
                             </Button>
                           )}
-                          {resource.guide && (
-                            <Button
-                              variant="outline"
-                              size="sm"
-                              onClick={() => {
-                                window.open(resource.guide!, "_blank");
-                              }}
-                            >
-                              <BookOpen className="h-4 w-4 mr-2" />
-                              Read Guide
-                            </Button>
-                          )}
-
-                          {resource.assessment && (
-                            <Button
-                              variant="outline"
-                              size="sm"
-                              onClick={() => {
-                                console.log("Downloading:", resource.title);
-                              }}
-                            >
-                              <Play className="h-4 w-4 mr-2" />
-                              Take Assement
-                            </Button>
-                          )}
                           {resource.training && (
-                            <Button
-                              variant="outline"
-                              size="sm"
-                              onClick={() => {
-                                console.log("Start Training:", resource.title);
-                              }}
-                            >
-                              <Play className="h-4 w-4 mr-2" />
-                              Start Training
-                            </Button>
-                          )}
+  <>
+    {resource.type === "video" || resource.type === "webinar" ? (
+      <div className="video-container w-full mt-4">
+        <iframe
+          width="100%"
+          height="315"
+          src={resource.training}
+          title={resource.title}
+          frameBorder="0"
+          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+          allowFullScreen
+        ></iframe>
+      </div>
+    ) : (
+      <Button
+        variant="outline"
+        size="sm"
+        onClick={() => window.open(resource.training, "_blank")}
+      >
+        <Play className="h-4 w-4 mr-2" />
+        Start Training
+      </Button>
+    )}
+  </>
+)}
+
                         </div>
                       </CardContent>
                     </Card>
@@ -655,7 +643,7 @@ export function ResourcesPage() {
                 <div className="space-y-4">
                   <div>
                     <h4 className="text-lg text-gray-900 mb-2">
-                      Australian Cybersecurity Centre (ACSC)
+                      Australian Cyber Security Centre (ACSC)
                     </h4>
                     <p className="text-gray-600 mb-2">
                       Latest threat intelligence and security guidance
@@ -749,3 +737,5 @@ export function ResourcesPage() {
     </div>
   );
 }
+
+export default ResourcesPage;

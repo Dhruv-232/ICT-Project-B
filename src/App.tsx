@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Navigation } from "./components/Navigation";
 import { HomePage } from "./components/HomePage";
 import { RiskToolPage } from "./components/RiskToolPage";
@@ -11,7 +11,26 @@ export default function App() {
 
   const handleNavigate = (page: string) => {
     setCurrentPage(page);
+    window.history.pushState({}, "", `/${page === "home" ? "" : page}`);
   };
+
+  // 🧭 Keep the right page when reloading
+  useEffect(() => {
+    const path = window.location.pathname.replace("/", "");
+    if (path === "") setCurrentPage("home");
+    else setCurrentPage(path);
+  }, []);
+
+  // 🧭 Handle browser Back/Forward navigation
+  useEffect(() => {
+    const onPopState = () => {
+      const path = window.location.pathname.replace("/", "");
+      if (path === "") setCurrentPage("home");
+      else setCurrentPage(path);
+    };
+    window.addEventListener("popstate", onPopState);
+    return () => window.removeEventListener("popstate", onPopState);
+  }, []);
 
   const renderPage = () => {
     switch (currentPage) {
@@ -20,7 +39,7 @@ export default function App() {
       case "compliance":
         return <ComplianceChecklistPage />;
       case "resources":
-        return <ResourcesPage />;
+        return <ResourcesPage onNavigate={handleNavigate} />;
       case "about":
         return <AboutPage onNavigate={handleNavigate} />;
       default:

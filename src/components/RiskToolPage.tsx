@@ -11,6 +11,7 @@ import {
 import { Badge } from "./ui/badge";
 import { Progress } from "./ui/progress";
 import { AlertTriangle, Check, CircleAlert } from "lucide-react";
+// RiskToolPage.tsx
 import RiskHeatMap from "./RiskHeatMap";
 import { RecommendationsSection } from "./RecommendationsSection";
 import {
@@ -19,78 +20,62 @@ import {
   riskScore40,
   riskScore0,
 } from "../data/RiskTool.data";
+import { storage } from "../utils/storage";
+import ProgressTracker from "./ProgressTracker"; // <-- NEW
 
-// 🧩 Declare a global window type for the heatmap updater
-declare global {
-  interface Window {
-    updateRiskHeatMap?: (placements: Array<{
-      likelihood: 1 | 2 | 3 | 4 | 5;
-      impact: 1 | 2 | 3 | 4 | 5;
-      categories: (
-        | "Data Protection"
-        | "Access Control"
-        | "Incident Response"
-        | "Staff Training"
-      )[];
-    }>) => void;
-  }
-}
+/* ========= Local storage keys ========= */
+const RISK_ANSWERS_KEY = "risk.answers.v1";
+const RISK_STEP_KEY = "risk.step.v1";
+const RISK_RESULTS_KEY = "risk.results.v1";
+/* ===================================== */
 
-// 🔥 Helper function to convert score into heatmap data
-const computeHeatmapPlacementsFromScore = (score: number) => {
-  const placements: Array<{
-    likelihood: 1 | 2 | 3 | 4 | 5;
-    impact: 1 | 2 | 3 | 4 | 5;
-    categories: (
-      | "Data Protection"
-      | "Access Control"
-      | "Incident Response"
-      | "Staff Training"
-    )[];
-  }> = [];
-
-  if (score <= 20) {
-    placements.push(
-      { likelihood: 2, impact: 2, categories: ["Staff Training"] },
-      { likelihood: 2, impact: 2, categories: ["Data Protection"] }
-    );
-  } else if (score <= 40) {
-    placements.push(
-      { likelihood: 3, impact: 3, categories: ["Data Protection"] },
-      { likelihood: 2, impact: 3, categories: ["Staff Training"] }
-    );
-  } else if (score <= 60) {
-    placements.push(
-      { likelihood: 3, impact: 4, categories: ["Access Control"] },
-      { likelihood: 4, impact: 3, categories: ["Staff Training"] },
-      { likelihood: 3, impact: 3, categories: ["Data Protection"] }
-    );
-  } else if (score <= 80) {
-    placements.push(
-      { likelihood: 4, impact: 4, categories: ["Data Protection", "Access Control"] },
-      { likelihood: 3, impact: 5, categories: ["Incident Response"] }
-    );
-  } else {
-    placements.push(
-      { likelihood: 5, impact: 5, categories: ["Incident Response", "Access Control", "Data Protection"] },
-      { likelihood: 4, impact: 4, categories: ["Staff Training"] }
-    );
-  }
-
-  return placements;
-};
-
-// 🧠 Risk-based recommendations
+// Risk-based recommendations data
 const getRiskRecommendations = (riskScore: number) => {
   if (riskScore > 60) return riskScore60;
-  else if (riskScore > 40) return riskScore40;
-  else return riskScore0;
+  if (riskScore > 40) return riskScore40;
+  return riskScore0;
 };
 
 export function RiskToolPage() {
   const [currentCategory, setCurrentCategory] = useState(0);
   const [answers, setAnswers] = useState<Record<string, string>>({});
   const [showResults, setShowResults] = useState(false);
+  const [hydrated, setHydrated] = useState(false);
+
+  /* -------- Load saved state once -------- */
+  useEffect(() => {
+    const savedAnswers = storage.get<Record<string, string>>(RISK_ANSWERS_KEY);
+    const savedStep = storage.get<number>(RISK_STEP_KEY);
+    const savedResults = storage.get<boolean>(RISK_RESULTS_KEY);
+
+    if (savedAnswers) setAnswers(savedAnswers);
+    if (typeof savedStep === "number") {
+      const clamped = Math.min(
+        Math.max(0, savedStep),
+        Math.max(0, riskCategories.length - 1)
+      );
+      setCurrentCategory(clamped);
+    }
+    if (typeof savedResults === "boolean") setShowResults(savedResults);
+
+    setHydrated(true);
+  }, []);
+
+  /* -------- Persist changes -------- */
+  useEffect(() => {
+    if (!hydrated) return;
+    storage.set(RISK_ANSWERS_KEY, answers);
+  }, [answers, hydrated]);
+
+  useEffect(() => {
+    if (!hydrated) return;
+    storage.set(RISK_STEP_KEY, currentCategory);
+  }, [currentCategory, hydrated]);
+
+  useEffect(() => {
+    if (!hydrated) return;
+    storage.set(RISK_RESULTS_KEY, showResults);
+  }, [showResults, hydrated]);
 
   const handleAnswerChange = (questionId: string, value: string) => {
     setAnswers((prev) => ({ ...prev, [questionId]: value }));
@@ -130,36 +115,150 @@ export function RiskToolPage() {
     return { level: "Critical", color: "bg-red-500", textColor: "text-red-700" };
   };
 
-  // 🧩 Update the Heat Map when results are shown
-  useEffect(() => {
-    if (!showResults) return;
-    const score = calculateRiskScore();
-    const placements = computeHeatmapPlacementsFromScore(score);
-    window.updateRiskHeatMap?.(placements);
-    try {
-      localStorage.setItem("riskHeatMapPlacements", JSON.stringify(placements));
-    } catch {}
-  }, [showResults, answers]);
-
-  // 📥 Download PDF
+  // Zobair
+  // Enhanced PDF Export - includes results, recommendations, and summary
   const downloadPdf = () => {
-    const doc = new jsPDF();
-    const riskScore = calculateRiskScore();
-    const riskLevel = getRiskLevel(riskScore);
+  const doc = new jsPDF({ unit: "pt", format: "a4" });
+  const pageWidth = doc.internal.pageSize.getWidth();
+  let y = 60;
 
-    doc.setFontSize(18);
-    doc.text("Cybersecurity Risk Assessment Report", 20, 20);
+  const riskScore = calculateRiskScore();
+  const riskLevel = getRiskLevel(riskScore);
+  const recommendations = getRiskRecommendations(riskScore);
+
+  // Header
+  doc.setFont("helvetica", "bold");
+  doc.setFontSize(22);
+  doc.setTextColor(40, 40, 40);
+  doc.text("Cybersecurity Risk Assessment Results", pageWidth / 2, y, { align: "center" });
+  y += 40;
+
+  // === Risk Summary Card ===
+  doc.setFillColor(250, 250, 250);
+  doc.roundedRect(60, y, pageWidth - 120, 120, 10, 10, "F");
+
+  let badge = [67, 160, 71];
+  if (riskLevel.level === "Medium") badge = [255, 193, 7];
+  if (riskLevel.level === "High") badge = [255, 152, 0];
+  if (riskLevel.level === "Critical") badge = [211, 47, 47];
+
+  doc.setFont("helvetica", "bold");
+  doc.setFontSize(14);
+  doc.setTextColor(50, 50, 50);
+  doc.text("Overall Risk Score", pageWidth / 2, y + 30, { align: "center" });
+
+  doc.setFontSize(42);
+  doc.text(`${riskScore}%`, pageWidth / 2, y + 75, { align: "center" });
+
+  // Badge
+  doc.setFillColor(badge[0], badge[1], badge[2]);
+  doc.roundedRect(pageWidth / 2 - 45, y + 85, 90, 28, 5, 5, "F");
+  doc.setFontSize(11);
+  doc.setTextColor(255, 255, 255);
+  doc.text(riskLevel.level.toUpperCase(), pageWidth / 2, y + 104, { align: "center" });
+
+  // Bar
+  doc.setFillColor(230, 230, 230);
+  doc.rect(120, y + 118, pageWidth - 240, 8, "F");
+  doc.setFillColor(badge[0], badge[1], badge[2]);
+  doc.rect(120, y + 118, ((pageWidth - 240) * riskScore) / 100, 8, "F");
+  y += 160;
+
+  // === Priority Summary ===
+  doc.setFontSize(14);
+  doc.setTextColor(0, 0, 0);
+  doc.text("Personalized Security Recommendations", 60, y);
+  y += 25;
+
+  const priorities = [
+    { label: "High Priority", count: 4, color: [211, 47, 47] },
+    { label: "Medium Priority", count: 0, color: [255, 193, 7] },
+    { label: "Low Priority", count: 0, color: [67, 160, 71] },
+  ];
+
+  let x = 100;
+  priorities.forEach((p) => {
+    doc.setFillColor(250, 250, 250);
+    doc.roundedRect(x - 25, y, 150, 70, 10, 10, "F");
+    doc.setFont("helvetica", "bold");
+    doc.setTextColor(p.color[0], p.color[1], p.color[2]);
+    doc.setFontSize(26);
+    doc.text(`${p.count}`, x + 50, y + 40, { align: "center" });
+    doc.setFontSize(11);
+    doc.setTextColor(80, 80, 80);
+    doc.text(p.label, x + 50, y + 55, { align: "center" });
+    x += 180;
+  });
+  y += 110;
+
+  // === Recommendations ===
+  doc.setFont("helvetica", "bold");
+  doc.setFontSize(14);
+  doc.setTextColor(40, 40, 40);
+  doc.text("High Priority Recommendations", 60, y);
+  y += 25;
+
+  recommendations.forEach((rec, i) => {
+    if (y > 720) { doc.addPage(); y = 60; }
+    doc.setFillColor(255, 255, 255);
+    doc.setDrawColor(240, 240, 240);
+    doc.roundedRect(60, y, pageWidth - 120, 90, 10, 10, "FD");
+
+    doc.setFont("helvetica", "bold");
     doc.setFontSize(12);
-    doc.text(`Overall Risk Score: ${riskScore}%`, 20, 40);
-    doc.text(`Risk Level: ${riskLevel.level}`, 20, 50);
-    doc.text("Thank you for using the assessment tool.", 20, 70);
-    doc.text("Refer to the recommendations for improvements.", 20, 80);
-    doc.save("Cybersecurity-risk-report.pdf");
-  };
+    doc.setTextColor(0, 0, 0);
+    doc.text(`${i + 1}. ${rec.title}`, 75, y + 25);
 
-  const allQuestionsAnswered = riskCategories.every((category) =>
-    category.questions.every((question) => answers[question.id])
+    doc.text("Thank you for using the assessment tool.", 20, 70);
+    doc.text("To improve your posture, please refer to our recommendations.", 20, 80);
+
+    y += 110;
+  });
+
+  // === Next Steps ===
+  doc.setFillColor(250, 250, 250);
+  doc.roundedRect(60, y, pageWidth - 120, 80, 10, 10, "F");
+  y += 25;
+  doc.setFont("helvetica", "bold");
+  doc.setTextColor(40, 40, 40);
+  doc.text("Next Steps", 75, y);
+  doc.setFont("helvetica", "normal");
+  doc.setFontSize(11);
+  doc.setTextColor(80, 80, 80);
+  y += 20;
+  doc.text("• Start with high-priority recommendations for immediate impact", 90, y);
+  y += 18;
+  doc.text("• Schedule medium-priority items for the next quarter", 90, y);
+  y += 18;
+  doc.text("• Plan low-priority improvements for ongoing security enhancement", 90, y);
+  y += 40;
+
+  // === Footer ===
+  doc.setFont("helvetica", "italic");
+  doc.setFontSize(10);
+  doc.setTextColor(120, 120, 120);
+  doc.text("Generated using the CyberWise Core Risk Assessment Tool", 60, y);
+
+  doc.save("Cybersecurity-Risk-Assessment.pdf");
+};
+
+
+  // Overall progress
+  const answeredCount = Object.keys(answers).length;
+  const totalQuestions = riskCategories.reduce(
+    (sum, category) => sum + category.questions.length,
+    0
   );
+  const progressPercent = Math.round((answeredCount / totalQuestions) * 100);
+
+  /* -------- Hydration guard -------- */
+  if (!hydrated) {
+    return (
+      <div className="min-h-[60vh] flex items-center justify-center text-sm text-gray-600">
+        Loading assessment…
+      </div>
+    );
+  }
 
   // ✅ Results Page
   if (showResults) {
@@ -181,9 +280,7 @@ export function RiskToolPage() {
             <CardTitle className="text-2xl">Overall Risk Score</CardTitle>
             <div className="mt-4">
               <div className="text-4xl mb-2">{riskScore}%</div>
-              <Badge className={`${riskLevel.color} text-white`}>
-                {riskLevel.level} Risk
-              </Badge>
+              <Badge className={`${riskLevel.color} text-white`}>{riskLevel.level} Risk</Badge>
             </div>
           </CardHeader>
           <CardContent>
@@ -213,6 +310,9 @@ export function RiskToolPage() {
         <div className="text-center">
           <Button
             onClick={() => {
+              storage.remove(RISK_ANSWERS_KEY);
+              storage.remove(RISK_STEP_KEY);
+              storage.remove(RISK_RESULTS_KEY);
               setShowResults(false);
               setAnswers({});
               setCurrentCategory(0);
@@ -222,10 +322,7 @@ export function RiskToolPage() {
           >
             Start New Assessment
           </Button>
-          <Button
-            className="bg-gray-900 hover:bg-gray-800 text-white"
-            onClick={downloadPdf}
-          >
+          <Button className="bg-gray-900 hover:bg-gray-800 text-white" onClick={downloadPdf}>
             Download Report
           </Button>
         </div>
@@ -270,9 +367,7 @@ export function RiskToolPage() {
                     key={category.id}
                     onClick={() => setCurrentCategory(index)}
                     className={`w-full text-left p-3 rounded-lg border transition-colors ${
-                      isCurrent
-                        ? "border-gray-900 bg-gray-50"
-                        : "border-gray-200 hover:bg-gray-50"
+                      isCurrent ? "border-gray-900 bg-gray-50" : "border-gray-200 hover:bg-gray-50"
                     }`}
                   >
                     <div className="flex items-center space-x-3">
@@ -292,6 +387,17 @@ export function RiskToolPage() {
 
           {/* Main Form */}
           <div className="lg:col-span-3">
+            {/* NEW: Global sticky progress tracker */}
+            <div className="mb-4">
+              <ProgressTracker
+                title="Overall Assessment Progress"
+                percent={progressPercent}
+                leftLabel={`${answeredCount} of ${totalQuestions} answered`}
+                rightLabel={`${totalQuestions - answeredCount} remaining`}
+                sticky
+              />
+            </div>
+
             <Card>
               <CardHeader>
                 <div>
@@ -314,6 +420,7 @@ export function RiskToolPage() {
                   Section {currentCategory + 1} of {riskCategories.length}
                 </p>
               </CardHeader>
+
               <CardContent className="space-y-8">
                 {riskCategories[currentCategory].questions.map((question) => (
                   <div key={question.id} className="space-y-4">
@@ -323,6 +430,7 @@ export function RiskToolPage() {
                         Required
                       </Badge>
                     </div>
+
                     <div className="grid gap-3">
                       {question.options.map((option) => {
                         const isSelected = answers[question.id] === option.value;
@@ -330,19 +438,18 @@ export function RiskToolPage() {
                           <button
                             key={option.value}
                             onClick={() => handleAnswerChange(question.id, option.value)}
-                            className={`relative p-4 rounded-lg border-2 text-left transition-all duration-200 hover:shadow-md ${
-                              isSelected
-                                ? "border-gray-900 bg-gray-50 shadow-sm"
-                                : "border-gray-200 bg-white hover:border-gray-300 hover:bg-gray-50"
-                            }`}
+                            className={`
+                              relative p-4 rounded-lg border-2 text-left transition-all duration-200 hover:shadow-md
+                              ${
+                                isSelected
+                                  ? "border-gray-900 bg-gray-50 shadow-sm"
+                                  : "border-gray-200 bg-white hover:border-gray-300 hover:bg-gray-50"
+                              }
+                            `}
                           >
                             <div className="flex items-start justify-between">
                               <div className="flex-1">
-                                <div
-                                  className={`text-base mb-1 ${
-                                    isSelected ? "text-gray-900" : "text-gray-700"
-                                  }`}
-                                >
+                                <div className={`text-base mb-1 ${isSelected ? "text-gray-900" : "text-gray-700"}`}>
                                   {option.label}
                                 </div>
                                 {option.risk <= 2 && (
@@ -386,9 +493,7 @@ export function RiskToolPage() {
                                   />
                                 ))}
                               </div>
-                              <span className="text-xs text-gray-500">
-                                Risk Level: {option.risk}/5
-                              </span>
+                              <span className="text-xs text-gray-500">Risk Level: {option.risk}/5</span>
                             </div>
                           </button>
                         );
@@ -400,7 +505,7 @@ export function RiskToolPage() {
             </Card>
 
             {/* Navigation */}
-            <div className="flex justify-between mt-8">
+            <div className="flex items-center justify-between mt-8">
               <Button
                 variant="outline"
                 onClick={() => setCurrentCategory(Math.max(0, currentCategory - 1))}
@@ -409,24 +514,39 @@ export function RiskToolPage() {
                 Previous
               </Button>
 
-              {currentCategory === riskCategories.length - 1 ? (
+              <div className="flex items-center gap-3">
                 <Button
-                  onClick={() => setShowResults(true)}
-                  disabled={!allQuestionsAnswered}
-                  className="bg-gray-900 hover:bg-gray-800 text-white"
+                  variant="outline"
+                  onClick={() => {
+                    storage.remove(RISK_ANSWERS_KEY);
+                    storage.remove(RISK_STEP_KEY);
+                    storage.remove(RISK_RESULTS_KEY);
+                    setAnswers({});
+                    setCurrentCategory(0);
+                    setShowResults(false);
+                  }}
                 >
-                  Complete Assessment
+                  Reset Saved Progress
                 </Button>
-              ) : (
-                <Button
-                  onClick={() =>
-                    setCurrentCategory(Math.min(riskCategories.length - 1, currentCategory + 1))
-                  }
-                  className="bg-gray-900 hover:bg-gray-800 text-white"
-                >
-                  Next
-                </Button>
-              )}
+
+                {currentCategory === riskCategories.length - 1 ? (
+                  <Button
+                    onClick={() => setShowResults(true)}
+                    className="bg-gray-900 hover:bg-gray-800 text-white"
+                  >
+                    Complete Assessment
+                  </Button>
+                ) : (
+                  <Button
+                    onClick={() =>
+                      setCurrentCategory(Math.min(riskCategories.length - 1, currentCategory + 1))
+                    }
+                    className="bg-gray-900 hover:bg-gray-800 text-white"
+                  >
+                    Next
+                  </Button>
+                )}
+              </div>
             </div>
           </div>
         </div>
@@ -434,3 +554,6 @@ export function RiskToolPage() {
     </>
   );
 }
+
+export default RiskToolPage;
+
