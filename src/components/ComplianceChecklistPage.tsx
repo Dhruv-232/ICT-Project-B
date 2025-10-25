@@ -112,189 +112,155 @@ function mergeCompleted(
     };
   });
 }
-/* ================================================== */
-
-// Generate tailored recommendations (unchanged)
+// Generate tailored recommendations (dynamic & conditional)
 const getComplianceRecommendations = (
   progressPercentage: number,
   businessSize: string,
   sector: string
 ) => {
+  // --- Guard: no data yet ---
+  if (!businessSize && !sector) return [];
+  if (progressPercentage === 0) return [];
+
   const recommendations: any[] = [];
 
+  // --- Progress-based guidance ---
   if (progressPercentage < 25) {
-    recommendations.push(
-      {
-        id: "start-privacy",
-        title: "Begin with Privacy Fundamentals",
-        description:
-          "Start your compliance journey by implementing basic privacy policies and data handling procedures",
-        priority: "high" as const,
-        category: "Privacy",
-        timeframe: "2-3 weeks",
-        effort: "low" as const,
-        impact: "high" as const,
-        action: "Start Privacy Basics",
-        resources: [
-          { title: "Privacy Policy Template", url: "#", type: "guide" as const },
-          {
-            title: "OAIC Privacy Guidelines",
-            url: "https://www.oaic.gov.au/",
-            type: "external" as const,
-          },
-        ],
-      },
-      {
-        id: "essential-eight-start",
-        title: "Implement Essential Eight Basics",
-        description:
-          "Focus on foundational ACSC Essential Eight security controls to establish baseline protection",
-        priority: "high" as const,
-        category: "Security",
-        timeframe: "4-6 weeks",
-        effort: "medium" as const,
-        impact: "high" as const,
-        action: "Start Essential Eight",
-        resources: [
-          {
-            title: "Essential Eight Implementation Guide",
-            url: "#",
-            type: "guide" as const,
-          },
-        ],
-      }
-    );
+    recommendations.push({
+      id: "privacy-basics",
+      title: "Start with Privacy and Security Basics",
+      description:
+        "You’re at the beginning of your compliance journey. Focus on essential policies, data handling rules, and foundational controls.",
+      priority: "high",
+      category: "Foundations",
+      timeframe: "2–3 weeks",
+      effort: "low",
+      impact: "high",
+      action: "View Privacy Resources",
+      resources: [
+        {
+          title: "OAIC Privacy Essentials",
+          url: "https://www.oaic.gov.au/privacy/privacy-guidance-for-organisations-and-government-agencies/organisations/small-business",
+          type: "external",
+        },
+      ],
+    });
   } else if (progressPercentage < 50) {
-    recommendations.push(
-      {
-        id: "expand-controls",
-        title: "Expand Security Controls",
-        description:
-          "Build on your foundation by implementing additional security measures and monitoring capabilities",
-        priority: "medium" as const,
-        category: "Security",
-        timeframe: "6-8 weeks",
-        effort: "medium" as const,
-        impact: "medium" as const,
-        action: "Expand Controls",
-        resources: [
-          { title: "Security Controls Checklist", url: "#", type: "guide" as const },
-        ],
-      },
-      {
-        id: "data-governance",
-        title: "Strengthen Data Governance",
-        description:
-          "Develop comprehensive data classification and handling procedures",
-        priority: "medium" as const,
-        category: "Data Management",
-        timeframe: "4-6 weeks",
-        effort: "medium" as const,
-        impact: "high" as const,
-        action: "Develop Procedures",
-        resources: [
-          { title: "Data Governance Framework", url: "#", type: "guide" as const },
-        ],
-      }
-    );
+    recommendations.push({
+      id: "expand-controls",
+      title: "Expand Security Controls",
+      description:
+        "Continue building maturity with multi-factor authentication, access restrictions, and audit logging.",
+      priority: "medium",
+      category: "Security",
+      timeframe: "4–6 weeks",
+      effort: "medium",
+      impact: "medium",
+      action: "Review Security Controls",
+      resources: [
+        {
+          title: "ACSC Essential Eight Maturity Model",
+          url: "https://www.cyber.gov.au/business-government/asds-cyber-security-frameworks/essential-eight",
+          type: "external",
+        },
+      ],
+    });
   } else if (progressPercentage < 75) {
     recommendations.push({
       id: "advanced-monitoring",
-      title: "Advanced Monitoring and Detection",
+      title: "Enhance Monitoring and Incident Readiness",
       description:
-        "Implement sophisticated monitoring tools and incident response procedures",
-      priority: "medium" as const,
+        "Implement advanced detection tools and test incident-response procedures regularly.",
+      priority: "medium",
       category: "Monitoring",
-      timeframe: "8-12 weeks",
-      effort: "high" as const,
-      impact: "medium" as const,
-      action: "Setup Monitoring",
+      timeframe: "8–12 weeks",
+      effort: "high",
+      impact: "high",
+      action: "Improve Monitoring",
       resources: [
-        { title: "Monitoring Solutions Guide", url: "#", type: "guide" as const },
+        {
+          title: "Incident Response Planning Guide",
+          url: "https://www.cyber.gov.au/",
+          type: "external",
+        },
       ],
+    });
+  } else {
+    recommendations.push({
+      id: "continuous-improvement",
+      title: "Maintain Continuous Improvement",
+      description:
+        "You’re achieving strong compliance maturity. Establish quarterly audits and staff refreshers to stay current.",
+      priority: "low",
+      category: "Process",
+      timeframe: "Ongoing",
+      effort: "low",
+      impact: "medium",
+      action: "Schedule Review",
+      resources: [
+  {
+    title: "Cybersecurity Act 2024 – Implementation Guide",
+    url: "https://www.legislation.gov.au/C2024A00098/latest/text",
+    type: "external",
+  },
+],
     });
   }
 
+  // --- Sector-specific extras ---
   if (sector === "healthcare") {
     recommendations.push({
-      id: "healthcare-specific",
-      title: "Healthcare Data Protection",
+      id: "healthcare-protection",
+      title: "Apply Healthcare-Specific Safeguards",
       description:
-        "Implement healthcare-specific privacy and security measures for patient data protection",
-      priority: "high" as const,
+        "Follow strict privacy and data handling measures aligned with the Australian Privacy Principles.",
+      priority: "high",
       category: "Healthcare",
-      timeframe: "3-4 weeks",
-      effort: "medium" as const,
-      impact: "high" as const,
-      action: "Review Healthcare Requirements",
+      timeframe: "3–4 weeks",
+      effort: "medium",
+      impact: "high",
+      action: "Review Health Data Policy",
       resources: [
-        { title: "Healthcare Privacy Guide", url: "#", type: "guide" as const },
+        {
+          title: "OAIC Health Data Guidance",
+          url: "https://www.oaic.gov.au/privacy/privacy-guidance-for-organisations-and-government-agencies/health-service-providers/guide-to-health-privacy",
+          type: "external",
+        },
       ],
     });
   }
 
   if (sector === "finance") {
     recommendations.push({
-      id: "finance-specific",
-      title: "Financial Services Compliance",
+      id: "finance-controls",
+      title: "Strengthen Financial Security Controls",
       description:
-        "Ensure compliance with financial sector Cybersecurity and privacy requirements",
-      priority: "high" as const,
+        "Ensure compliance with APRA CPS 234 and protect financial systems with risk-based control testing.",
+      priority: "high",
       category: "Finance",
-      timeframe: "4-6 weeks",
-      effort: "high" as const,
-      impact: "high" as const,
-      action: "Review Finance Requirements",
+      timeframe: "4–6 weeks",
+      effort: "high",
+      impact: "high",
+      action: "Review Finance Controls",
       resources: [
-        { title: "Financial Services Guide", url: "#", type: "guide" as const },
-      ],
+  {
+    title: "APRA CPS 234 – Information Security Standard",
+    url: "https://www.legislation.gov.au/F2018L01745/latest/text",
+    type: "external",
+  },
+  {
+    title: "APRA CPG 234 – Information Security Guidance",
+    url: "https://www.apra.gov.au/sites/default/files/cpg_234_information_security_june_2019_0.pdf",
+    type: "external",
+  },
+],
+      
     });
   }
-
-  if (businessSize === "small") {
-    recommendations.push({
-      id: "small-business",
-      title: "Small Business Security Essentials",
-      description:
-        "Focus on cost-effective security measures that provide maximum protection for small businesses",
-      priority: "medium" as const,
-      category: "Small Business",
-      timeframe: "2-4 weeks",
-      effort: "low" as const,
-      impact: "medium" as const,
-      action: "Review Small Business Guide",
-      resources: [
-        {
-          title: "Small Business Cybersecurity Guide",
-          url: "#",
-          type: "guide" as const,
-        },
-      ],
-    });
-  }
-
-  recommendations.push({
-    id: "continuous-improvement",
-    title: "Continuous Compliance Monitoring",
-    description:
-      "Establish regular reviews and updates to maintain compliance as regulations evolve",
-    priority: "low" as const,
-    category: "Process",
-    timeframe: "Ongoing",
-    effort: "low" as const,
-    impact: "medium" as const,
-    action: "Setup Reviews",
-    resources: [
-      {
-        title: "Compliance Review Schedule",
-        url: "#",
-        type: "guide" as const,
-      },
-    ],
-  });
 
   return recommendations;
 };
+
 
 export function ComplianceChecklistPage() {
   const [businessSize, setBusinessSize] = useState<string>("");
@@ -866,18 +832,37 @@ export function ComplianceChecklistPage() {
           })}
         </div>
 
-        <div className="mt-8">
-          <RecommendationsSection
-            title="Compliance Improvement Recommendations"
-            subtitle="Tailored suggestions to enhance your compliance posture and security maturity"
-            recommendations={getComplianceRecommendations(
-              progressPercentage,
-              businessSize,
-              sector
-            )}
-            onActionClick={(r) => console.log("Action clicked for:", r.title)}
-          />
-        </div>
+
+      <div className="mt-8">
+  {getComplianceRecommendations(progressPercentage, businessSize, sector).length > 0 ? (
+    <RecommendationsSection
+      title="Compliance Improvement Recommendations"
+      subtitle="Tailored suggestions to enhance your compliance posture and security maturity"
+      recommendations={getComplianceRecommendations(
+        progressPercentage,
+        businessSize,
+        sector
+      )}
+      onActionClick={(r) => {
+        if (r.resources && r.resources.length > 0 && r.resources[0].url) {
+          window.open(r.resources[0].url, "_blank");
+        } else {
+          alert(`Action: ${r.action}`);
+        }
+      }}
+    />
+  ) : (
+    <div className="text-center text-gray-500 py-10 border rounded-lg bg-gray-50">
+      <p>
+        No recommendations yet — complete some checklist items and select your business details
+        to see tailored suggestions.
+      </p>
+    </div>
+  )}
+</div>
+
+
+        
 
         <Card className="mt-8">
           <CardHeader>
