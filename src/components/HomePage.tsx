@@ -1,3 +1,5 @@
+// src/components/HomePage.tsx
+import { useEffect, useState } from "react";
 import { Button } from "./ui/button";
 import {
   Card,
@@ -12,12 +14,31 @@ import {
   CircleAlert,
   Fingerprint,
 } from "lucide-react";
+import { Progress } from "./ui/progress";
+import {
+  getCombinedProgress,
+  getResumeDestination,
+} from "../utils/storage";
 
 interface HomePageProps {
-  onNavigate: (page: string) => void;
+  onNavigate: (page: string, opts?: Record<string, any>) => void;
 }
 
 export function HomePage({ onNavigate }: HomePageProps) {
+  const [combined, setCombined] = useState<number>(0);
+
+  useEffect(() => {
+    // Read combined percent from local storage (risk + compliance)
+    setCombined(getCombinedProgress());
+  }, []);
+
+  const handleResume = () => {
+    const dest = getResumeDestination(); // picks last visited or first module
+    const opts = { resume: { sectionId: dest.sectionId, step: dest.step } };
+    if (dest.kind === "risk") onNavigate("risk-tool", opts);
+    else onNavigate("compliance", opts);
+  };
+
   return (
     <>
       {/* Hero Section */}
@@ -36,10 +57,33 @@ export function HomePage({ onNavigate }: HomePageProps) {
                 with our comprehensive suite of tools designed specifically for
                 small and medium enterprises.
               </p>
+
+              {/* Resume block */}
+              <div className="max-w-xl mx-auto mt-10">
+                <Card className="bg-white border border-gray-200">
+                  <CardContent className="pt-6 space-y-4">
+                    <div className="flex items-center justify-between">
+                      <div className="text-sm text-gray-600">
+                        Overall progress (Compliance + Risk Tool)
+                      </div>
+                      <div className="font-medium">{combined}%</div>
+                    </div>
+                    <Progress value={combined} />
+                    <Button
+                      className="w-full bg-gray-900 hover:bg-gray-800 text-white"
+                      size="lg"
+                      onClick={handleResume}
+                    >
+                      Resume • {combined}% complete
+                    </Button>
+                  </CardContent>
+                </Card>
+              </div>
             </div>
           </div>
         </section>
       </div>
+
       <div className="bg-gray-50 flex flex-col">
         {/* Tools Section */}
         <section className="bg-gray-50 py-8">
