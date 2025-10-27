@@ -23,6 +23,7 @@ import complianceFrameworks from "../data/ComplianceChecklist.data";
 import jsPDF from "jspdf";
 import autoTable from "jspdf-autotable";
 import { storage } from "../utils/storage"; // localStorage helper
+import { setToolProgress, setLastVisited } from "../utils/storage"; // resume helpers
 
 /* ================= Progress Tracker (inline) ================= */
 function ProgressTracker({
@@ -112,6 +113,7 @@ function mergeCompleted(
     };
   });
 }
+
 // Generate tailored recommendations (dynamic & conditional)
 const getComplianceRecommendations = (
   progressPercentage: number,
@@ -198,12 +200,12 @@ const getComplianceRecommendations = (
       impact: "medium",
       action: "Schedule Review",
       resources: [
-  {
-    title: "Cybersecurity Act 2024 – Implementation Guide",
-    url: "https://www.legislation.gov.au/C2024A00098/latest/text",
-    type: "external",
-  },
-],
+        {
+          title: "Cybersecurity Act 2024 – Implementation Guide",
+          url: "https://www.legislation.gov.au/C2024A00098/latest/text",
+          type: "external",
+        },
+      ],
     });
   }
 
@@ -243,32 +245,42 @@ const getComplianceRecommendations = (
       impact: "high",
       action: "Review Finance Controls",
       resources: [
-  {
-    title: "APRA CPS 234 – Information Security Standard",
-    url: "https://www.legislation.gov.au/F2018L01745/latest/text",
-    type: "external",
-  },
-  {
-    title: "APRA CPG 234 – Information Security Guidance",
-    url: "https://www.apra.gov.au/sites/default/files/cpg_234_information_security_june_2019_0.pdf",
-    type: "external",
-  },
-],
-      
+        {
+          title: "APRA CPS 234 – Information Security Standard",
+          url: "https://www.legislation.gov.au/F2018L01745/latest/text",
+          type: "external",
+        },
+        {
+          title: "APRA CPG 234 – Information Security Guidance",
+          url: "https://www.apra.gov.au/sites/default/files/cpg_234_information_security_june_2019_0.pdf",
+          type: "external",
+        },
+      ],
     });
   }
 
   return recommendations;
 };
 
+type ResumeOpts = { sectionId: string | null; step: number } | undefined;
+type Props = {
+  onNavigate?: (page: string, opts?: Record<string, any>) => void;
+  navOpts?: { resume?: ResumeOpts } | Record<string, any>;
+  onRendered?: () => void; // used by App to clear one-time opts
+};
 
-export function ComplianceChecklistPage() {
+export function ComplianceChecklistPage({ navOpts, onRendered }: Props) {
   const [businessSize, setBusinessSize] = useState<string>("");
   const [sector, setSector] = useState<string>("");
 
   // MASTER list: holds true state (including completed flags)
   const [allFrameworks, setAllFrameworks] =
     useState<ComplianceFramework[]>(complianceFrameworks);
+
+  // Track which framework is currently “focused” for resume purposes
+  const [currentFrameworkId, setCurrentFrameworkId] = useState<string | null>(
+    null
+  );
 
   const [privacyActExpanded, setPrivacyActExpanded] = useState(false);
   const [cyberActExpanded, setCyberActExpanded] = useState(false);
@@ -317,6 +329,34 @@ export function ComplianceChecklistPage() {
 
     setHydrated(true);
   }, []);
+
+  // If we arrived via Home "Resume", expand the requested framework or a sensible default
+  useEffect(() => {
+    if (!hydrated) return;
+    const resume = (navOpts as any)?.resume as ResumeOpts;
+    if (resume) {
+      let targetId: string | null = resume.sectionId ?? null;
+
+      // If no sectionId provided, use step as index in the full framework list
+      if (!targetId && typeof resume.step === "number") {
+        const idx = Math.max(0, Math.min(allFrameworks.length - 1, resume.step));
+        targetId = String(allFrameworks[idx]?.id ?? "");
+      }
+
+      if (targetId) {
+        setCurrentFrameworkId(targetId);
+        // Open the correct accordion based on known IDs
+        if (targetId === "privacy-act") setPrivacyActExpanded(true);
+        if (targetId === "Cybersecurity-act") setCyberActExpanded(true);
+        if (targetId === "ransomware-reporting") setRansomwareExpanded(true);
+        if (targetId === "essential-eight-ml1") setML1Expanded(true);
+        if (targetId === "essential-eight-ml2") setML2Expanded(true);
+        if (targetId === "essential-eight-ml3") setML3Expanded(true);
+      }
+    }
+    onRendered?.(); // tell App we consumed the options
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [hydrated, navOpts, onRendered]);
 
   /* -------- Save to localStorage -------- */
   // Save profile
@@ -390,6 +430,37 @@ export function ComplianceChecklistPage() {
   const progressPercentage =
     totalItems > 0 ? Math.round((completedItems / totalItems) * 100) : 0;
 
+  /* -------- Mirror into shared Resume store -------- */
+  useEffect(() => {
+    if (!hydrated) return;
+    // sectionId = currently focused framework (if any). If none, pick first with remaining work.
+    let sectionId = currentFrameworkId;
+    if (!sectionId) {
+      const firstWithWork = checklist.find((fw) =>
+        fw.items.some((i) => !i.completed)
+      );
+      sectionId = firstWithWork ? String(firstWithWork.id) : (checklist[0] ? String(checklist[0].id) : null);
+    }
+
+    // step: use index of the focused framework in the full frameworks list as a stable numeric hint
+    const idx = sectionId
+      ? allFrameworks.findIndex((fw) => String(fw.id) === sectionId)
+      : 0;
+
+    setToolProgress("compliance", {
+      sectionId: sectionId ?? null,
+      step: Math.max(0, idx),
+      progress: progressPercentage,
+    });
+    setLastVisited("compliance");
+  }, [
+    hydrated,
+    progressPercentage,
+    currentFrameworkId,
+    checklist,
+    allFrameworks,
+  ]);
+
   /* -------- Toggle handler updates master list -------- */
   const handleItemToggle = (
     frameworkId: string | number,
@@ -409,6 +480,7 @@ export function ComplianceChecklistPage() {
           : framework
       )
     );
+    setCurrentFrameworkId(String(frameworkId));
   };
 
   const generateReport = () => {
@@ -711,13 +783,29 @@ export function ComplianceChecklistPage() {
                 <CardHeader
                   className="cursor-pointer select-none"
                   onClick={() => {
-                    if (isPrivacyAct) setPrivacyActExpanded(!privacyActExpanded);
-                    else if (isCyberAct) setCyberActExpanded(!cyberActExpanded);
-                    else if (isRansomware)
+                    // Toggle each known panel and update current focused framework
+                    if (isPrivacyAct) {
+                      setPrivacyActExpanded(!privacyActExpanded);
+                      setCurrentFrameworkId(String(framework.id));
+                    } else if (isCyberAct) {
+                      setCyberActExpanded(!cyberActExpanded);
+                      setCurrentFrameworkId(String(framework.id));
+                    } else if (isRansomware) {
                       setRansomwareExpanded(!ransomwareExpanded);
-                    else if (isML1) setML1Expanded(!ml1Expanded);
-                    else if (isML2) setML2Expanded(!ml2Expanded);
-                    else if (isML3) setML3Expanded(!ml3Expanded);
+                      setCurrentFrameworkId(String(framework.id));
+                    } else if (isML1) {
+                      setML1Expanded(!ml1Expanded);
+                      setCurrentFrameworkId(String(framework.id));
+                    } else if (isML2) {
+                      setML2Expanded(!ml2Expanded);
+                      setCurrentFrameworkId(String(framework.id));
+                    } else if (isML3) {
+                      setML3Expanded(!ml3Expanded);
+                      setCurrentFrameworkId(String(framework.id));
+                    } else {
+                      // Fallback for any future frameworks
+                      setCurrentFrameworkId(String(framework.id));
+                    }
                   }}
                 >
                   <div className="flex items-center justify-between">
@@ -832,37 +920,37 @@ export function ComplianceChecklistPage() {
           })}
         </div>
 
-
-      <div className="mt-8">
-  {getComplianceRecommendations(progressPercentage, businessSize, sector).length > 0 ? (
-    <RecommendationsSection
-      title="Compliance Improvement Recommendations"
-      subtitle="Tailored suggestions to enhance your compliance posture and security maturity"
-      recommendations={getComplianceRecommendations(
-        progressPercentage,
-        businessSize,
-        sector
-      )}
-      onActionClick={(r) => {
-        if (r.resources && r.resources.length > 0 && r.resources[0].url) {
-          window.open(r.resources[0].url, "_blank");
-        } else {
-          alert(`Action: ${r.action}`);
-        }
-      }}
-    />
-  ) : (
-    <div className="text-center text-gray-500 py-10 border rounded-lg bg-gray-50">
-      <p>
-        No recommendations yet — complete some checklist items and select your business details
-        to see tailored suggestions.
-      </p>
-    </div>
-  )}
-</div>
-
-
-        
+        <div className="mt-8">
+          {getComplianceRecommendations(
+            progressPercentage,
+            businessSize,
+            sector
+          ).length > 0 ? (
+            <RecommendationsSection
+              title="Compliance Improvement Recommendations"
+              subtitle="Tailored suggestions to enhance your compliance posture and security maturity"
+              recommendations={getComplianceRecommendations(
+                progressPercentage,
+                businessSize,
+                sector
+              )}
+              onActionClick={(r) => {
+                if (r.resources && r.resources.length > 0 && r.resources[0].url) {
+                  window.open(r.resources[0].url, "_blank");
+                } else {
+                  alert(`Action: ${r.action}`);
+                }
+              }}
+            />
+          ) : (
+            <div className="text-center text-gray-500 py-10 border rounded-lg bg-gray-50">
+              <p>
+                No recommendations yet — complete some checklist items and select your business details
+                to see tailored suggestions.
+              </p>
+            </div>
+          )}
+        </div>
 
         <Card className="mt-8">
           <CardHeader>
@@ -904,6 +992,7 @@ export function ComplianceChecklistPage() {
                   setML1Expanded(false);
                   setML2Expanded(false);
                   setML3Expanded(false);
+                  setCurrentFrameworkId(null);
                 }}
               >
                 Reset Local Data

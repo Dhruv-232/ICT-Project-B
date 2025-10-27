@@ -662,12 +662,13 @@ const riskCategories: RiskCategory[] = [
         question:
           "Are staff required to change their passwords from time to time?",
         options: [
-          { value: "regular", label: "Yes, regular password changes", risk: 2 },
           {
             value: "risk-based",
             label: "Only when security risk identified",
             risk: 1,
           },
+          { value: "regular", label: "Yes, regular password changes", risk: 2 },
+          
           { value: "no", label: "No password rotation policy", risk: 4 },
         ],
       },
@@ -898,6 +899,7 @@ const riskCategories: RiskCategory[] = [
         question:
           "Is any data transferred or stored overseas, and do you check it's protected?",
         options: [
+          { value: "no_overseas", label: "No overseas data storage", risk: 1 },
           {
             value: "verified_protection",
             label: "Yes, overseas protection verified",
@@ -908,7 +910,7 @@ const riskCategories: RiskCategory[] = [
             label: "Overseas storage but unverified",
             risk: 4,
           },
-          { value: "no_overseas", label: "No overseas data storage", risk: 1 },
+          
         ],
       },
       {
