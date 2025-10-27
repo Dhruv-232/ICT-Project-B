@@ -36,6 +36,42 @@ const getRiskRecommendations = (riskScore: number) => {
   return riskScore0;
 };
 
+// 🔥 NEW: Convert answers to heat map format
+const convertAnswersToHeatMapFormat = (
+  answers: Record<string, string>,
+  categories: typeof riskCategories
+) => {
+  const heatMapData: Record<string, { likelihood: number; impact: number }> = {};
+  
+  categories.forEach((category) => {
+    let totalRisk = 0;
+    let count = 0;
+    
+    category.questions.forEach((question) => {
+      const answer = answers[question.id];
+      if (answer) {
+        const option = question.options.find((opt) => opt.value === answer);
+        if (option) {
+          totalRisk += option.risk;
+          count++;
+        }
+      }
+    });
+    
+    if (count > 0) {
+      const avgRisk = Math.round(totalRisk / count);
+      // Map risk to likelihood and impact (1-5 scale)
+      // Higher risk = higher likelihood and impact
+      heatMapData[category.name] = {
+        likelihood: avgRisk,
+        impact: avgRisk
+      };
+    }
+  });
+  
+  return heatMapData;
+};
+
 export function RiskToolPage() {
   const [currentCategory, setCurrentCategory] = useState(0);
   const [answers, setAnswers] = useState<Record<string, string>>({});
@@ -304,8 +340,11 @@ export function RiskToolPage() {
           />
         </div>
 
-        {/* Heat Map */}
-        <RiskHeatMap />
+        {/* 🔥 Heat Map - NOW WITH USER ANSWERS */}
+        <RiskHeatMap 
+          riskAnswers={convertAnswersToHeatMapFormat(answers, riskCategories)}
+          riskScore={riskScore}
+        />
 
         <div className="text-center">
           <Button
@@ -556,4 +595,3 @@ export function RiskToolPage() {
 }
 
 export default RiskToolPage;
-

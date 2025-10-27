@@ -43,14 +43,8 @@ type AnswersByCategory = Partial<
 const defaultAssignments: CategoryPlacement[] = [
   { likelihood: 3, impact: 4, categories: ["Access Control"] },
   { likelihood: 4, impact: 4, categories: ["Data Protection"] },
-  { likelihood: 3, impact: 5, categories: ["Access Control", "Incident Response"] },
+  { likelihood: 3, impact: 5, categories: ["Incident Response"] },
   { likelihood: 4, impact: 3, categories: ["Staff Training"] },
-  { likelihood: 2, impact: 4, categories: ["Data Protection", "Staff Training"] },
-  {
-    likelihood: 5,
-    impact: 5,
-    categories: ["Incident Response", "Access Control", "Data Protection"],
-  },
 ];
 
 const likelihoodLabels = ["Rare", "Unlikely", "Possible", "Likely", "Almost Certain"] as const;
@@ -141,20 +135,35 @@ function mergePlacements(rows: CategoryPlacement[]): CategoryPlacement[] {
 }
 
 // ────────────────────────────────────────────────────────────────────────────────
-// Component (DEFAULT EXPORT)
+// Component (DEFAULT EXPORT) - NOW WITH PROPS
 // ────────────────────────────────────────────────────────────────────────────────
-export default function RiskHeatMap({ riskScore }: { riskScore?: number }) {
+interface RiskHeatMapProps {
+  riskScore?: number;
+  riskAnswers?: AnswersByCategory;
+}
+
+export default function RiskHeatMap({ riskScore, riskAnswers }: RiskHeatMapProps) {
   const [placements, setPlacements] = useState<CategoryPlacement[]>(defaultAssignments);
 
-  // Load initial data and subscribe to external updates
+  // Update placements when riskAnswers prop changes
   useEffect(() => {
+    if (riskAnswers && Object.keys(riskAnswers).length > 0) {
+      const mapped = mapAnswersToPlacements(riskAnswers);
+      if (mapped) {
+        setPlacements(mergePlacements(mapped));
+        return;
+      }
+    }
+    
+    // Fallback to localStorage if no props provided
     const fromStorage = loadFromLocalStorage();
     if (fromStorage) {
       setPlacements(mergePlacements(fromStorage));
     }
+  }, [riskAnswers]);
 
-    // other code can dispatch:
-    // window.dispatchEvent(new CustomEvent('risk-heatmap:update', { detail: { placements } }))
+  // Load initial data and subscribe to external updates
+  useEffect(() => {
     const handler = (e: Event) => {
       const detail = (e as CustomEvent).detail;
       const incoming: any = detail?.placements;
@@ -177,15 +186,18 @@ export default function RiskHeatMap({ riskScore }: { riskScore?: number }) {
     return map;
   }, [placements]);
 
-  // Color gradient from green (low) to red (high)
+  // Color gradient - EXACT COLORS
   const getCellColor = (row: number, col: number) => {
-    const riskScoreLocal = riskScore ?? 0; // optional use of overall riskScore
-    const baseRisk = col + 1 + (5 - row);
-    const adjusted = baseRisk + Math.round(riskScoreLocal / 25);
-    if (adjusted <= 4) return "bg-green-300";
-    if (adjusted <= 6) return "bg-yellow-300";
-    if (adjusted <= 8) return "bg-orange-300";
-    return "bg-red-300";
+    const likelihood = col + 1; // 1-5
+    const impact = 5 - row; // 5-1
+    const riskValue = likelihood + impact; // 2-10
+    
+    // Exact hex colors as specified
+    if (riskValue <= 3) return "#99E699"; // Low - green
+    if (riskValue <= 5) return "#FFCC00"; // Medium - yellow
+    if (riskValue <= 7) return "#FFB84D"; // High - orange
+    if (riskValue <= 8) return "#FFB84D"; // High - orange
+    return "#FF6666"; // Critical - red
   };
 
   const getCategoriesForCell = (likelihood: number, impact: number): Category[] => {
@@ -194,110 +206,162 @@ export default function RiskHeatMap({ riskScore }: { riskScore?: number }) {
   };
 
   return (
-    <Card className="mb-8">
-      <CardHeader>
-        <CardTitle className="text-2xl text-center">Cybersecurity Risk Heat Map</CardTitle>
-        <CardDescription className="text-center">
+    <Card className="mb-8 shadow-md">
+      <CardHeader className="text-center pb-4">
+        <CardTitle className="text-2xl font-semibold text-gray-900">
+          Cybersecurity Risk Heat Map
+        </CardTitle>
+        <CardDescription className="text-sm text-gray-600 mt-2">
           Visual representation of cybersecurity risk categories by likelihood and impact
         </CardDescription>
       </CardHeader>
 
-      <CardContent>
+      <CardContent className="px-6 pb-6">
         <div className="overflow-x-auto">
           <div className="min-w-[600px] mx-auto">
-            {/* Heat Map Grid */}
-            <div className="relative bg-white rounded-lg p-6 shadow-sm border border-gray-200">
+            {/* Heat Map Grid Container */}
+            <div className="relative">
               {/* Y-axis label */}
-              <div className="absolute -left-16 top-1/2 -translate-y-1/2 -rotate-90">
-                <span className="text-sm text-gray-700">Impact (Low → Severe)</span>
+              <div 
+                className="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-full pr-4"
+                style={{ writingMode: 'vertical-rl', transform: 'translateX(-100%) translateY(-50%) rotate(180deg)' }}
+              >
+                <span className="text-xs font-medium text-gray-600">Impact (Low → Severe)</span>
               </div>
 
-              {/* Y-axis labels */}
-              <div className="absolute left-1 top-0 h-full flex flex-col justify-between py-6">
-                {impactLabels
-                  .slice()
-                  .reverse()
-                  .map((label, index) => (
-                    <div key={index} className="text-xs text-gray-700 flex items-center h-20">
-                      {label}
-                    </div>
-                  ))}
-              </div>
-
-              {/* Grid */}
-              <div className="ml-16">
-                <div className="grid grid-cols-5 gap-0 mb-2 border border-gray-300 rounded-lg overflow-hidden">
-                  {Array.from({ length: 5 }, (_, rowIndex) =>
-                    Array.from({ length: 5 }, (_, colIndex) => {
-                      const likelihood = colIndex + 1; // 1..5
-                      const impact = 5 - rowIndex; // 5..1
-                      const catsInCell = getCategoriesForCell(likelihood, impact);
-
-                      return (
-                        <div
-                          key={`${rowIndex}-${colIndex}`}
-                          className={`h-20 w-full border-r border-b border-gray-300 last:border-r-0 ${getCellColor(
-                            rowIndex,
-                            colIndex
-                          )} flex items-center justify-center text-center p-1`}
-                        >
-                          {catsInCell.length > 0 && (
-                            <div className="flex flex-wrap gap-1 justify-center">
-                              {catsInCell.map((cat, idx) => (
-                                <span
-                                  key={idx}
-                                  className="text-[10px] leading-tight px-2 py-0.5 bg-white/70 border border-white rounded-full shadow-sm"
-                                >
-                                  {cat}
-                                </span>
-                              ))}
-                            </div>
-                          )}
-                        </div>
-                      );
-                    })
-                  )}
+              {/* Main grid area with Y-axis labels */}
+              <div className="flex gap-3">
+                {/* Y-axis labels */}
+                <div 
+                  className="flex flex-col justify-between py-2" 
+                  aria-label="Impact levels"
+                  style={{ minWidth: '60px' }}
+                >
+                  {impactLabels
+                    .slice()
+                    .reverse()
+                    .map((label, index) => (
+                      <div 
+                        key={index} 
+                        className="text-xs font-medium text-gray-600 flex items-center"
+                        style={{ height: '80px' }}
+                      >
+                        {label}
+                      </div>
+                    ))}
                 </div>
 
-                {/* X-axis labels */}
-                <div className="grid grid-cols-5 gap-0 mt-2">
-                  {likelihoodLabels.map((label, index) => (
-                    <div key={index} className="text-xs text-gray-700 text-center px-1">
-                      {label}
-                    </div>
-                  ))}
-                </div>
+                {/* Grid */}
+                <div className="flex-1">
+                  <div 
+                    className="grid grid-cols-5 gap-1 p-3 bg-slate-50 rounded-lg border border-slate-200"
+                    aria-label="Risk assessment grid"
+                  >
+                    {Array.from({ length: 5 }, (_, rowIndex) =>
+                      Array.from({ length: 5 }, (_, colIndex) => {
+                        const likelihood = colIndex + 1;
+                        const impact = 5 - rowIndex;
+                        const catsInCell = getCategoriesForCell(likelihood, impact);
+                        const bgColor = getCellColor(rowIndex, colIndex);
 
-                {/* X-axis label */}
-                <div className="text-center mt-4">
-                  <span className="text-sm text-gray-700">Likelihood (Rare → Almost Certain)</span>
+                        return (
+                          <div
+                            key={`${rowIndex}-${colIndex}`}
+                            className="flex items-center justify-center p-2 rounded transition-all duration-200"
+                            style={{ 
+                              backgroundColor: bgColor,
+                              minHeight: '80px',
+                              border: '1px solid rgba(0,0,0,0.05)'
+                            }}
+                          >
+                            {catsInCell.length > 0 && (
+                              <div className="flex flex-col gap-1.5 items-center justify-center w-full">
+                                {catsInCell.map((cat, idx) => (
+                                  <span
+                                    key={idx}
+                                    className="inline-block px-3 py-1 bg-white rounded-full text-xs font-medium text-gray-800 shadow-sm border border-gray-200 hover:shadow-md transition-shadow duration-150 text-center"
+                                    style={{ maxWidth: '90%' }}
+                                  >
+                                    {cat}
+                                  </span>
+                                ))}
+                              </div>
+                            )}
+                          </div>
+                        );
+                      })
+                    )}
+                  </div>
+
+                  {/* X-axis labels */}
+                  <div 
+                    className="grid grid-cols-5 gap-1 mt-2 px-3"
+                    aria-label="Likelihood levels"
+                  >
+                    {likelihoodLabels.map((label, index) => (
+                      <div 
+                        key={index} 
+                        className="text-xs font-medium text-gray-600 text-center"
+                      >
+                        {label}
+                      </div>
+                    ))}
+                  </div>
+
+                  {/* X-axis label */}
+                  <div className="text-center mt-3">
+                    <span className="text-xs font-medium text-gray-600">
+                      Likelihood (Rare → Almost Certain)
+                    </span>
+                  </div>
                 </div>
               </div>
             </div>
 
             {/* Legend */}
-            <div className="mt-6 bg-gray-50 rounded-lg p-4">
-              <h4 className="text-sm text-gray-900 mb-3 text-center">Risk Level</h4>
-              <div className="flex justify-center items-center space-x-6">
-                <div className="flex items-center space-x-2">
-                  <div className="w-4 h-4 bg-green-300 rounded border border-green-400" />
-                  <span className="text-sm text-gray-700">Low</span>
-                </div>
-                <div className="flex items-center space-x-2">
-                  <div className="w-4 h-4 bg-yellow-300 rounded border border-yellow-400" />
-                  <span className="text-sm text-gray-700">Medium</span>
-                </div>
-                <div className="flex items-center space-x-2">
-                  <div className="w-4 h-4 bg-orange-300 rounded border border-orange-400" />
-                  <span className="text-sm text-gray-700">High</span>
-                </div>
-                <div className="flex items-center space-x-2">
-                  <div className="w-4 h-4 bg-red-300 rounded border border-red-400" />
-                  <span className="text-sm text-gray-700">Critical</span>
-                </div>
-              </div>
+            <div className="mt-8 bg-gray-50 rounded-lg p-5 border border-gray-100">
+              <h4 className="text-sm font-semibold text-gray-900 mb-4 text-center">
+                Risk Level
+              </h4>
+              <ul 
+                className="flex flex-wrap justify-center items-center gap-6"
+                role="list"
+              >
+                <li className="flex items-center gap-2">
+                  <div 
+                    className="w-5 h-5 rounded border border-gray-300 shadow-sm"
+                    style={{ backgroundColor: '#99E699' }}
+                    aria-hidden="true"
+                  />
+                  <span className="text-sm font-medium text-gray-700">Low</span>
+                </li>
+                <li className="flex items-center gap-2">
+                  <div 
+                    className="w-5 h-5 rounded border border-gray-300 shadow-sm"
+                    style={{ backgroundColor: '#FFCC00' }}
+                    aria-hidden="true"
+                  />
+                  <span className="text-sm font-medium text-gray-700">Medium</span>
+                </li>
+                <li className="flex items-center gap-2">
+                  <div 
+                    className="w-5 h-5 rounded border border-gray-300 shadow-sm"
+                    style={{ backgroundColor: '#FFB84D' }}
+                    aria-hidden="true"
+                  />
+                  <span className="text-sm font-medium text-gray-700">High</span>
+                </li>
+                <li className="flex items-center gap-2">
+                  <div 
+                    className="w-5 h-5 rounded border border-gray-300 shadow-sm"
+                    style={{ backgroundColor: '#FF6666' }}
+                    aria-hidden="true"
+                  />
+                  <span className="text-sm font-medium text-gray-700">Critical</span>
+                </li>
+              </ul>
               <div className="mt-4 text-center">
-                <span className="text-xs text-gray-600">
+                <span className="text-xs text-gray-500">
                   Categories: Data Protection · Access Control · Incident Response · Staff Training
                 </span>
               </div>
