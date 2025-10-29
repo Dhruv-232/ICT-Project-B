@@ -21,11 +21,7 @@ import {
   riskScore0,
 } from "../data/RiskTool.data";
 import { storage } from "../utils/storage";
-import ProgressTracker from "./ProgressTracker"; // <-- existing
-import {
-  setToolProgress,
-  setLastVisited,
-} from "../utils/storage"; // <-- NEW resume helpers
+import ProgressTracker from "./ProgressTracker";
 
 /* ========= Local storage keys ========= */
 const RISK_ANSWERS_KEY = "risk.answers.v1";
@@ -40,15 +36,48 @@ const getRiskRecommendations = (riskScore: number) => {
   return riskScore0;
 };
 
-type ResumeOpts = { sectionId: string | null; step: number } | undefined;
-
-type Props = {
-  onNavigate?: (page: string, opts?: Record<string, any>) => void;
-  navOpts?: { resume?: ResumeOpts } | Record<string, any>;
-  onRendered?: () => void; // used by App to clear one-time opts
+// 🔥 NEW: Convert answers to heat map format
+const convertAnswersToHeatMapFormat = (
+  answers: Record<string, string>,
+  categories: typeof riskCategories
+) => {
+  const heatMapData: Record<string, { likelihood: number; impact: number }> = {};
+  
+  categories.forEach((category) => {
+    let totalRisk = 0;
+    let count = 0;
+    
+    category.questions.forEach((question) => {
+      const answer = answers[question.id];
+      if (answer) {
+        const option = question.options.find((opt) => opt.value === answer);
+        if (option) {
+          totalRisk += option.risk;
+          count++;
+        }
+      }
+    });
+    
+    if (count > 0) {
+      const avgRisk = Math.round(totalRisk / count);
+      // Map risk to likelihood and impact (1-5 scale)
+      heatMapData[category.name] = {
+        likelihood: avgRisk,
+        impact: avgRisk
+      };
+    }
+  });
+  
+  return heatMapData;
 };
 
-export function RiskToolPage({ navOpts, onRendered }: Props) {
+interface RiskToolPageProps {
+  onNavigate?: (page: string, opts?: Record<string, any>) => void;
+  navOpts?: Record<string, any>;
+  onRendered?: (clearNavOpts: () => void) => void;
+}
+
+export function RiskToolPage({ onNavigate, navOpts, onRendered }: RiskToolPageProps = {}) {
   const [currentCategory, setCurrentCategory] = useState(0);
   const [answers, setAnswers] = useState<Record<string, string>>({});
   const [showResults, setShowResults] = useState(false);
@@ -72,25 +101,6 @@ export function RiskToolPage({ navOpts, onRendered }: Props) {
 
     setHydrated(true);
   }, []);
-
-  // If we arrived here via Home "Resume", jump to the requested section/step
-  useEffect(() => {
-    if (!hydrated) return;
-    const resume = (navOpts as any)?.resume as ResumeOpts;
-    if (resume) {
-      // Find category by sectionId if provided; otherwise fall back to step as index
-      let nextIndex = currentCategory;
-      if (resume.sectionId) {
-        const found = riskCategories.findIndex((c) => c.id === resume.sectionId);
-        if (found >= 0) nextIndex = found;
-      } else if (typeof resume.step === "number") {
-        nextIndex = Math.max(0, Math.min(riskCategories.length - 1, resume.step));
-      }
-      setCurrentCategory(nextIndex);
-    }
-    onRendered?.(); // tell App we consumed the nav options
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [hydrated, navOpts, onRendered]);
 
   /* -------- Persist changes -------- */
   useEffect(() => {
@@ -146,8 +156,7 @@ export function RiskToolPage({ navOpts, onRendered }: Props) {
     return { level: "Critical", color: "bg-red-500", textColor: "text-red-700" };
   };
 
-  // Zobair
-  // Enhanced PDF Export - includes results, recommendations, and summary
+  // Enhanced PDF Export
   const downloadPdf = () => {
     const doc = new jsPDF({ unit: "pt", format: "a4" });
     const pageWidth = doc.internal.pageSize.getWidth();
@@ -164,7 +173,7 @@ export function RiskToolPage({ navOpts, onRendered }: Props) {
     doc.text("Cybersecurity Risk Assessment Results", pageWidth / 2, y, { align: "center" });
     y += 40;
 
-    // === Risk Summary Card ===
+    // Risk Summary Card
     doc.setFillColor(250, 250, 250);
     doc.roundedRect(60, y, pageWidth - 120, 120, 10, 10, "F");
 
@@ -195,7 +204,7 @@ export function RiskToolPage({ navOpts, onRendered }: Props) {
     doc.rect(120, y + 118, ((pageWidth - 240) * riskScore) / 100, 8, "F");
     y += 160;
 
-    // === Priority Summary ===
+    // Priority Summary
     doc.setFontSize(14);
     doc.setTextColor(0, 0, 0);
     doc.text("Personalized Security Recommendations", 60, y);
@@ -222,7 +231,7 @@ export function RiskToolPage({ navOpts, onRendered }: Props) {
     });
     y += 110;
 
-    // === Recommendations ===
+    // Recommendations
     doc.setFont("helvetica", "bold");
     doc.setFontSize(14);
     doc.setTextColor(40, 40, 40);
@@ -246,7 +255,7 @@ export function RiskToolPage({ navOpts, onRendered }: Props) {
       y += 110;
     });
 
-    // === Next Steps ===
+    // Next Steps
     doc.setFillColor(250, 250, 250);
     doc.roundedRect(60, y, pageWidth - 120, 80, 10, 10, "F");
     y += 25;
@@ -264,7 +273,7 @@ export function RiskToolPage({ navOpts, onRendered }: Props) {
     doc.text("• Plan low-priority improvements for ongoing security enhancement", 90, y);
     y += 40;
 
-    // === Footer ===
+    // Footer
     doc.setFont("helvetica", "italic");
     doc.setFontSize(10);
     doc.setTextColor(120, 120, 120);
@@ -280,19 +289,6 @@ export function RiskToolPage({ navOpts, onRendered }: Props) {
     0
   );
   const progressPercent = Math.round((answeredCount / totalQuestions) * 100);
-
-  // Continuously mirror progress into the shared Resume storage
-  useEffect(() => {
-    if (!hydrated) return;
-    const sectionId = riskCategories[currentCategory]?.id ?? null;
-    setToolProgress("risk", {
-      sectionId,
-      // We use the category index as a simple step indicator for resume
-      step: currentCategory,
-      progress: progressPercent,
-    });
-    setLastVisited("risk");
-  }, [hydrated, currentCategory, progressPercent]);
 
   /* -------- Hydration guard -------- */
   if (!hydrated) {
@@ -433,7 +429,7 @@ export function RiskToolPage({ navOpts, onRendered }: Props) {
 
           {/* Main Form */}
           <div className="lg:col-span-3">
-            {/* Global sticky progress tracker */}
+            {/* Global progress tracker */}
             <div className="mb-4">
               <ProgressTracker
                 title="Overall Assessment Progress"
