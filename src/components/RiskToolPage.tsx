@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import jsPDF from "jspdf";
 import { Button } from "./ui/button";
+import { setToolProgress } from "../utils/storage"; // add this import at the top
 import {
   Card,
   CardContent,
@@ -27,6 +28,8 @@ import ProgressTracker from "./ProgressTracker";
 const RISK_ANSWERS_KEY = "risk.answers.v1";
 const RISK_STEP_KEY = "risk.step.v1";
 const RISK_RESULTS_KEY = "risk.results.v1";
+const RISK_PROGRESS_KEY = "risk.progress.v1";
+
 /* ===================================== */
 
 // Risk-based recommendations data
@@ -289,6 +292,16 @@ export function RiskToolPage({ onNavigate, navOpts, onRendered }: RiskToolPagePr
     0
   );
   const progressPercent = Math.round((answeredCount / totalQuestions) * 100);
+  // Persist risk progress for home page resume state
+useEffect(() => {
+  if (!hydrated) return;
+  setToolProgress("risk", {
+    progress: progressPercent,
+    step: currentCategory,
+    sectionId: riskCategories[currentCategory]?.id ?? null,
+  });
+}, [progressPercent, currentCategory, hydrated]);
+
 
   /* -------- Hydration guard -------- */
   if (!hydrated) {
