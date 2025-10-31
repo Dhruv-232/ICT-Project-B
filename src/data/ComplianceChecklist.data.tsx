@@ -8509,9 +8509,9 @@ const complianceFrameworksData: ComplianceFramework[] = [
       // 1. Business Overview
       {
         id: "annual-turnover",
-        title: "Annual Turnover Assessment",
+        title: "Annual Turnover (>$3m)",
         description:
-          "Does your business have an annual turnover of more than $3 million?\n○ If Yes: You are required to comply with ransomware payment reporting rules under the Cybersecurity Act 2024.\n○ If No: You are exempt from ransomware reporting but should still follow other Cybersecurity practices.",
+          "Does your business have annual turnover exceeding $3 million?\n- If Yes: You are required to comply with ransomware payment reporting obligations under the Cyber Security Act 2024.\n- If No: You are generally exempt from ransomware payment reporting, but should continue to follow other cyber security good practices.",
         completed: false,
         required: true,
       },
