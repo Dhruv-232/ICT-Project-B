@@ -159,131 +159,177 @@ export function RiskToolPage({ onNavigate, navOpts, onRendered }: RiskToolPagePr
     return { level: "Critical", color: "bg-red-500", textColor: "text-red-700" };
   };
 
-  // Enhanced PDF Export
-  const downloadPdf = () => {
-    const doc = new jsPDF({ unit: "pt", format: "a4" });
-    const pageWidth = doc.internal.pageSize.getWidth();
-    let y = 60;
+  
+   // Enhanced PDF Export
+const downloadPdf = () => {
+  const doc = new jsPDF({ unit: "pt", format: "a4" });
+  const pageWidth = doc.internal.pageSize.getWidth();
+  let y = 60;
 
-    const riskScore = calculateRiskScore();
-    const riskLevel = getRiskLevel(riskScore);
-    const recommendations = getRiskRecommendations(riskScore);
+  const riskScore = calculateRiskScore();
+  const riskLevel = getRiskLevel(riskScore);
+  const recommendations = getRiskRecommendations(riskScore);
 
-    // Header
-    doc.setFont("helvetica", "bold");
-    doc.setFontSize(22);
-    doc.setTextColor(40, 40, 40);
-    doc.text("Cybersecurity Risk Assessment Results", pageWidth / 2, y, { align: "center" });
-    y += 40;
+  // Header
+  doc.setFont("helvetica", "bold");
+  doc.setFontSize(22);
+  doc.setTextColor(40, 40, 40);
+  doc.text("Cybersecurity Risk Assessment Results", pageWidth / 2, y, { align: "center" });
+  y += 40;
 
-    // Risk Summary Card
+  // Risk Summary Card
+  doc.setFillColor(250, 250, 250);
+  doc.roundedRect(60, y, pageWidth - 120, 120, 10, 10, "F");
+
+  let badge = [67, 160, 71];
+  if (riskLevel.level === "Medium") badge = [255, 193, 7];
+  if (riskLevel.level === "High") badge = [255, 152, 0];
+  if (riskLevel.level === "Critical") badge = [211, 47, 47];
+
+  doc.setFont("helvetica", "bold");
+  doc.setFontSize(14);
+  doc.setTextColor(50, 50, 50);
+  doc.text("Overall Risk Score", pageWidth / 2, y + 30, { align: "center" });
+
+  doc.setFontSize(42);
+  doc.text(`${riskScore}%`, pageWidth / 2, y + 75, { align: "center" });
+
+  doc.setFillColor(badge[0], badge[1], badge[2]);
+  doc.roundedRect(pageWidth / 2 - 45, y + 85, 90, 28, 5, 5, "F");
+  doc.setFontSize(11);
+  doc.setTextColor(255, 255, 255);
+  doc.text(riskLevel.level.toUpperCase(), pageWidth / 2, y + 104, { align: "center" });
+
+  doc.setFillColor(230, 230, 230);
+  doc.rect(120, y + 118, pageWidth - 240, 8, "F");
+  doc.setFillColor(badge[0], badge[1], badge[2]);
+  doc.rect(120, y + 118, ((pageWidth - 240) * riskScore) / 100, 8, "F");
+  y += 160;
+
+  // Intro
+  doc.setFont("helvetica", "normal");
+  doc.setFontSize(11);
+  doc.setTextColor(90, 90, 90);
+  const intro = doc.splitTextToSize(
+    "Thank you for using the assessment tool. To improve your cybersecurity posture, please review the recommendations below.",
+    pageWidth - 120
+  );
+  doc.text(intro, 60, y);
+  y += intro.length * 14 + 10;
+
+  // Count priorities dynamically
+    // Ensure recommendations are always an array for reduce
+const recArray = Array.isArray(recommendations)
+  ? recommendations
+  : Object.values(recommendations || {});
+
+const priorityCounts = (recArray as any[]).reduce(
+  (acc: { high: number; medium: number; low: number }, r: any) => {
+    const p = String(r.priority || "").toLowerCase();
+    if (p === "high") acc.high += 1;
+    else if (p === "medium") acc.medium += 1;
+    else acc.low += 1;
+    return acc;
+  },
+  { high: 0, medium: 0, low: 0 }
+);
+
+
+ 
+
+  const priorities = [
+    { label: "High Priority", count: priorityCounts.high, color: [211, 47, 47] },
+    { label: "Medium Priority", count: priorityCounts.medium, color: [255, 193, 7] },
+    { label: "Low Priority", count: priorityCounts.low, color: [67, 160, 71] },
+  ];
+
+  // Priority Summary
+  doc.setFontSize(14);
+  doc.setTextColor(0, 0, 0);
+  doc.text("Personalized Security Recommendations", 60, y);
+  y += 25;
+
+  let x = 100;
+  priorities.forEach((p) => {
     doc.setFillColor(250, 250, 250);
-    doc.roundedRect(60, y, pageWidth - 120, 120, 10, 10, "F");
-
-    let badge = [67, 160, 71];
-    if (riskLevel.level === "Medium") badge = [255, 193, 7];
-    if (riskLevel.level === "High") badge = [255, 152, 0];
-    if (riskLevel.level === "Critical") badge = [211, 47, 47];
-
+    doc.roundedRect(x - 25, y, 150, 70, 10, 10, "F");
     doc.setFont("helvetica", "bold");
-    doc.setFontSize(14);
-    doc.setTextColor(50, 50, 50);
-    doc.text("Overall Risk Score", pageWidth / 2, y + 30, { align: "center" });
-
-    doc.setFontSize(42);
-    doc.text(`${riskScore}%`, pageWidth / 2, y + 75, { align: "center" });
-
-    // Badge
-    doc.setFillColor(badge[0], badge[1], badge[2]);
-    doc.roundedRect(pageWidth / 2 - 45, y + 85, 90, 28, 5, 5, "F");
-    doc.setFontSize(11);
-    doc.setTextColor(255, 255, 255);
-    doc.text(riskLevel.level.toUpperCase(), pageWidth / 2, y + 104, { align: "center" });
-
-    // Bar
-    doc.setFillColor(230, 230, 230);
-    doc.rect(120, y + 118, pageWidth - 240, 8, "F");
-    doc.setFillColor(badge[0], badge[1], badge[2]);
-    doc.rect(120, y + 118, ((pageWidth - 240) * riskScore) / 100, 8, "F");
-    y += 160;
-
-    // Priority Summary
-    doc.setFontSize(14);
-    doc.setTextColor(0, 0, 0);
-    doc.text("Personalized Security Recommendations", 60, y);
-    y += 25;
-
-    const priorities = [
-      { label: "High Priority", count: 4, color: [211, 47, 47] },
-      { label: "Medium Priority", count: 0, color: [255, 193, 7] },
-      { label: "Low Priority", count: 0, color: [67, 160, 71] },
-    ];
-
-    let x = 100;
-    priorities.forEach((p) => {
-      doc.setFillColor(250, 250, 250);
-      doc.roundedRect(x - 25, y, 150, 70, 10, 10, "F");
-      doc.setFont("helvetica", "bold");
-      doc.setTextColor(p.color[0], p.color[1], p.color[2]);
-      doc.setFontSize(26);
-      doc.text(`${p.count}`, x + 50, y + 40, { align: "center" });
-      doc.setFontSize(11);
-      doc.setTextColor(80, 80, 80);
-      doc.text(p.label, x + 50, y + 55, { align: "center" });
-      x += 180;
-    });
-    y += 110;
-
-    // Recommendations
-    doc.setFont("helvetica", "bold");
-    doc.setFontSize(14);
-    doc.setTextColor(40, 40, 40);
-    doc.text("High Priority Recommendations", 60, y);
-    y += 25;
-
-    recommendations.forEach((rec, i) => {
-      if (y > 720) { doc.addPage(); y = 60; }
-      doc.setFillColor(255, 255, 255);
-      doc.setDrawColor(240, 240, 240);
-      doc.roundedRect(60, y, pageWidth - 120, 90, 10, 10, "FD");
-
-      doc.setFont("helvetica", "bold");
-      doc.setFontSize(12);
-      doc.setTextColor(0, 0, 0);
-      doc.text(`${i + 1}. ${rec.title}`, 75, y + 25);
-
-      doc.text("Thank you for using the assessment tool.", 20, 70);
-      doc.text("To improve your posture, please refer to our recommendations.", 20, 80);
-
-      y += 110;
-    });
-
-    // Next Steps
-    doc.setFillColor(250, 250, 250);
-    doc.roundedRect(60, y, pageWidth - 120, 80, 10, 10, "F");
-    y += 25;
-    doc.setFont("helvetica", "bold");
-    doc.setTextColor(40, 40, 40);
-    doc.text("Next Steps", 75, y);
-    doc.setFont("helvetica", "normal");
+    doc.setTextColor(p.color[0], p.color[1], p.color[2]);
+    doc.setFontSize(26);
+    doc.text(`${p.count}`, x + 50, y + 40, { align: "center" });
     doc.setFontSize(11);
     doc.setTextColor(80, 80, 80);
-    y += 20;
-    doc.text("• Start with high-priority recommendations for immediate impact", 90, y);
-    y += 18;
-    doc.text("• Schedule medium-priority items for the next quarter", 90, y);
-    y += 18;
-    doc.text("• Plan low-priority improvements for ongoing security enhancement", 90, y);
-    y += 40;
+    doc.text(p.label, x + 50, y + 55, { align: "center" });
+    x += 180;
+  });
+  y += 110;
 
-    // Footer
-    doc.setFont("helvetica", "italic");
+  // Recommendations
+  doc.setFont("helvetica", "bold");
+  doc.setFontSize(14);
+  doc.setTextColor(40, 40, 40);
+  doc.text("High Priority Recommendations", 60, y);
+  y += 25;
+
+  recommendations.forEach((rec, i) => {
+    if (y > 740) { doc.addPage(); y = 60; }
+
+    doc.setFillColor(255, 255, 255);
+    doc.setDrawColor(230, 230, 230);
+    doc.roundedRect(60, y, pageWidth - 120, 104, 10, 10, "FD");
+
+    doc.setFont("helvetica", "bold");
+    doc.setFontSize(12);
+    doc.setTextColor(0, 0, 0);
+
+    const title = doc.splitTextToSize(`${i + 1}. ${rec.title}`, pageWidth - 150);
+    doc.text(title, 75, y + 24);
+
+    doc.setFont("helvetica", "normal");
     doc.setFontSize(10);
-    doc.setTextColor(120, 120, 120);
-    doc.text("Generated using the CyberWise Core Risk Assessment Tool", 60, y);
+    doc.setTextColor(110, 110, 110);
+    const meta = [];
+    if (rec.priority) meta.push(`Priority: ${String(rec.priority).toUpperCase()}`);
+    if (rec.timeframe) meta.push(`Timeframe: ${rec.timeframe}`);
+    if (rec.effort) meta.push(`Effort: ${rec.effort}`);
+    if (rec.impact) meta.push(`Impact: ${rec.impact}`);
+    doc.text(meta.join("  |  "), 75, y + 42);
 
-    doc.save("Cybersecurity-Risk-Assessment.pdf");
-  };
+    doc.setFontSize(10);
+    doc.setTextColor(70, 70, 70);
+    const desc = doc.splitTextToSize(rec.description || "", pageWidth - 150);
+    doc.text(desc, 75, y + 60);
+
+    y += Math.max(104, 60 + desc.length * 12);
+  });
+
+  // Next Steps
+  if (y > 700) { doc.addPage(); y = 60; }
+  doc.setFillColor(250, 250, 250);
+  doc.roundedRect(60, y, pageWidth - 120, 80, 10, 10, "F");
+  y += 25;
+  doc.setFont("helvetica", "bold");
+  doc.setTextColor(40, 40, 40);
+  doc.text("Next Steps", 75, y);
+  doc.setFont("helvetica", "normal");
+  doc.setFontSize(11);
+  doc.setTextColor(80, 80, 80);
+  y += 20;
+  doc.text("• Start with high-priority recommendations for immediate impact", 90, y);
+  y += 18;
+  doc.text("• Schedule medium-priority items for the next quarter", 90, y);
+  y += 18;
+  doc.text("• Plan low-priority improvements for ongoing security enhancement", 90, y);
+  y += 40;
+
+  // Footer
+  doc.setFont("helvetica", "italic");
+  doc.setFontSize(10);
+  doc.setTextColor(120, 120, 120);
+  doc.text("Generated using the CyberWise Core Risk Assessment Tool", 60, y);
+
+  doc.save("Cybersecurity-Risk-Assessment.pdf");
+};
 
   // Overall progress
   const answeredCount = Object.keys(answers).length;
