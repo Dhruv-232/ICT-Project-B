@@ -55,10 +55,10 @@ export function HomePage({ onNavigate }: HomePageProps) {
                 <Fingerprint className="h-10 w-10 text-gray-700" />
               </div>
               <h1 className="text-4xl md:text-5xl text-gray-900 mb-6">
-                Simplifying Cybersecurity for SMEs
+                Simplifying Cyber Security for SMEs
               </h1>
               <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-                Resume where you left off — or start your cybersecurity journey.
+                Resume where you left off — or start your cyber security journey.
               </p>
             </div>
           </div>
@@ -81,7 +81,7 @@ export function HomePage({ onNavigate }: HomePageProps) {
                     Compliance Checklist
                   </CardTitle>
                   <CardDescription className="text-gray-600 text-sm">
-                    Meet regulatory cybersecurity requirements with confidence.
+                    Meet regulatory cyber security requirements with confidence.
                   </CardDescription>
                 </CardHeader>
 
@@ -123,7 +123,7 @@ export function HomePage({ onNavigate }: HomePageProps) {
                     Risk Assessment Tool
                   </CardTitle>
                   <CardDescription className="text-gray-600 text-sm">
-                    Identify and mitigate cybersecurity vulnerabilities.
+                    Identify and mitigate cyber security vulnerabilities.
                   </CardDescription>
                 </CardHeader>
 

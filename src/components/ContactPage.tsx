@@ -83,7 +83,7 @@ export function ContactPage() {
               Get in Touch
             </h1>
             <p className="text-xl text-gray-600 max-w-2xl mx-auto">
-              Have questions about Cybersecurity compliance? Need help with our tools? 
+              Have questions about Cyber Security compliance? Need help with our tools? 
               Our team of experts is here to help your business stay secure.
             </p>
           </div>
@@ -210,7 +210,7 @@ export function ContactPage() {
                   <Label htmlFor="message">Message *</Label>
                   <Textarea
                     id="message"
-                    placeholder="Please provide details about your inquiry, including your current Cybersecurity challenges or questions..."
+                    placeholder="Please provide details about your inquiry, including your current Cyber Security challenges or questions..."
                     rows={6}
                     value={formData.message}
                     onChange={(e) => handleInputChange("message", e.target.value)}
@@ -246,12 +246,12 @@ export function ContactPage() {
                 <div>
                   <h3 className="text-xl text-gray-900 mb-3">Compliance Guidance</h3>
                   <p className="text-gray-600 mb-3">
-                    Get expert advice on Australian Cybersecurity regulations including the Privacy Act 1988, 
-                    Cybersecurity Act 2024, and ACSC Essential Eight implementation.
+                    Get expert advice on Australian Cyber Security regulations including the Privacy Act 1988, 
+                    Cyber Security Act 2024, and ACSC Essential Eight implementation.
                   </p>
                   <div className="flex flex-wrap gap-2">
                     <Badge variant="outline">Privacy Act 1988</Badge>
-                    <Badge variant="outline">Cybersecurity Act 2024</Badge>
+                    <Badge variant="outline">Cyber Security Act 2024</Badge>
                     <Badge variant="outline">Essential Eight</Badge>
                   </div>
                 </div>
@@ -276,7 +276,7 @@ export function ContactPage() {
                 <div>
                   <h3 className="text-xl text-gray-900 mb-3">Emergency Response</h3>
                   <p className="text-gray-600 mb-3">
-                    Experiencing a Cybersecurity incident? Contact our emergency response team 
+                    Experiencing a Cyber Security incident? Contact our emergency response team 
                     for immediate assistance with containment and reporting.
                   </p>
                   <div className="p-4 bg-red-50 border border-red-200 rounded-lg">
@@ -292,7 +292,7 @@ export function ContactPage() {
                 <div>
                   <h3 className="text-xl text-gray-900 mb-3">Training & Education</h3>
                   <p className="text-gray-600">
-                    Interested in Cybersecurity training for your team? We offer customized 
+                    Interested in Cyber Security training for your team? We offer customized 
                     training programs tailored to your industry and compliance requirements.
                   </p>
                 </div>

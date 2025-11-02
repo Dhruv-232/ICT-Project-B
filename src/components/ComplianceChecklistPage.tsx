@@ -201,7 +201,7 @@ const getComplianceRecommendations = (
       action: "Schedule Review",
       resources: [
         {
-          title: "Cybersecurity Act 2024 – Implementation Guide",
+          title: "Cyber Security Act 2024 – Implementation Guide",
           url: "https://www.legislation.gov.au/C2024A00098/latest/text",
           type: "external",
         },
@@ -591,7 +591,7 @@ export function ComplianceChecklistPage({ navOpts, onRendered }: Props) {
       y += 8;
       doc.setFontSize(11);
       doc.text(
-        "Based on your compliance progress, the following recommendations are prioritized to improve your Cybersecurity posture:",
+        "Based on your compliance progress, the following recommendations are prioritized to improve your Cyber Security posture:",
         14,
         y,
         { maxWidth: 180 }
@@ -670,7 +670,7 @@ export function ComplianceChecklistPage({ navOpts, onRendered }: Props) {
                 Compliance Checklist
               </h1>
               <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-                Ensure your organization meets all relevant Cybersecurity
+                Ensure your organization meets all relevant Cyber Security
                 compliance requirements. Select your business details below to
                 customize your checklist.
               </p>
@@ -995,7 +995,7 @@ export function ComplianceChecklistPage({ navOpts, onRendered }: Props) {
                   setCurrentFrameworkId(null);
                 }}
               >
-                Reset Local Data
+                Start New Assessment
               </Button>
             </div>
           </CardContent>

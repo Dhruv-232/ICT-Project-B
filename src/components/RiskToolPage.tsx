@@ -174,7 +174,7 @@ const downloadPdf = () => {
   doc.setFont("helvetica", "bold");
   doc.setFontSize(22);
   doc.setTextColor(40, 40, 40);
-  doc.text("Cybersecurity Risk Assessment Results", pageWidth / 2, y, { align: "center" });
+  doc.text("Cyber Security Risk Assessment Results", pageWidth / 2, y, { align: "center" });
   y += 40;
 
   // Risk Summary Card
@@ -211,7 +211,7 @@ const downloadPdf = () => {
   doc.setFontSize(11);
   doc.setTextColor(90, 90, 90);
   const intro = doc.splitTextToSize(
-    "Thank you for using the assessment tool. To improve your cybersecurity posture, please review the recommendations below.",
+    "Thank you for using the assessment tool. To improve your cyber security posture, please review the recommendations below.",
     pageWidth - 120
   );
   doc.text(intro, 60, y);
@@ -367,7 +367,7 @@ useEffect(() => {
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         <div className="text-center mb-8">
           <h1 className="text-3xl text-gray-900 mb-4">Risk Assessment Results</h1>
-          <p className="text-gray-600">Your Cybersecurity risk analysis is complete</p>
+          <p className="text-gray-600">Your Cyber Security risk analysis is complete</p>
         </div>
 
         <Card className="mb-8">
@@ -385,7 +385,7 @@ useEffect(() => {
             <Progress value={riskScore} className="mb-4" />
             <p className="text-center text-gray-600">
               Based on your responses, your organization has a{" "}
-              {riskLevel.level.toLowerCase()} Cybersecurity risk profile.
+              {riskLevel.level.toLowerCase()} Cyber Security risk profile.
             </p>
           </CardContent>
         </Card>
@@ -394,7 +394,7 @@ useEffect(() => {
         <div className="mb-8">
           <RecommendationsSection
             title="Personalized Security Recommendations"
-            subtitle="Based on your risk assessment, here are specific actions to improve your Cybersecurity posture"
+            subtitle="Based on your risk assessment, here are specific actions to improve your Cyber Security posture"
             recommendations={getRiskRecommendations(riskScore)}
             onActionClick={(recommendation) => {
               console.log("Action clicked for:", recommendation.title);
@@ -442,10 +442,10 @@ useEffect(() => {
                 <CircleAlert className="h-10 w-10 text-gray-700" />
               </div>
               <h1 className="text-4xl md:text-5xl text-gray-900 mb-6">
-                Cybersecurity Risk Assessment
+                Cyber Security Risk Assessment
               </h1>
               <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-                Evaluate your organization's Cybersecurity posture across key risk areas.
+                Evaluate your organization's Cyber Security posture across key risk areas.
                 Complete all sections to receive a comprehensive risk score and recommendations.
               </p>
             </div>

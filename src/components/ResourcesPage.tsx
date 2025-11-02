@@ -58,7 +58,7 @@ const resourceCategories: ResourceCategory[] = [
     id: "government-frameworks",
     name: "Government Frameworks",
     description:
-      "Official Australian government Cybersecurity frameworks and legislation",
+      "Official Australian government Cyber Security frameworks and legislation",
     icon: <Shield className="h-5 w-5" />,
     resources: [
       {
@@ -74,20 +74,20 @@ const resourceCategories: ResourceCategory[] = [
         tags: ["Privacy Act", "Data Protection", "Legal Requirements"],
       },
       {
-        title: "Cybersecurity Act 2024 Implementation Guide",
+        title: "Cyber Security Act 2024 Implementation Guide",
         description:
-          "Step-by-step guide for critical infrastructure Cybersecurity obligations",
+          "Step-by-step guide for critical infrastructure Cyber Security obligations",
         type: "document",
         level: "intermediate",
         duration: "1 hour read",
         url: "https://www.legislation.gov.au/C2024A00098/asmade/text",
         downloadUrl: "https://www.legislation.gov.au/C2024A00098/asmade/text",
-        tags: ["Cybersecurity Act", "Critical Infrastructure", "Compliance"],
+        tags: ["Cyber Security Act", "Critical Infrastructure", "Compliance"],
       },
       {
         title: "ACSC Essential Eight Maturity Model",
         description:
-          "Detailed implementation guide for the Essential Eight Cybersecurity strategies",
+          "Detailed implementation guide for the Essential Eight Cyber Security strategies",
         type: "guide",
         level: "intermediate",
         duration: "2 hours",
@@ -112,13 +112,13 @@ const resourceCategories: ResourceCategory[] = [
     id: "implementation-guides",
     name: "Implementation Guides",
     description:
-      "Practical guides for implementing Cybersecurity measures in your organization",
+      "Practical guides for implementing Cyber Security measures in your organization",
     icon: <BookOpen className="h-5 w-5" />,
     resources: [
       {
-        title: "SME Cybersecurity Quick Start Guide",
+        title: "SME Cyber Security Quick Start Guide",
         description:
-          "Essential first steps for small businesses starting their Cybersecurity journey",
+          "Essential first steps for small businesses starting their Cyber Security journey",
         type: "guide",
         level: "beginner",
         duration: "20 min read",
@@ -148,7 +148,7 @@ const resourceCategories: ResourceCategory[] = [
       {
         title: "Employee Security Training Program",
         description:
-          "Framework for developing Cybersecurity awareness training for staff",
+          "Framework for developing Cyber Security awareness training for staff",
         type: "guide",
         level: "intermediate",
         duration: "45 min read",
@@ -158,7 +158,7 @@ const resourceCategories: ResourceCategory[] = [
       {
         title: "Incident Response Plan Template",
         description:
-          "Ready-to-use template for creating your Cybersecurity incident response plan",
+          "Ready-to-use template for creating your Cyber Security incident response plan",
         type: "tool",
         level: "intermediate",
         duration: "2 hours setup",
@@ -171,13 +171,13 @@ const resourceCategories: ResourceCategory[] = [
     id: "assessment-tools",
     name: "Assessment Tools",
     description:
-      "Tools and checklists to evaluate your current Cybersecurity posture",
+      "Tools and checklists to evaluate your current Cyber Security posture",
     icon: <CheckCircle className="h-5 w-5" />,
     resources: [
       {
-        title: "Cybersecurity Maturity Self-Assessment",
+        title: "Cyber Security Maturity Self-Assessment",
         description:
-          "Evaluate your organization's Cybersecurity maturity across key domains",
+          "Evaluate your organization's Cyber Security maturity across key domains",
         type: "tool",
         level: "beginner",
         duration: "30 minutes",
@@ -208,7 +208,7 @@ const resourceCategories: ResourceCategory[] = [
       {
         title: "Risk Assessment Methodology",
         description:
-          "Structured approach to identifying and assessing Cybersecurity risks",
+          "Structured approach to identifying and assessing Cyber Security risks",
         type: "guide",
         level: "advanced",
         duration: "2 hours",
@@ -225,7 +225,7 @@ const resourceCategories: ResourceCategory[] = [
     icon: <Users className="h-5 w-5" />,
     resources: [
       {
-        title: "Cybersecurity Awareness for Employees",
+        title: "Cyber Security Awareness for Employees",
         description:
           "Interactive training module covering common threats and safe practices",
         type: "video",
@@ -265,7 +265,7 @@ const resourceCategories: ResourceCategory[] = [
         tags: ["Remote Work", "VPN", "Home Office Security"],
       },
       {
-        title: "Monthly Cybersecurity Webinar Series",
+        title: "Monthly Cyber Security Webinar Series",
         description:
           "Regular webinars covering current threats and compliance updates",
         type: "webinar",
@@ -284,7 +284,7 @@ const resourceCategories: ResourceCategory[] = [
     icon: <Globe className="h-5 w-5" />,
     resources: [
       {
-        title: "Healthcare Cybersecurity Guide",
+        title: "Healthcare Cyber Security Guide",
         description:
           "Specific guidance for healthcare providers and patient data protection",
         type: "guide",
@@ -296,7 +296,7 @@ const resourceCategories: ResourceCategory[] = [
       {
         title: "Financial Services Security Framework",
         description:
-          "Cybersecurity requirements and best practices for financial institutions",
+          "Cyber Security requirements and best practices for financial institutions",
         type: "document",
         level: "advanced",
         duration: "2 hours",
@@ -314,7 +314,7 @@ const resourceCategories: ResourceCategory[] = [
         tags: ["Retail", "PCI DSS", "Payment Security"],
       },
       {
-        title: "Education Sector Cybersecurity",
+        title: "Education Sector Cyber Security",
         description:
           "Protecting student data and educational technology systems",
         type: "guide",
@@ -393,12 +393,12 @@ export function ResourcesPage({
               <BookOpen className="h-10 w-10 text-gray-700" />
             </div>
             <h1 className="text-4xl md:text-5xl text-gray-900 mb-6">
-              Cybersecurity Resources
+              Cyber Security Resources
             </h1>
             <p className="text-xl text-gray-600 max-w-3xl mx-auto">
               Comprehensive guides, tools, and educational materials to help
               your organization understand and implement Australian
-              Cybersecurity compliance requirements.
+              Cyber Security compliance requirements.
             </p>
           </div>
         </div>
@@ -413,7 +413,7 @@ export function ResourcesPage({
                 <Shield className="h-8 w-8 text-gray-700 mx-auto mb-3" />
                 <h3 className="text-lg text-gray-900 mb-2">Getting Started</h3>
                 <p className="text-sm text-gray-600">
-                  New to Cybersecurity? Start with our beginner-friendly guides.
+                  New to Cyber Security? Start with our beginner-friendly guides.
                 </p>
               </CardContent>
             </Card>
@@ -444,7 +444,7 @@ export function ResourcesPage({
                 <Users className="h-8 w-8 text-gray-700 mx-auto mb-3" />
                 <h3 className="text-lg text-gray-900 mb-2">Training</h3>
                 <p className="text-sm text-gray-600">
-                  Educational materials to build Cybersecurity awareness.
+                  Educational materials to build Cyber Security awareness.
                 </p>
               </CardContent>
             </Card>
@@ -516,7 +516,7 @@ export function ResourcesPage({
 
                         <div className="flex flex-wrap items-center gap-3">
                           {/* Special route to Risk Tool */}
-                          {resource.title === "Cybersecurity Maturity Self-Assessment" ? (
+                          {resource.title === "Cyber Security Maturity Self-Assessment" ? (
                             <Button
                               variant="outline"
                               size="sm"
@@ -556,7 +556,7 @@ export function ResourcesPage({
                               View Resource
                             </Button>
                           )}
-                          {!resource.url && resource.assessment && resource.title !== "Cybersecurity Maturity Self-Assessment" && (
+                          {!resource.url && resource.assessment && resource.title !== "Cyber Security Maturity Self-Assessment" && (
                             <Button
                               variant="outline"
                               size="sm"
@@ -626,7 +626,7 @@ export function ResourcesPage({
           <div className="text-center mb-12">
             <h2 className="text-3xl text-gray-900 mb-4">Stay Updated</h2>
             <p className="text-xl text-gray-600 max-w-2xl mx-auto">
-              Cybersecurity threats and regulations are constantly evolving.
+              Cyber Security threats and regulations are constantly evolving.
               Here are additional resources to keep your knowledge current.
             </p>
           </div>
@@ -696,7 +696,7 @@ export function ResourcesPage({
                       Australian Information Industry Association (AIIA)
                     </h4>
                     <p className="text-gray-600 mb-2">
-                      Industry insights and Cybersecurity initiatives
+                      Industry insights and Cyber Security initiatives
                     </p>
                     <Button
                       variant="outline"

@@ -1451,7 +1451,7 @@ const riskScore60 = [
     impact: "high" as const,
     action: "Start Implementation",
     resources: [
-      { title: "MFA Setup Guide", url: "#", type: "guide" as const },
+      { title: "MFA Setup Guide", url: "https://www.business.com/articles/what-is-multifactor-authentication/", type: "guide" as const },
       {
         title: "ACSC MFA Guidelines",
         url: "https://www.cyber.gov.au/",
@@ -1471,7 +1471,7 @@ const riskScore60 = [
     impact: "high" as const,
     action: "Schedule Updates",
     resources: [
-      { title: "Patch Management Tool", url: "#", type: "tool" as const },
+      { title: "Patch Management Tool", url: "https://blog.codacy.com/code-documentation", type: "tool" as const },
     ],
   },
   {
@@ -1486,7 +1486,7 @@ const riskScore60 = [
     impact: "high" as const,
     action: "Setup Backups",
     resources: [
-      { title: "Backup Strategy Guide", url: "#", type: "guide" as const },
+      { title: "Backup Strategy Guide", url: "https://www.cyber.gov.au/protect-yourself/securing-your-devices/how-back-up-your-files-and-devices", type: "guide" as const },
     ],
   },
   {
@@ -1501,7 +1501,7 @@ const riskScore60 = [
     impact: "medium" as const,
     action: "Schedule Training",
     resources: [
-      { title: "Training Materials", url: "#", type: "training" as const },
+      { title: "Training Materials", url: "https://www.anz.com.au/security/business/cyber-protection/cyber-security-training/", type: "training" as const },
     ],
   },
 ];

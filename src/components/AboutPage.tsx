@@ -21,7 +21,7 @@ export function AboutPage({ onNavigate }: AboutPageProps) {
               About CyberWise Core
             </h1>
             <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-              We're dedicated to helping small and medium enterprises (SMEs) navigate the complex landscape of Cybersecurity compliance with Australian government requirements.
+              We're dedicated to helping small and medium enterprises (SMEs) navigate the complex landscape of Cyber Security compliance with Australian government requirements.
             </p>
           </div>
         </div>
@@ -33,7 +33,7 @@ export function AboutPage({ onNavigate }: AboutPageProps) {
           <div className="text-center mb-16">
             <h2 className="text-3xl text-gray-900 mb-4">Our Mission</h2>
             <p className="text-xl text-gray-600 max-w-2xl mx-auto">
-              Making government Cybersecurity compliance accessible, understandable, and achievable for every Australian SME.
+              Making government Cyber Security compliance accessible, understandable, and achievable for every Australian SME.
             </p>
           </div>
 
@@ -57,7 +57,7 @@ export function AboutPage({ onNavigate }: AboutPageProps) {
                 </div>
                 <CardTitle>Government Aligned</CardTitle>
                 <CardDescription>
-                  Our checklists and assessments are directly aligned with Australian government Cybersecurity frameworks and regulations.
+                  Our checklists and assessments are directly aligned with Australian government Cyber Security frameworks and regulations.
                 </CardDescription>
               </CardHeader>
             </Card>
@@ -83,7 +83,7 @@ export function AboutPage({ onNavigate }: AboutPageProps) {
           <div className="text-center mb-16">
             <h2 className="text-3xl text-gray-900 mb-4">How We Help SMEs</h2>
             <p className="text-xl text-gray-600 max-w-2xl mx-auto">
-              CyberWise Core bridges the gap between complex government Cybersecurity requirements and practical SME implementation.
+              CyberWise Core bridges the gap between complex government Cyber Security requirements and practical SME implementation.
             </p>
           </div>
 
@@ -96,12 +96,12 @@ export function AboutPage({ onNavigate }: AboutPageProps) {
                 <h3 className="text-xl text-gray-900 mb-3">Simplified Compliance Tracking</h3>
                 <p className="text-gray-600 mb-4">
                   Our interactive checklists break down complex government frameworks like the Privacy Act 1988, 
-                  Cybersecurity Act 2024, ACSC Essential Eight, and Ransomware Reporting Rules into manageable, 
+                  Cyber Security Act 2024, ACSC Essential Eight, and Ransomware Reporting Rules into manageable, 
                   actionable items that SMEs can understand and implement.
                 </p>
                 <div className="flex flex-wrap gap-2">
                   <Badge variant="outline">Privacy Act 1988</Badge>
-                  <Badge variant="outline">Cybersecurity Act 2024</Badge>
+                  <Badge variant="outline">Cyber Security Act 2024</Badge>
                   <Badge variant="outline">ACSC Essential Eight</Badge>
                   <Badge variant="outline">Ransomware Reporting</Badge>
                 </div>
@@ -115,7 +115,7 @@ export function AboutPage({ onNavigate }: AboutPageProps) {
               <div>
                 <h3 className="text-xl text-gray-900 mb-3">Risk Assessment & Mitigation</h3>
                 <p className="text-gray-600 mb-4">
-                  Our comprehensive risk assessment tool evaluates your organization's Cybersecurity posture 
+                  Our comprehensive risk assessment tool evaluates your organization's Cyber Security posture 
                   across key areas including IT infrastructure, access management, data protection, and staff training. 
                   We provide tailored recommendations that align with government best practices while being practical for SME budgets.
                 </p>
@@ -129,7 +129,7 @@ export function AboutPage({ onNavigate }: AboutPageProps) {
               <div>
                 <h3 className="text-xl text-gray-900 mb-3">Audit-Ready Documentation</h3>
                 <p className="text-gray-600 mb-4">
-                  Generate comprehensive compliance reports that demonstrate your adherence to government Cybersecurity 
+                  Generate comprehensive compliance reports that demonstrate your adherence to government Cyber Security 
                   requirements. Our reports are designed to meet audit standards and can be easily shared with 
                   regulators, insurers, or business partners.
                 </p>
@@ -154,7 +154,7 @@ export function AboutPage({ onNavigate }: AboutPageProps) {
                   <h4 className="text-lg text-gray-900 mb-2">No Technical Expertise Required</h4>
                   <p className="text-gray-600">
                     Our tools are designed for business owners and managers, not IT specialists. 
-                    Plain language explanations make complex Cybersecurity concepts accessible.
+                    Plain language explanations make complex Cyber Security concepts accessible.
                   </p>
                 </div>
               </div>
@@ -226,7 +226,7 @@ export function AboutPage({ onNavigate }: AboutPageProps) {
           <h2 className="text-3xl text-gray-900 mb-4">Ready to Secure Your Business?</h2>
           <p className="text-xl text-gray-600 mb-8 max-w-2xl mx-auto">
             Join hundreds of Australian SMEs who are already using CyberWise Core to meet 
-            their government Cybersecurity compliance requirements.
+            their government Cyber Security compliance requirements.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Button 

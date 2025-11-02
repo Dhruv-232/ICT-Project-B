@@ -209,10 +209,10 @@ export default function RiskHeatMap({ riskScore, riskAnswers }: RiskHeatMapProps
     <Card className="mb-8 shadow-md">
       <CardHeader className="text-center pb-4">
         <CardTitle className="text-2xl font-semibold text-gray-900">
-          Cybersecurity Risk Heat Map
+          Cyber Security Risk Heat Map
         </CardTitle>
         <CardDescription className="text-sm text-gray-600 mt-2">
-          Visual representation of cybersecurity risk categories by likelihood and impact
+          Visual representation of cyber security risk categories by likelihood and impact
         </CardDescription>
       </CardHeader>
 
