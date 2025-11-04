@@ -45,11 +45,11 @@ const convertAnswersToHeatMapFormat = (
   categories: typeof riskCategories
 ) => {
   const heatMapData: Record<string, { likelihood: number; impact: number }> = {};
-  
+
   categories.forEach((category) => {
     let totalRisk = 0;
     let count = 0;
-    
+
     category.questions.forEach((question) => {
       const answer = answers[question.id];
       if (answer) {
@@ -60,7 +60,7 @@ const convertAnswersToHeatMapFormat = (
         }
       }
     });
-    
+
     if (count > 0) {
       const avgRisk = Math.round(totalRisk / count);
       // Map risk to likelihood and impact (1-5 scale)
@@ -70,7 +70,7 @@ const convertAnswersToHeatMapFormat = (
       };
     }
   });
-  
+
   return heatMapData;
 };
 
@@ -159,177 +159,177 @@ export function RiskToolPage({ onNavigate, navOpts, onRendered }: RiskToolPagePr
     return { level: "Critical", color: "bg-red-500", textColor: "text-red-700" };
   };
 
-  
-   // Enhanced PDF Export
-const downloadPdf = () => {
-  const doc = new jsPDF({ unit: "pt", format: "a4" });
-  const pageWidth = doc.internal.pageSize.getWidth();
-  let y = 60;
 
-  const riskScore = calculateRiskScore();
-  const riskLevel = getRiskLevel(riskScore);
-  const recommendations = getRiskRecommendations(riskScore);
+  // Enhanced PDF Export
+  const downloadPdf = () => {
+    const doc = new jsPDF({ unit: "pt", format: "a4" });
+    const pageWidth = doc.internal.pageSize.getWidth();
+    let y = 60;
 
-  // Header
-  doc.setFont("helvetica", "bold");
-  doc.setFontSize(22);
-  doc.setTextColor(40, 40, 40);
-  doc.text("Cyber Security Risk Assessment Results", pageWidth / 2, y, { align: "center" });
-  y += 40;
+    const riskScore = calculateRiskScore();
+    const riskLevel = getRiskLevel(riskScore);
+    const recommendations = getRiskRecommendations(riskScore);
 
-  // Risk Summary Card
-  doc.setFillColor(250, 250, 250);
-  doc.roundedRect(60, y, pageWidth - 120, 120, 10, 10, "F");
-
-  let badge = [67, 160, 71];
-  if (riskLevel.level === "Medium") badge = [255, 193, 7];
-  if (riskLevel.level === "High") badge = [255, 152, 0];
-  if (riskLevel.level === "Critical") badge = [211, 47, 47];
-
-  doc.setFont("helvetica", "bold");
-  doc.setFontSize(14);
-  doc.setTextColor(50, 50, 50);
-  doc.text("Overall Risk Score", pageWidth / 2, y + 30, { align: "center" });
-
-  doc.setFontSize(42);
-  doc.text(`${riskScore}%`, pageWidth / 2, y + 75, { align: "center" });
-
-  doc.setFillColor(badge[0], badge[1], badge[2]);
-  doc.roundedRect(pageWidth / 2 - 45, y + 85, 90, 28, 5, 5, "F");
-  doc.setFontSize(11);
-  doc.setTextColor(255, 255, 255);
-  doc.text(riskLevel.level.toUpperCase(), pageWidth / 2, y + 104, { align: "center" });
-
-  doc.setFillColor(230, 230, 230);
-  doc.rect(120, y + 118, pageWidth - 240, 8, "F");
-  doc.setFillColor(badge[0], badge[1], badge[2]);
-  doc.rect(120, y + 118, ((pageWidth - 240) * riskScore) / 100, 8, "F");
-  y += 160;
-
-  // Intro
-  doc.setFont("helvetica", "normal");
-  doc.setFontSize(11);
-  doc.setTextColor(90, 90, 90);
-  const intro = doc.splitTextToSize(
-    "Thank you for using the assessment tool. To improve your cyber security posture, please review the recommendations below.",
-    pageWidth - 120
-  );
-  doc.text(intro, 60, y);
-  y += intro.length * 14 + 10;
-
-  // Count priorities dynamically
-    // Ensure recommendations are always an array for reduce
-const recArray = Array.isArray(recommendations)
-  ? recommendations
-  : Object.values(recommendations || {});
-
-const priorityCounts = (recArray as any[]).reduce(
-  (acc: { high: number; medium: number; low: number }, r: any) => {
-    const p = String(r.priority || "").toLowerCase();
-    if (p === "high") acc.high += 1;
-    else if (p === "medium") acc.medium += 1;
-    else acc.low += 1;
-    return acc;
-  },
-  { high: 0, medium: 0, low: 0 }
-);
-
-
- 
-
-  const priorities = [
-    { label: "High Priority", count: priorityCounts.high, color: [211, 47, 47] },
-    { label: "Medium Priority", count: priorityCounts.medium, color: [255, 193, 7] },
-    { label: "Low Priority", count: priorityCounts.low, color: [67, 160, 71] },
-  ];
-
-  // Priority Summary
-  doc.setFontSize(14);
-  doc.setTextColor(0, 0, 0);
-  doc.text("Personalized Security Recommendations", 60, y);
-  y += 25;
-
-  let x = 100;
-  priorities.forEach((p) => {
-    doc.setFillColor(250, 250, 250);
-    doc.roundedRect(x - 25, y, 150, 70, 10, 10, "F");
+    // Header
     doc.setFont("helvetica", "bold");
-    doc.setTextColor(p.color[0], p.color[1], p.color[2]);
-    doc.setFontSize(26);
-    doc.text(`${p.count}`, x + 50, y + 40, { align: "center" });
+    doc.setFontSize(22);
+    doc.setTextColor(40, 40, 40);
+    doc.text("Cyber Security Risk Assessment Results", pageWidth / 2, y, { align: "center" });
+    y += 40;
+
+    // Risk Summary Card
+    doc.setFillColor(250, 250, 250);
+    doc.roundedRect(60, y, pageWidth - 120, 120, 10, 10, "F");
+
+    let badge = [67, 160, 71];
+    if (riskLevel.level === "Medium") badge = [255, 193, 7];
+    if (riskLevel.level === "High") badge = [255, 152, 0];
+    if (riskLevel.level === "Critical") badge = [211, 47, 47];
+
+    doc.setFont("helvetica", "bold");
+    doc.setFontSize(14);
+    doc.setTextColor(50, 50, 50);
+    doc.text("Overall Risk Score", pageWidth / 2, y + 30, { align: "center" });
+
+    doc.setFontSize(42);
+    doc.text(`${riskScore}%`, pageWidth / 2, y + 75, { align: "center" });
+
+    doc.setFillColor(badge[0], badge[1], badge[2]);
+    doc.roundedRect(pageWidth / 2 - 45, y + 85, 90, 28, 5, 5, "F");
+    doc.setFontSize(11);
+    doc.setTextColor(255, 255, 255);
+    doc.text(riskLevel.level.toUpperCase(), pageWidth / 2, y + 104, { align: "center" });
+
+    doc.setFillColor(230, 230, 230);
+    doc.rect(120, y + 118, pageWidth - 240, 8, "F");
+    doc.setFillColor(badge[0], badge[1], badge[2]);
+    doc.rect(120, y + 118, ((pageWidth - 240) * riskScore) / 100, 8, "F");
+    y += 160;
+
+    // Intro
+    doc.setFont("helvetica", "normal");
+    doc.setFontSize(11);
+    doc.setTextColor(90, 90, 90);
+    const intro = doc.splitTextToSize(
+      "Thank you for using the assessment tool. To improve your cyber security posture, please review the recommendations below.",
+      pageWidth - 120
+    );
+    doc.text(intro, 60, y);
+    y += intro.length * 14 + 10;
+
+    // Count priorities dynamically
+    // Ensure recommendations are always an array for reduce
+    const recArray = Array.isArray(recommendations)
+      ? recommendations
+      : Object.values(recommendations || {});
+
+    const priorityCounts = (recArray as any[]).reduce(
+      (acc: { high: number; medium: number; low: number }, r: any) => {
+        const p = String(r.priority || "").toLowerCase();
+        if (p === "high") acc.high += 1;
+        else if (p === "medium") acc.medium += 1;
+        else acc.low += 1;
+        return acc;
+      },
+      { high: 0, medium: 0, low: 0 }
+    );
+
+
+
+
+    const priorities = [
+      { label: "High Priority", count: priorityCounts.high, color: [211, 47, 47] },
+      { label: "Medium Priority", count: priorityCounts.medium, color: [255, 193, 7] },
+      { label: "Low Priority", count: priorityCounts.low, color: [67, 160, 71] },
+    ];
+
+    // Priority Summary
+    doc.setFontSize(14);
+    doc.setTextColor(0, 0, 0);
+    doc.text("Personalized Security Recommendations", 60, y);
+    y += 25;
+
+    let x = 100;
+    priorities.forEach((p) => {
+      doc.setFillColor(250, 250, 250);
+      doc.roundedRect(x - 25, y, 150, 70, 10, 10, "F");
+      doc.setFont("helvetica", "bold");
+      doc.setTextColor(p.color[0], p.color[1], p.color[2]);
+      doc.setFontSize(26);
+      doc.text(`${p.count}`, x + 50, y + 40, { align: "center" });
+      doc.setFontSize(11);
+      doc.setTextColor(80, 80, 80);
+      doc.text(p.label, x + 50, y + 55, { align: "center" });
+      x += 180;
+    });
+    y += 110;
+
+    // Recommendations
+    doc.setFont("helvetica", "bold");
+    doc.setFontSize(14);
+    doc.setTextColor(40, 40, 40);
+    doc.text("High Priority Recommendations", 60, y);
+    y += 25;
+
+    recommendations.forEach((rec, i) => {
+      if (y > 740) { doc.addPage(); y = 60; }
+
+      doc.setFillColor(255, 255, 255);
+      doc.setDrawColor(230, 230, 230);
+      doc.roundedRect(60, y, pageWidth - 120, 104, 10, 10, "FD");
+
+      doc.setFont("helvetica", "bold");
+      doc.setFontSize(12);
+      doc.setTextColor(0, 0, 0);
+
+      const title = doc.splitTextToSize(`${i + 1}. ${rec.title}`, pageWidth - 150);
+      doc.text(title, 75, y + 24);
+
+      doc.setFont("helvetica", "normal");
+      doc.setFontSize(10);
+      doc.setTextColor(110, 110, 110);
+      const meta = [];
+      if (rec.priority) meta.push(`Priority: ${String(rec.priority).toUpperCase()}`);
+      if (rec.timeframe) meta.push(`Timeframe: ${rec.timeframe}`);
+      if (rec.effort) meta.push(`Effort: ${rec.effort}`);
+      if (rec.impact) meta.push(`Impact: ${rec.impact}`);
+      doc.text(meta.join("  |  "), 75, y + 42);
+
+      doc.setFontSize(10);
+      doc.setTextColor(70, 70, 70);
+      const desc = doc.splitTextToSize(rec.description || "", pageWidth - 150);
+      doc.text(desc, 75, y + 60);
+
+      y += Math.max(104, 60 + desc.length * 12);
+    });
+
+    // Next Steps
+    if (y > 700) { doc.addPage(); y = 60; }
+    doc.setFillColor(250, 250, 250);
+    doc.roundedRect(60, y, pageWidth - 120, 80, 10, 10, "F");
+    y += 25;
+    doc.setFont("helvetica", "bold");
+    doc.setTextColor(40, 40, 40);
+    doc.text("Next Steps", 75, y);
+    doc.setFont("helvetica", "normal");
     doc.setFontSize(11);
     doc.setTextColor(80, 80, 80);
-    doc.text(p.label, x + 50, y + 55, { align: "center" });
-    x += 180;
-  });
-  y += 110;
+    y += 20;
+    doc.text("• Start with high-priority recommendations for immediate impact", 90, y);
+    y += 18;
+    doc.text("• Schedule medium-priority items for the next quarter", 90, y);
+    y += 18;
+    doc.text("• Plan low-priority improvements for ongoing security enhancement", 90, y);
+    y += 40;
 
-  // Recommendations
-  doc.setFont("helvetica", "bold");
-  doc.setFontSize(14);
-  doc.setTextColor(40, 40, 40);
-  doc.text("High Priority Recommendations", 60, y);
-  y += 25;
-
-  recommendations.forEach((rec, i) => {
-    if (y > 740) { doc.addPage(); y = 60; }
-
-    doc.setFillColor(255, 255, 255);
-    doc.setDrawColor(230, 230, 230);
-    doc.roundedRect(60, y, pageWidth - 120, 104, 10, 10, "FD");
-
-    doc.setFont("helvetica", "bold");
-    doc.setFontSize(12);
-    doc.setTextColor(0, 0, 0);
-
-    const title = doc.splitTextToSize(`${i + 1}. ${rec.title}`, pageWidth - 150);
-    doc.text(title, 75, y + 24);
-
-    doc.setFont("helvetica", "normal");
+    // Footer
+    doc.setFont("helvetica", "italic");
     doc.setFontSize(10);
-    doc.setTextColor(110, 110, 110);
-    const meta = [];
-    if (rec.priority) meta.push(`Priority: ${String(rec.priority).toUpperCase()}`);
-    if (rec.timeframe) meta.push(`Timeframe: ${rec.timeframe}`);
-    if (rec.effort) meta.push(`Effort: ${rec.effort}`);
-    if (rec.impact) meta.push(`Impact: ${rec.impact}`);
-    doc.text(meta.join("  |  "), 75, y + 42);
+    doc.setTextColor(120, 120, 120);
+    doc.text("Generated using the CyberWise Core Risk Assessment Tool", 60, y);
 
-    doc.setFontSize(10);
-    doc.setTextColor(70, 70, 70);
-    const desc = doc.splitTextToSize(rec.description || "", pageWidth - 150);
-    doc.text(desc, 75, y + 60);
-
-    y += Math.max(104, 60 + desc.length * 12);
-  });
-
-  // Next Steps
-  if (y > 700) { doc.addPage(); y = 60; }
-  doc.setFillColor(250, 250, 250);
-  doc.roundedRect(60, y, pageWidth - 120, 80, 10, 10, "F");
-  y += 25;
-  doc.setFont("helvetica", "bold");
-  doc.setTextColor(40, 40, 40);
-  doc.text("Next Steps", 75, y);
-  doc.setFont("helvetica", "normal");
-  doc.setFontSize(11);
-  doc.setTextColor(80, 80, 80);
-  y += 20;
-  doc.text("• Start with high-priority recommendations for immediate impact", 90, y);
-  y += 18;
-  doc.text("• Schedule medium-priority items for the next quarter", 90, y);
-  y += 18;
-  doc.text("• Plan low-priority improvements for ongoing security enhancement", 90, y);
-  y += 40;
-
-  // Footer
-  doc.setFont("helvetica", "italic");
-  doc.setFontSize(10);
-  doc.setTextColor(120, 120, 120);
-  doc.text("Generated using the CyberWise Core Risk Assessment Tool", 60, y);
-
-  doc.save("Cybersecurity-Risk-Assessment.pdf");
-};
+    doc.save("Cybersecurity-Risk-Assessment.pdf");
+  };
 
   // Overall progress
   const answeredCount = Object.keys(answers).length;
@@ -339,14 +339,14 @@ const priorityCounts = (recArray as any[]).reduce(
   );
   const progressPercent = Math.round((answeredCount / totalQuestions) * 100);
   // Persist risk progress for home page resume state
-useEffect(() => {
-  if (!hydrated) return;
-  setToolProgress("risk", {
-    progress: progressPercent,
-    step: currentCategory,
-    sectionId: riskCategories[currentCategory]?.id ?? null,
-  });
-}, [progressPercent, currentCategory, hydrated]);
+  useEffect(() => {
+    if (!hydrated) return;
+    setToolProgress("risk", {
+      progress: progressPercent,
+      step: currentCategory,
+      sectionId: riskCategories[currentCategory]?.id ?? null,
+    });
+  }, [progressPercent, currentCategory, hydrated]);
 
 
   /* -------- Hydration guard -------- */
@@ -403,26 +403,45 @@ useEffect(() => {
         </div>
 
         {/* 🔥 Heat Map - NOW WITH USER ANSWERS */}
-        <RiskHeatMap 
+        <RiskHeatMap
           riskAnswers={convertAnswersToHeatMapFormat(answers, riskCategories)}
           riskScore={riskScore}
         />
 
         <div className="text-center">
           <Button
-            onClick={() => {
-              storage.remove(RISK_ANSWERS_KEY);
-              storage.remove(RISK_STEP_KEY);
-              storage.remove(RISK_RESULTS_KEY);
-              setShowResults(false);
-              setAnswers({});
-              setCurrentCategory(0);
-            }}
             variant="outline"
             className="mr-4"
+            disabled={
+              !storage.get(RISK_ANSWERS_KEY) &&
+              !storage.get(RISK_STEP_KEY) &&
+              !storage.get(RISK_RESULTS_KEY)
+            }
+            onClick={() => {
+              const hasData =
+                storage.get(RISK_ANSWERS_KEY) ||
+                storage.get(RISK_STEP_KEY) ||
+                storage.get(RISK_RESULTS_KEY);
+
+              if (!hasData) return;
+
+              const confirmed = window.confirm(
+                "Are you sure you want to start a new assessment? This will clear your previous responses."
+              );
+
+              if (confirmed) {
+                storage.remove(RISK_ANSWERS_KEY);
+                storage.remove(RISK_STEP_KEY);
+                storage.remove(RISK_RESULTS_KEY);
+                setShowResults(false);
+                setAnswers({});
+                setCurrentCategory(0);
+              }
+            }}
           >
             Start New Assessment
           </Button>
+
           <Button className="bg-gray-900 hover:bg-gray-800 text-white" onClick={downloadPdf}>
             Download Report
           </Button>
@@ -467,9 +486,8 @@ useEffect(() => {
                   <button
                     key={category.id}
                     onClick={() => setCurrentCategory(index)}
-                    className={`w-full text-left p-3 rounded-lg border transition-colors ${
-                      isCurrent ? "border-gray-900 bg-gray-50" : "border-gray-200 hover:bg-gray-50"
-                    }`}
+                    className={`w-full text-left p-3 rounded-lg border transition-colors ${isCurrent ? "border-gray-900 bg-gray-50" : "border-gray-200 hover:bg-gray-50"
+                      }`}
                   >
                     <div className="flex items-center space-x-3">
                       <div className={`p-2 rounded ${isCompleted ? "bg-green-100" : "bg-gray-100"}`}>
@@ -541,10 +559,9 @@ useEffect(() => {
                             onClick={() => handleAnswerChange(question.id, option.value)}
                             className={`
                               relative p-4 rounded-lg border-2 text-left transition-all duration-200 hover:shadow-md
-                              ${
-                                isSelected
-                                  ? "border-gray-900 bg-gray-50 shadow-sm"
-                                  : "border-gray-200 bg-white hover:border-gray-300 hover:bg-gray-50"
+                              ${isSelected
+                                ? "border-gray-900 bg-gray-50 shadow-sm"
+                                : "border-gray-200 bg-white hover:border-gray-300 hover:bg-gray-50"
                               }
                             `}
                           >
@@ -582,15 +599,14 @@ useEffect(() => {
                                 {Array.from({ length: 5 }, (_, i) => (
                                   <div
                                     key={i}
-                                    className={`w-2 h-2 rounded-full ${
-                                      i < option.risk
-                                        ? option.risk <= 2
-                                          ? "bg-green-400"
-                                          : option.risk === 3
+                                    className={`w-2 h-2 rounded-full ${i < option.risk
+                                      ? option.risk <= 2
+                                        ? "bg-green-400"
+                                        : option.risk === 3
                                           ? "bg-yellow-400"
                                           : "bg-red-400"
-                                        : "bg-gray-200"
-                                    }`}
+                                      : "bg-gray-200"
+                                      }`}
                                   />
                                 ))}
                               </div>
@@ -618,17 +634,36 @@ useEffect(() => {
               <div className="flex items-center gap-3">
                 <Button
                   variant="outline"
+                  disabled={
+                    !storage.get(RISK_ANSWERS_KEY) &&
+                    !storage.get(RISK_STEP_KEY) &&
+                    !storage.get(RISK_RESULTS_KEY)
+                  }
                   onClick={() => {
-                    storage.remove(RISK_ANSWERS_KEY);
-                    storage.remove(RISK_STEP_KEY);
-                    storage.remove(RISK_RESULTS_KEY);
-                    setAnswers({});
-                    setCurrentCategory(0);
-                    setShowResults(false);
+                    const hasData =
+                      storage.get(RISK_ANSWERS_KEY) ||
+                      storage.get(RISK_STEP_KEY) ||
+                      storage.get(RISK_RESULTS_KEY);
+
+                    if (!hasData) return;
+
+                    const confirmed = window.confirm(
+                      "Are you sure you want to reset your saved progress? All answers will be cleared."
+                    );
+
+                    if (confirmed) {
+                      storage.remove(RISK_ANSWERS_KEY);
+                      storage.remove(RISK_STEP_KEY);
+                      storage.remove(RISK_RESULTS_KEY);
+                      setAnswers({});
+                      setCurrentCategory(0);
+                      setShowResults(false);
+                    }
                   }}
                 >
                   Reset Saved Progress
                 </Button>
+
 
                 {currentCategory === riskCategories.length - 1 ? (
                   <Button
