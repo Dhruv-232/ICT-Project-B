@@ -470,13 +470,13 @@ export function ComplianceChecklistPage({ navOpts, onRendered }: Props) {
       prev.map((framework) =>
         framework.id === frameworkId
           ? {
-              ...framework,
-              items: framework.items.map((item) =>
-                item.id === itemId
-                  ? { ...item, completed: !item.completed }
-                  : item
-              ),
-            }
+            ...framework,
+            items: framework.items.map((item) =>
+              item.id === itemId
+                ? { ...item, completed: !item.completed }
+                : item
+            ),
+          }
           : framework
       )
     );
@@ -760,7 +760,7 @@ export function ComplianceChecklistPage({ navOpts, onRendered }: Props) {
             const frameworkProgress = Math.round(
               (framework.items.filter((i) => i.completed).length /
                 framework.items.length) *
-                100
+              100
             );
 
             const isPrivacyAct = framework.id === "privacy-act";
@@ -976,28 +976,48 @@ export function ComplianceChecklistPage({ navOpts, onRendered }: Props) {
             )}
 
             {/* Reset Local Data */}
+            {/* Reset Local Data */}
             <div className="mt-3 grid grid-cols-1 sm:grid-cols-2 gap-3">
               <Button
                 variant="outline"
+                disabled={
+                  !storage.get(PROFILE_KEY) &&
+                  !storage.get(CHECKLIST_KEY) &&
+                  !storage.get(UI_KEY)
+                }
                 onClick={() => {
-                  storage.remove(PROFILE_KEY);
-                  storage.remove(CHECKLIST_KEY);
-                  storage.remove(UI_KEY);
-                  setBusinessSize("");
-                  setSector("");
-                  setAllFrameworks(complianceFrameworks);
-                  setPrivacyActExpanded(false);
-                  setCyberActExpanded(false);
-                  setRansomwareExpanded(false);
-                  setML1Expanded(false);
-                  setML2Expanded(false);
-                  setML3Expanded(false);
-                  setCurrentFrameworkId(null);
+                  const hasData =
+                    storage.get(PROFILE_KEY) ||
+                    storage.get(CHECKLIST_KEY) ||
+                    storage.get(UI_KEY);
+
+                  if (!hasData) return;
+
+                  const confirmed = window.confirm(
+                    "Are you sure you want to reset everything? This will clear all progress and profile data."
+                  );
+
+                  if (confirmed) {
+                    storage.remove(PROFILE_KEY);
+                    storage.remove(CHECKLIST_KEY);
+                    storage.remove(UI_KEY);
+                    setBusinessSize("");
+                    setSector("");
+                    setAllFrameworks(complianceFrameworks);
+                    setPrivacyActExpanded(false);
+                    setCyberActExpanded(false);
+                    setRansomwareExpanded(false);
+                    setML1Expanded(false);
+                    setML2Expanded(false);
+                    setML3Expanded(false);
+                    setCurrentFrameworkId(null);
+                  }
                 }}
               >
                 Start New Assessment
               </Button>
             </div>
+
           </CardContent>
         </Card>
       </div>
